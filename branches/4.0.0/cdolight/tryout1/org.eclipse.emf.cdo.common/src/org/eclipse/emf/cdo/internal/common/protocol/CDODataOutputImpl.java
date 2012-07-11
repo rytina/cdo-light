@@ -20,7 +20,6 @@ import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
-import org.eclipse.emf.cdo.common.id1.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
@@ -280,7 +279,7 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
   {
     if (value == null)
     {
-      value = CDOID.NULL;
+      value = 0;
     }
     else if (value instanceof EObject)
     {
@@ -294,7 +293,7 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
     }
 
     CDOType type = null;
-    if (value instanceof CDOID)
+    if (value instanceof Long) //rytina: what is when value is not a reference?
     {
       type = CDOType.OBJECT;
     }
@@ -308,7 +307,6 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
       }
     }
 
-    writeCDOType(type);
     type.writeValue(this, value);
   }
 

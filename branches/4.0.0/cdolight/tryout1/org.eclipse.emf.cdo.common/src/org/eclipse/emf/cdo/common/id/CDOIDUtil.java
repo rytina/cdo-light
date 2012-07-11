@@ -13,8 +13,6 @@
  */
 package org.eclipse.emf.cdo.common.id;
 
-import org.eclipse.emf.cdo.common.id1.CDOID;
-import org.eclipse.emf.cdo.common.id1.CDOID.Type;
 
 /**
  * Various static methods that may help with CDO {@link CDOID IDs}.
@@ -40,7 +38,6 @@ public final class CDOIDUtil
   public static void write(StringBuilder builder, long id)
   {
 
-   	builder.append(Type.OBJECT);
     builder.append(CDOIDUtil.toURIFragment(id));
   }
 
@@ -52,7 +49,6 @@ public final class CDOIDUtil
   public static long read(String uriFragment)
   {
     char typeID = uriFragment.charAt(0);
-    Enum<?> literal = org.eclipse.emf.cdo.common.id1.CDOID.Type.OBJECT; 
     String fragment = uriFragment.substring(1);
     return Long.parseLong(fragment);
   }
