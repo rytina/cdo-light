@@ -177,7 +177,7 @@ public class CDOPerformanceTests {
 			final IStatus status;
 			if(model instanceof CDOObjectImpl){
 				CDOView view = session.openView();
-				CDOObject lib = view.getObject(CDOIDUtil.createLong(2));
+				CDOObject lib = view.getObject(2);
 				lib.eContents();
 				status = validator.validate(lib);
 			}else{
@@ -269,8 +269,6 @@ public class CDOPerformanceTests {
 	  private static Map<String, String> createProperties(final String REPO) {
 		    Map<String, String> props = new HashMap<String, String>();
 		    props.put(IRepository.Props.OVERRIDE_UUID, REPO);
-		    props.put(IRepository.Props.SUPPORTING_AUDITS, Boolean.toString(false));
-		    props.put(IRepository.Props.SUPPORTING_BRANCHES, Boolean.toString(false));
 		    return props;
 		  }
 	  
