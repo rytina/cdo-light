@@ -11,22 +11,19 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.model.EMFUtil;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RefreshSessionResult;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Simon McDuff
@@ -34,28 +31,23 @@ import java.util.Map.Entry;
  */
 public class RefreshSessionRequest extends CDOClientRequest<RefreshSessionResult>
 {
-  private long lastUpdateTime;
-
-  private Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions;
+  private Map<Long, InternalCDORevision> viewedRevisions;
 
   private int initialChunkSize;
 
   private boolean enablePassiveUpdates;
 
-  public RefreshSessionRequest(CDOClientProtocol protocol, long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  public RefreshSessionRequest(CDOClientProtocol protocol, Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates)
   {
-    this(protocol, CDOProtocolConstants.SIGNAL_REFRESH_SESSION, lastUpdateTime, viewedRevisions, initialChunkSize,
+    this(protocol, CDOProtocolConstants.SIGNAL_REFRESH_SESSION, viewedRevisions, initialChunkSize,
         enablePassiveUpdates);
   }
 
-  protected RefreshSessionRequest(CDOClientProtocol protocol, short signalID, long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  protected RefreshSessionRequest(CDOClientProtocol protocol, short signalID, Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates)
   {
     super(protocol, signalID);
-    this.lastUpdateTime = lastUpdateTime;
     this.viewedRevisions = viewedRevisions;
     this.initialChunkSize = initialChunkSize;
     this.enablePassiveUpdates = enablePassiveUpdates;
@@ -64,30 +56,23 @@ public class RefreshSessionRequest extends CDOClientRequest<RefreshSessionResult
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    out.writeLong(lastUpdateTime);
     out.writeInt(initialChunkSize);
     out.writeBoolean(enablePassiveUpdates);
 
     out.writeInt(viewedRevisions.size());
-    for (Entry<CDOBranch, Map<CDOID, InternalCDORevision>> entry : viewedRevisions.entrySet())
-    {
-      CDOBranch branch = entry.getKey();
-      Map<CDOID, InternalCDORevision> revisions = entry.getValue();
+      Map<Long, InternalCDORevision> revisions = viewedRevisions;
 
-      out.writeCDOBranch(branch);
       out.writeInt(revisions.size());
       for (InternalCDORevision revision : revisions.values())
       {
-        out.writeCDORevisionKey(revision);
+        out.writeCDOID(revision.getID());
       }
-    }
   }
 
   @Override
   protected RefreshSessionResult confirming(CDODataInput in) throws IOException
   {
-    lastUpdateTime = in.readLong();
-    RefreshSessionResult result = new RefreshSessionResult(lastUpdateTime);
+    RefreshSessionResult result = new RefreshSessionResult();
 
     ResourceSet resourceSet = EMFUtil.newEcoreResourceSet();
     for (;;)
@@ -111,7 +96,7 @@ public class RefreshSessionRequest extends CDOClientRequest<RefreshSessionResult
 
       case CDOProtocolConstants.REFRESH_DETACHED_OBJECT:
       {
-        CDORevisionKey key = in.readCDORevisionKey();
+        long key = in.readCDOID();
         result.addDetachedObject(key);
         break;
       }

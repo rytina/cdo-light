@@ -35,12 +35,12 @@ public class CDOObjectReferenceImpl implements CDOObjectReference
 
   public CDOObject getTargetObject()
   {
-    return view.getObject(delegate.getTargetObject());
+    return view.getObject(delegate.getTargetID());
   }
 
   public CDOObject getSourceObject()
   {
-    return view.getObject(delegate.getSourceObject());
+    return view.getObject(delegate.getSourceID());
   }
 
   public EStructuralFeature getSourceFeature()
@@ -57,7 +57,7 @@ public class CDOObjectReferenceImpl implements CDOObjectReference
   public String toString()
   {
     StringBuilder builder = new StringBuilder();
-    builder.append(getSourceObject());
+    builder.append(getSourceID());
     builder.append(".");
     builder.append(getSourceFeature().getName());
     int sourceIndex = getSourceIndex();
@@ -69,8 +69,16 @@ public class CDOObjectReferenceImpl implements CDOObjectReference
     }
 
     builder.append(" --> ");
-    builder.append(getTargetObject());
+    builder.append(getTargetID());
     return builder.toString();
   }
+
+	public long getTargetID() {
+		return delegate.getTargetID();
+	}
+
+	public long getSourceID() {
+		return delegate.getSourceID();
+	}
 
 }

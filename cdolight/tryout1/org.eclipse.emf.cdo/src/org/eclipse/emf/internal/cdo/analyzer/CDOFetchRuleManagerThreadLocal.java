@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.internal.cdo.analyzer;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 import org.eclipse.emf.cdo.session.CDOCollectionLoadingPolicy;
 import org.eclipse.emf.cdo.view.CDOFetchRuleManager;
@@ -45,13 +44,13 @@ public class CDOFetchRuleManagerThreadLocal implements CDOFetchRuleManager
     threadLocal.set(null);
   }
 
-  public CDOID getContext()
+  public long getContext()
   {
     CDOFetchRuleManager analyzer = CDOFetchRuleManagerThreadLocal.getCurrent();
     return analyzer != null ? analyzer.getContext() : null;
   }
 
-  public List<CDOFetchRule> getFetchRules(Collection<CDOID> ids)
+  public List<CDOFetchRule> getFetchRules(Collection<Long> ids)
   {
     CDOFetchRuleManager analyzer = CDOFetchRuleManagerThreadLocal.getCurrent();
     return analyzer != null ? analyzer.getFetchRules(ids) : null;

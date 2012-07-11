@@ -137,10 +137,6 @@ public interface CDOProtocolConstants
 
   public static final short SIGNAL_REMOTE_SESSION_NOTIFICATION = 32;
 
-  /**
-   * @since 3.0
-   */
-  public static final short SIGNAL_CREATE_BRANCH = 33;
 
   /**
    * @since 3.0
@@ -182,15 +178,6 @@ public interface CDOProtocolConstants
    */
   public static final short SIGNAL_LOAD_COMMIT_DATA = 41;
 
-  /**
-   * @since 3.0
-   */
-  public static final short SIGNAL_REPLICATE_REPOSITORY = 42;
-
-  /**
-   * @since 3.0
-   */
-  public static final short SIGNAL_REPLICATE_REPOSITORY_RAW = 43;
 
   /**
    * @since 3.0

@@ -11,9 +11,10 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchManager;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
@@ -23,15 +24,11 @@ import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataInputImpl;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataOutputImpl;
 import org.eclipse.emf.cdo.internal.common.revision.CDOListWithElementProxiesImpl;
-
+import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.net4j.signal.RequestWithConfirmation;
 import org.eclipse.net4j.util.io.ExtendedDataInputStream;
 import org.eclipse.net4j.util.io.ExtendedDataOutputStream;
 import org.eclipse.net4j.util.io.StringIO;
-
-import org.eclipse.emf.spi.cdo.InternalCDOSession;
-
-import java.io.IOException;
 
 /**
  * @author Eike Stepper
@@ -54,11 +51,6 @@ public abstract class CDOClientRequest<RESULT> extends RequestWithConfirmation<R
     return (InternalCDOSession)getProtocol().getSession();
   }
 
-  protected CDOIDProvider getIDProvider()
-  {
-    throw new UnsupportedOperationException();
-  }
-
   @Override
   protected void requesting(ExtendedDataOutputStream out) throws Exception
   {
@@ -68,12 +60,6 @@ public abstract class CDOClientRequest<RESULT> extends RequestWithConfirmation<R
       public CDOPackageRegistry getPackageRegistry()
       {
         return getSession().getPackageRegistry();
-      }
-
-      @Override
-      public CDOIDProvider getIDProvider()
-      {
-        return CDOClientRequest.this.getIDProvider();
       }
 
       @Override

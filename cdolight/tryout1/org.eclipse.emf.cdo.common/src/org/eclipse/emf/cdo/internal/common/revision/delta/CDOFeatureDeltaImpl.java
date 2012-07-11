@@ -11,19 +11,16 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta;
-
-import org.eclipse.net4j.util.CheckUtil;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
-import java.text.MessageFormat;
+import org.eclipse.net4j.util.CheckUtil;
 
 /**
  * @author Simon McDuff
@@ -84,7 +81,6 @@ public abstract class CDOFeatureDeltaImpl implements InternalCDOFeatureDelta
     return MessageFormat.format("CDOFeatureDelta[{0}, {1}, {2}]", feature.getName(), getType(), additional);
   }
 
-  public abstract boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster);
 
   protected abstract String toStringAdditional();
 }

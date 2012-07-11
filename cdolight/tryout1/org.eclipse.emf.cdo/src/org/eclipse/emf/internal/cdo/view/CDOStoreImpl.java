@@ -14,7 +14,9 @@
  */
 package org.eclipse.emf.internal.cdo.view;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.text.MessageFormat;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.common.revision.CDOElementProxy;
@@ -34,12 +36,6 @@ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDORevisionPrefetchingPolicy;
-
-import org.eclipse.emf.internal.cdo.bundle.OM;
-
-import org.eclipse.net4j.util.ObjectUtil;
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -49,13 +45,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.InternalEObject.EStore;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
+import org.eclipse.emf.internal.cdo.bundle.OM;
 import org.eclipse.emf.spi.cdo.CDOStore;
 import org.eclipse.emf.spi.cdo.FSMUtil;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
 import org.eclipse.emf.spi.cdo.InternalCDOView;
-
-import java.text.MessageFormat;
-import java.util.List;
+import org.eclipse.net4j.util.ObjectUtil;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * CDORevision needs to follow these rules:<br>
@@ -103,9 +99,9 @@ public final class CDOStoreImpl implements CDOStore
         TRACER.format("setContainer({0}, {1}, {2}, {3})", cdoObject, newResource, newEContainer, newContainerFeatureID); //$NON-NLS-1$
       }
 
-      Object newContainerID = newEContainer == null ? CDOID.NULL : cdoObject.cdoView().convertObjectToID(newEContainer,
+      long newContainerID = newEContainer == null ? 0 : cdoObject.cdoView().convertObjectToID(newEContainer,
           true);
-      CDOID newResourceID = newResource == null ? CDOID.NULL : newResource.cdoID();
+      long newResourceID = newResource == null ? 0 : newResource.cdoID();
 
       CDOFeatureDelta delta = new CDOContainerFeatureDeltaImpl(newResourceID, newContainerID, newContainerFeatureID);
       InternalCDORevision revision = getRevisionForWriting(cdoObject, delta);
@@ -608,17 +604,17 @@ public final class CDOStoreImpl implements CDOStore
         if (feature.isMany() && index != EStore.NO_INDEX)
         {
           value = resolveProxy(revision, feature, index, value);
-          if (value instanceof CDOID)
+          if (feature instanceof EReference)
           {
-            CDOID id = (CDOID)value;
+            long id = (Long)value;
             CDOList list = revision.getList(feature);
             CDORevisionPrefetchingPolicy policy = view.options().getRevisionPrefetchingPolicy();
             InternalCDORevisionManager revisionManager = view.getSession().getRevisionManager();
-            List<CDOID> listOfIDs = policy.loadAhead(revisionManager, view, eObject, feature, list, index, id);
+            List<Long> listOfIDs = policy.loadAhead(revisionManager, view, eObject, feature, list, index, id);
             if (!listOfIDs.isEmpty())
             {
               int initialChunkSize = view.getSession().options().getCollectionLoadingPolicy().getInitialChunkSize();
-              revisionManager.getRevisions(listOfIDs, view, initialChunkSize, CDORevision.DEPTH_NONE, true);
+              revisionManager.getRevisions(listOfIDs, initialChunkSize, CDORevision.DEPTH_NONE, true);
             }
           }
         }
@@ -657,14 +653,11 @@ public final class CDOStoreImpl implements CDOStore
   {
     try
     {
-      value = view.convertIDToObject(value);
+      value = view.convertIDToObject((Long)value);
     }
     catch (ObjectNotFoundException ex)
     {
-      if (value instanceof CDOID)
-      {
         value = view.options().getStaleReferenceBehaviour().processStaleReference(eObject, feature, index, ex.getID());
-      }
     }
 
     return value;

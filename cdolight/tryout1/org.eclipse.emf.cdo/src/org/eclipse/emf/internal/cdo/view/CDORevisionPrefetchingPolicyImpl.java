@@ -11,20 +11,18 @@
  */
 package org.eclipse.emf.internal.cdo.view;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.revision.CDOList;
-import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
-import org.eclipse.emf.cdo.view.CDORevisionPrefetchingPolicy;
-
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.common.revision.CDOList;
+import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
+import org.eclipse.emf.cdo.view.CDORevisionPrefetchingPolicy;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * @author Simon McDuff
@@ -39,35 +37,32 @@ public class CDORevisionPrefetchingPolicyImpl implements CDORevisionPrefetchingP
     this.chunkSize = chunkSize;
   }
 
-  public List<CDOID> loadAhead(CDORevisionManager revisionManager, CDOBranchPoint branchPoint, EObject eObject,
-      EStructuralFeature feature, CDOList list, int accessIndex, CDOID accessID)
+  public List<Long> loadAhead(CDORevisionManager revisionManager, CDOBranchPoint branchPoint, EObject eObject,
+      EStructuralFeature feature, CDOList list, int accessIndex, long accessID)
   {
-    if (chunkSize > 1 && !revisionManager.containsRevision(accessID, branchPoint))
+    if (chunkSize > 1 && !revisionManager.containsRevision(accessID))
     {
       int fromIndex = accessIndex;
       int toIndex = Math.min(accessIndex + chunkSize, list.size()) - 1;
 
-      Set<CDOID> notRegistered = new HashSet<CDOID>();
+      Set<Long> notRegistered = new HashSet<Long>();
       for (int i = fromIndex; i <= toIndex; i++)
       {
         Object element = list.get(i);
-        if (element instanceof CDOID)
+        if (element instanceof Long)
         {
-          CDOID idElement = (CDOID)element;
-          if (!idElement.isTemporary() && !idElement.isExternal())
-          {
-            if (!revisionManager.containsRevision(idElement, branchPoint))
+          long idElement = (Long)element;
+            if (!revisionManager.containsRevision(idElement))
             {
               if (!notRegistered.contains(idElement))
               {
                 notRegistered.add(idElement);
               }
             }
-          }
         }
       }
 
-      return new ArrayList<CDOID>(notRegistered);
+      return new ArrayList<Long>(notRegistered);
     }
 
     return Collections.emptyList();

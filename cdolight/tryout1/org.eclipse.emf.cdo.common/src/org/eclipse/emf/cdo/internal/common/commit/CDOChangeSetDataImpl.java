@@ -10,9 +10,15 @@
  */
 package org.eclipse.emf.cdo.internal.common.commit;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
@@ -21,28 +27,21 @@ import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.spi.common.commit.CDOChangeKindCache;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author Eike Stepper
  */
 public class CDOChangeSetDataImpl implements CDOChangeSetData
 {
-  private List<CDOIDAndVersion> newObjects;
+  private Collection<CDORevision> newObjects;
 
-  private List<CDORevisionKey> changedObjects;
+  private Collection<CDORevisionDelta> changedObjects;
 
-  private List<CDOIDAndVersion> detachedObjects;
+  private Collection<Long> detachedObjects;
 
   private CDOChangeKindCache changeKindCache;
 
-  public CDOChangeSetDataImpl(List<CDOIDAndVersion> newObjects, List<CDORevisionKey> changedObjects,
-      List<CDOIDAndVersion> detachedObjects)
+  public CDOChangeSetDataImpl(Collection<CDORevision> newObjects, Collection<CDORevisionDelta> changedObjects,
+      Collection<Long> detachedObjects)
   {
     this.newObjects = newObjects;
     this.changedObjects = changedObjects;
@@ -51,7 +50,7 @@ public class CDOChangeSetDataImpl implements CDOChangeSetData
 
   public CDOChangeSetDataImpl()
   {
-    this(new ArrayList<CDOIDAndVersion>(), new ArrayList<CDORevisionKey>(), new ArrayList<CDOIDAndVersion>());
+    this(new ArrayList<CDORevision>(), new ArrayList<CDORevisionDelta>(), new ArrayList<Long>());
   }
 
   public boolean isEmpty()
@@ -76,76 +75,43 @@ public class CDOChangeSetDataImpl implements CDOChangeSetData
 
   public CDOChangeSetData copy()
   {
-    List<CDOIDAndVersion> newObjectsCopy = new ArrayList<CDOIDAndVersion>(newObjects.size());
-    for (CDOIDAndVersion key : newObjects)
-    {
-      if (key instanceof CDORevision)
-      {
-        CDORevision revision = (CDORevision)key;
-        newObjectsCopy.add(revision.copy());
-      }
-      else
-      {
-        newObjectsCopy.add(key);
-      }
-    }
-
-    List<CDORevisionKey> changedObjectsCopy = new ArrayList<CDORevisionKey>(changedObjects.size());
-    for (CDORevisionKey key : changedObjects)
-    {
-      if (key instanceof CDORevisionDelta)
-      {
-        CDORevisionDelta delta = (CDORevisionDelta)key;
-        changedObjectsCopy.add(delta.copy());
-      }
-      else
-      {
-        changedObjectsCopy.add(key);
-      }
-    }
-
-    List<CDOIDAndVersion> detachedObjectsCopy = new ArrayList<CDOIDAndVersion>(detachedObjects.size());
-    for (CDOIDAndVersion key : detachedObjects)
-    {
-      detachedObjectsCopy.add(key);
-    }
-
+    List<CDORevision> newObjectsCopy = new ArrayList<CDORevision>(newObjects);
+    List<CDORevisionDelta> changedObjectsCopy = new ArrayList<CDORevisionDelta>(changedObjects);
+    List<Long> detachedObjectsCopy = new ArrayList<Long>(detachedObjects);
     return new CDOChangeSetDataImpl(newObjectsCopy, changedObjectsCopy, detachedObjectsCopy);
   }
 
   public void merge(CDOChangeSetData changeSetData)
   {
-    Map<CDOID, CDOIDAndVersion> newMap = new HashMap<CDOID, CDOIDAndVersion>();
+    Map<Long, CDORevision> newMap = new HashMap<Long, CDORevision>();
     fillMap(newMap, newObjects);
     fillMap(newMap, changeSetData.getNewObjects());
 
-    Map<CDOID, CDORevisionKey> changedMap = new HashMap<CDOID, CDORevisionKey>();
+    Map<Long, CDORevisionDelta> changedMap = new HashMap<Long, CDORevisionDelta>();
     fillMap(changedMap, changedObjects);
-    for (CDORevisionKey key : changeSetData.getChangedObjects())
+    for (CDORevisionDelta key : changeSetData.getChangedObjects())
     {
       mergeChangedObject(key, newMap, changedMap);
     }
 
-    Map<CDOID, CDOIDAndVersion> detachedMap = new HashMap<CDOID, CDOIDAndVersion>();
-    fillMap(detachedMap, detachedObjects);
-    for (CDOIDAndVersion key : changeSetData.getDetachedObjects())
+    List<Long> detached = new ArrayList<Long>(detachedObjects);
+    for (Long id : changeSetData.getDetachedObjects())
     {
-      CDOID id = key.getID();
       if (newMap.remove(id) == null)
       {
-        detachedMap.put(id, key);
+        detached.add(id);
       }
     }
 
-    newObjects = new ArrayList<CDOIDAndVersion>(newMap.values());
-    changedObjects = new ArrayList<CDORevisionKey>(changedMap.values());
-    detachedObjects = new ArrayList<CDOIDAndVersion>(detachedMap.values());
+    newObjects = new ArrayList<CDORevision>(newMap.values());
+    changedObjects = new ArrayList<CDORevisionDelta>(changedMap.values());
+    detachedObjects = new ArrayList<Long>(detached);
   }
 
-  private void mergeChangedObject(CDORevisionKey key, Map<CDOID, CDOIDAndVersion> newMap,
-      Map<CDOID, CDORevisionKey> changedMap)
+  private void mergeChangedObject(CDORevisionDelta key, Map<Long, CDORevision> newMap,
+      Map<Long, CDORevisionDelta> changedMap)
   {
-    CDOID id = key.getID();
+    long id = key.getID();
     if (key instanceof CDORevisionDelta)
     {
       CDORevisionDelta delta = (CDORevisionDelta)key;
@@ -177,22 +143,22 @@ public class CDOChangeSetDataImpl implements CDOChangeSetData
     changedMap.put(id, key);
   }
 
-  public List<CDOIDAndVersion> getNewObjects()
+  public List<CDORevision> getNewObjects()
   {
-    return newObjects;
+    return (List<CDORevision>) newObjects;
   }
 
-  public List<CDORevisionKey> getChangedObjects()
+  public List<CDORevisionDelta> getChangedObjects()
   {
-    return changedObjects;
+    return (List<CDORevisionDelta>) changedObjects;
   }
 
-  public List<CDOIDAndVersion> getDetachedObjects()
+  public List<Long> getDetachedObjects()
   {
-    return detachedObjects;
+    return (List<Long>) detachedObjects;
   }
 
-  public synchronized CDOChangeKind getChangeKind(CDOID id)
+  public synchronized CDOChangeKind getChangeKind(long id)
   {
     if (changeKindCache == null)
     {
@@ -210,7 +176,7 @@ public class CDOChangeSetDataImpl implements CDOChangeSetData
             "ChangeSetData[newObjects={0}, changedObjects={1}, detachedObjects={2}]", newObjects.size(), changedObjects.size(), detachedObjects.size()); //$NON-NLS-1$
   }
 
-  private static <T extends CDOIDAndVersion> void fillMap(Map<CDOID, T> map, Collection<T> c)
+  private static <T extends CDOIDAndVersion> void fillMap(Map<Long, T> map, Collection<T> c)
   {
     for (T key : c)
     {

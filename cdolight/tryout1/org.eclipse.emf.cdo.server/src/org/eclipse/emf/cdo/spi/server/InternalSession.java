@@ -10,20 +10,18 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.CDOCommonSession;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.ISession;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSessionMessage;
 import org.eclipse.emf.cdo.spi.common.branch.InternalCDOBranch;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -31,7 +29,7 @@ import java.util.Set;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface InternalSession extends ISession, CDOIDProvider, CDOCommonSession.Options
+public interface InternalSession extends ISession, CDOCommonSession.Options
 {
   public static final int TEMP_VIEW_ID = 0;
 
@@ -41,24 +39,21 @@ public interface InternalSession extends ISession, CDOIDProvider, CDOCommonSessi
 
   public InternalView getView(int viewID);
 
-  public InternalView openView(int viewID, CDOBranchPoint branchPoint);
+  public InternalView openView(int viewID);
 
-  public InternalTransaction openTransaction(int viewID, CDOBranchPoint branchPoint);
+  public InternalTransaction openTransaction(int viewID);
 
   public void viewClosed(InternalView view);
 
   public void setSubscribed(boolean subscribed);
 
-  public void collectContainedRevisions(InternalCDORevision revision, CDOBranchPoint branchPoint, int referenceChunk,
-      Set<CDOID> revisions, List<CDORevision> additionalRevisions);
+  public void collectContainedRevisions(InternalCDORevision revision, int referenceChunk,  Set<Long> revisions, List<CDORevision> additionalRevisions);
 
   public void sendRepositoryTypeNotification(CDOCommonRepository.Type oldType, CDOCommonRepository.Type newType)
       throws Exception;
 
   public void sendRepositoryStateNotification(CDOCommonRepository.State oldState, CDOCommonRepository.State newState)
       throws Exception;
-
-  public void sendBranchNotification(InternalCDOBranch branch) throws Exception;
 
   public void sendCommitNotification(CDOCommitInfo commitInfo) throws Exception;
 

@@ -10,47 +10,31 @@
  */
 package org.eclipse.emf.internal.cdo.session;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchHandler;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevisionHandler;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.session.CDOSession;
 import org.eclipse.emf.cdo.session.CDOSession.ExceptionHandler;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSession;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSessionMessage;
-import org.eclipse.emf.cdo.spi.common.CDORawReplicationContext;
-import org.eclipse.emf.cdo.spi.common.CDOReplicationContext;
 import org.eclipse.emf.cdo.spi.common.commit.CDORevisionAvailabilityInfo;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.RevisionInfo;
 import org.eclipse.emf.cdo.view.CDOView;
-
-import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
-import org.eclipse.net4j.util.WrappedException;
-import org.eclipse.net4j.util.collection.Pair;
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.event.EventUtil;
-import org.eclipse.net4j.util.event.IListener;
-import org.eclipse.net4j.util.lifecycle.ILifecycle;
-import org.eclipse.net4j.util.lifecycle.Lifecycle;
-import org.eclipse.net4j.util.lifecycle.LifecycleEventAdapter;
-import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -59,11 +43,16 @@ import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
 import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
 import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
+import org.eclipse.net4j.util.WrappedException;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.event.EventUtil;
+import org.eclipse.net4j.util.event.IListener;
+import org.eclipse.net4j.util.lifecycle.ILifecycle;
+import org.eclipse.net4j.util.lifecycle.Lifecycle;
+import org.eclipse.net4j.util.lifecycle.LifecycleEventAdapter;
+import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * @author Eike Stepper
@@ -132,7 +121,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void changeSubscription(int viewID, List<CDOID> ids, boolean subscribeMode, boolean clear)
+  public void changeSubscription(int viewID, List<Long> ids, boolean subscribeMode, boolean clear)
   {
     int attempt = 0;
     for (;;)
@@ -149,14 +138,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void openView(int viewID, boolean readOnly, CDOBranchPoint branchPoint)
+  public void openView(int viewID, boolean readOnly)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        delegate.openView(viewID, readOnly, branchPoint);
+        delegate.openView(viewID, readOnly);
         return;
       }
       catch (Exception ex)
@@ -182,15 +171,16 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void switchTarget(int viewID, CDOBranchPoint branchPoint, List<InternalCDOObject> invalidObjects,
-      List<CDORevisionKey> allChangedObjects, List<CDOIDAndVersion> allDetachedObjects, OMMonitor monitor)
+  
+  public void switchTarget(int viewID, List<InternalCDOObject> invalidObjects,
+      List<Long> allChangedObjects, List<Long> allDetachedObjects, OMMonitor monitor)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        delegate.switchTarget(viewID, branchPoint, invalidObjects, allChangedObjects, allDetachedObjects, monitor);
+        delegate.switchTarget(viewID, invalidObjects, allChangedObjects, allDetachedObjects, monitor);
         return;
       }
       catch (Exception ex)
@@ -270,15 +260,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks,
-      CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        return delegate.commitTransaction(transactionID, comment, releaseLocks, idProvider, commitData, lobs, monitor);
+        return delegate.commitTransaction(transactionID, comment, releaseLocks, commitData, lobs, monitor);
       }
       catch (Exception ex)
       {
@@ -287,15 +276,15 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public CommitTransactionResult commitDelegation(CDOBranch branch, String userID, String comment,
-      CDOCommitData commitData, Map<CDOID, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+  public CommitTransactionResult commitDelegation(String userID, String comment,
+      CDOCommitData commitData, Map<Long, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        return delegate.commitDelegation(branch, userID, comment, commitData, detachedObjectTypes, lobs, monitor);
+        return delegate.commitDelegation(userID, comment, commitData, detachedObjectTypes, lobs, monitor);
       }
       catch (Exception ex)
       {
@@ -432,21 +421,6 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public Pair<Integer, Long> createBranch(int branchID, BranchInfo branchInfo)
-  {
-    int attempt = 0;
-    for (;;)
-    {
-      try
-      {
-        return delegate.createBranch(branchID, branchInfo);
-      }
-      catch (Exception ex)
-      {
-        handleException(++attempt, ex);
-      }
-    }
-  }
 
   public BranchInfo loadBranch(int branchID)
   {
@@ -496,14 +470,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void loadCommitInfos(CDOBranch branch, long startTime, long endTime, CDOCommitInfoHandler handler)
+  public void loadCommitInfos(CDOCommitInfoHandler handler)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        delegate.loadCommitInfos(branch, startTime, endTime, handler);
+        delegate.loadCommitInfos(handler);
         return;
       }
       catch (Exception ex)
@@ -513,14 +487,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public CDOCommitData loadCommitData(long timeStamp)
+  public CDOCommitData loadCommitData()
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        return delegate.loadCommitData(timeStamp);
+        return delegate.loadCommitData();
       }
       catch (Exception ex)
       {
@@ -546,15 +520,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, CDOBranchPoint branchPoint,
-      int referenceChunk, int prefetchDepth)
+  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, int referenceChunk, int prefetchDepth)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        return delegate.loadRevisions(infos, branchPoint, referenceChunk, prefetchDepth);
+        return delegate.loadRevisions(infos, referenceChunk, prefetchDepth);
       }
       catch (Exception ex)
       {
@@ -563,14 +536,14 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public InternalCDORevision loadRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk)
+  public InternalCDORevision loadRevision(long id, int referenceChunk)
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        return delegate.loadRevisionByVersion(id, branchVersion, referenceChunk);
+        return delegate.loadRevision(id, referenceChunk);
       }
       catch (Exception ex)
       {
@@ -579,7 +552,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewID, CDOBranch viewedBranch,
+  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewId,
       LockType lockType, long timeout) throws InterruptedException
   {
     int attempt = 0;
@@ -587,7 +560,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     {
       try
       {
-        return delegate.lockObjects(viewedRevisions, viewID, viewedBranch, lockType, timeout);
+        return delegate.lockObjects(viewedRevisions, viewId, lockType, timeout);
       }
       catch (Exception ex)
       {
@@ -647,8 +620,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public RefreshSessionResult refresh(long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  public RefreshSessionResult refresh(Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates)
   {
     int attempt = 0;
@@ -656,7 +628,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     {
       try
       {
-        return delegate.refresh(lastUpdateTime, viewedRevisions, initialChunkSize, enablePassiveUpdates);
+        return delegate.refresh(viewedRevisions, initialChunkSize, enablePassiveUpdates);
       }
       catch (Exception ex)
       {
@@ -730,15 +702,15 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void replicateRepository(CDOReplicationContext context, OMMonitor monitor)
+
+  public CDOChangeSetData[] loadChangeSets()
   {
     int attempt = 0;
     for (;;)
     {
       try
       {
-        delegate.replicateRepository(context, monitor);
-        return;
+        return delegate.loadChangeSets();
       }
       catch (Exception ex)
       {
@@ -747,40 +719,7 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
     }
   }
 
-  public void replicateRepositoryRaw(CDORawReplicationContext context, OMMonitor monitor)
-  {
-    int attempt = 0;
-    for (;;)
-    {
-      try
-      {
-        delegate.replicateRepositoryRaw(context, monitor);
-        return;
-      }
-      catch (Exception ex)
-      {
-        handleException(++attempt, ex);
-      }
-    }
-  }
-
-  public CDOChangeSetData[] loadChangeSets(CDOBranchPointRange... ranges)
-  {
-    int attempt = 0;
-    for (;;)
-    {
-      try
-      {
-        return delegate.loadChangeSets(ranges);
-      }
-      catch (Exception ex)
-      {
-        handleException(++attempt, ex);
-      }
-    }
-  }
-
-  public Set<CDOID> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
+  public Set<Long> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
       CDORevisionAvailabilityInfo targetBaseInfo, CDORevisionAvailabilityInfo sourceBaseInfo)
   {
     int attempt = 0;
@@ -834,4 +773,8 @@ public class DelegatingSessionProtocol extends Lifecycle implements CDOSessionPr
       throw WrappedException.wrap(ex);
     }
   }
+
+
+
+
 }

@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 /**
  * An {@link CDOID ID} / version pair.
@@ -22,7 +21,6 @@ import org.eclipse.emf.cdo.common.id.CDOID;
  */
 public interface CDOIDAndVersion
 {
-  public CDOID getID();
+  public long getID();
 
-  public int getVersion();
 }

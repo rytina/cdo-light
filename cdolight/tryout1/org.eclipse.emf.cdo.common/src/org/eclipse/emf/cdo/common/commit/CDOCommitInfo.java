@@ -25,10 +25,6 @@ public interface CDOCommitInfo extends CDOBranchPoint, CDOCommitData
 {
   public CDOCommitInfoManager getCommitInfoManager();
 
-  /**
-   * @since 4.0
-   */
-  public long getPreviousTimeStamp();
 
   public String getUserID();
 

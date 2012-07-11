@@ -12,7 +12,6 @@
 package org.eclipse.emf.cdo.util;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
 import org.eclipse.emf.cdo.common.util.CDOException;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
@@ -37,9 +36,9 @@ public class InvalidObjectException extends CDOException
   /**
    * @since 3.0
    */
-  public InvalidObjectException(CDOID id, CDOBranchPoint branchPoint)
+  public InvalidObjectException(long id, CDOBranchPoint branchPoint)
   {
     super(MessageFormat.format(Messages.getString("InvalidObjectException.0"), //
-        id, branchPoint.getBranch().getID(), CDOCommonUtil.formatTimeStamp(branchPoint.getTimeStamp())));
+        id));
   }
 }

@@ -23,10 +23,4 @@ import org.eclipse.emf.cdo.common.CDOCommonRepository;
  */
 public interface CDORepositoryInfo extends CDOCommonRepository
 {
-  /**
-   * Returns the approximate current time of this repository by optionally refreshing the approximation from the server.
-   * 
-   * @see CDOCommonRepository#getTimeStamp()
-   */
-  public long getTimeStamp(boolean forceRefresh);
 }

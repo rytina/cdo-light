@@ -10,21 +10,19 @@
  **************************************************************************/
 package org.eclipse.emf.internal.cdo.transaction;
 
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDTempObjectExternalImpl;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.util.CDOUtil;
-
-import org.eclipse.emf.internal.cdo.messages.Messages;
-
-import org.eclipse.net4j.util.ImplementationError;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
@@ -32,14 +30,6 @@ import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
 import org.eclipse.emf.spi.cdo.InternalCDOTransaction.InternalCDOCommitContext;
 import org.eclipse.emf.spi.cdo.InternalCDOXATransaction;
 import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Simon McDuff
@@ -57,9 +47,7 @@ public class CDOXACommitContextImpl implements InternalCDOXACommitContext
 
   private InternalCDOCommitContext delegateCommitContext;
 
-  private Map<CDOIDTempObjectExternalImpl, InternalCDOTransaction> requestedIDs = new HashMap<CDOIDTempObjectExternalImpl, InternalCDOTransaction>();
-
-  private Map<InternalCDOObject, CDOIDTempObjectExternalImpl> objectToID = new HashMap<InternalCDOObject, CDOIDTempObjectExternalImpl>();
+  private Map<Long, InternalCDOTransaction> requestedIDs = new HashMap<Long, InternalCDOTransaction>();
 
   public CDOXACommitContextImpl(InternalCDOXATransaction manager, InternalCDOCommitContext commitContext)
   {
@@ -102,17 +90,17 @@ public class CDOXACommitContextImpl implements InternalCDOXACommitContext
     return delegateCommitContext.getTransaction();
   }
 
-  public Map<CDOIDTempObjectExternalImpl, InternalCDOTransaction> getRequestedIDs()
+  public Map<Long, InternalCDOTransaction> getRequestedIDs()
   {
     return requestedIDs;
   }
 
-  public Map<CDOID, CDOObject> getDirtyObjects()
+  public Map<Long, CDOObject> getDirtyObjects()
   {
     return delegateCommitContext.getDirtyObjects();
   }
 
-  public Map<CDOID, CDOObject> getNewObjects()
+  public Map<Long, CDOObject> getNewObjects()
   {
     return delegateCommitContext.getNewObjects();
   }
@@ -122,12 +110,12 @@ public class CDOXACommitContextImpl implements InternalCDOXACommitContext
     return delegateCommitContext.getNewPackageUnits();
   }
 
-  public Map<CDOID, CDOObject> getDetachedObjects()
+  public Map<Long, CDOObject> getDetachedObjects()
   {
     return delegateCommitContext.getDetachedObjects();
   }
 
-  public Map<CDOID, CDORevisionDelta> getRevisionDeltas()
+  public Map<Long, CDORevisionDelta> getRevisionDeltas()
   {
     return delegateCommitContext.getRevisionDeltas();
   }
@@ -153,30 +141,21 @@ public class CDOXACommitContextImpl implements InternalCDOXACommitContext
     return true;
   }
 
-  public CDOID provideCDOID(Object idOrObject)
+  public long provideCDOID(Object idOrObject)
   {
-    CDOID id = getTransaction().provideCDOID(idOrObject);
-    if (id instanceof CDOIDTempObjectExternalImpl)
-    {
-      if (idOrObject instanceof InternalEObject)
+      if (idOrObject instanceof CDOObject)
       {
-        CDOIDTempObjectExternalImpl proxyTemp = (CDOIDTempObjectExternalImpl)id;
-        if (!requestedIDs.containsKey(proxyTemp))
+        if (!requestedIDs.containsKey(((CDOObject) idOrObject).cdoID()))
         {
           InternalCDOObject cdoObject = (InternalCDOObject)CDOUtil.getCDOObject((InternalEObject)idOrObject);
           InternalCDOTransaction cdoTransaction = (InternalCDOTransaction)cdoObject.cdoView();
-          getTransactionManager().add(cdoTransaction, proxyTemp);
-          requestedIDs.put(proxyTemp, cdoTransaction);
-          objectToID.put(cdoObject, proxyTemp);
+          getTransactionManager().add(cdoTransaction, ((CDOObject) idOrObject).cdoID());
+          requestedIDs.put(((CDOObject) idOrObject).cdoID(), cdoTransaction);
         }
+        return ((CDOObject) idOrObject).cdoID();
+      }else{
+    	  return (Long) idOrObject;
       }
-      else
-      {
-        throw new ImplementationError(MessageFormat.format(Messages.getString("CDOXACommitContextImpl.0"), idOrObject)); //$NON-NLS-1$
-      }
-    }
-
-    return id;
   }
 
   public void preCommit()
@@ -188,23 +167,6 @@ public class CDOXACommitContextImpl implements InternalCDOXACommitContext
   {
     if (result != null)
     {
-      if (result.getRollbackMessage() != null)
-      {
-        final CDOReferenceAdjuster defaultReferenceAdjuster = result.getReferenceAdjuster();
-        result.setReferenceAdjuster(new CDOReferenceAdjuster()
-        {
-          public Object adjustReference(Object id, EStructuralFeature feature, int index)
-          {
-            CDOIDTempObjectExternalImpl externalID = objectToID.get(id);
-            if (externalID != null)
-            {
-              id = externalID;
-            }
-
-            return defaultReferenceAdjuster.adjustReference(id, feature, index);
-          }
-        });
-      }
 
       delegateCommitContext.postCommit(result);
     }

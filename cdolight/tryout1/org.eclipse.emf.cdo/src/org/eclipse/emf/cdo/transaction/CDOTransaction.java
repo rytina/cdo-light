@@ -22,7 +22,6 @@ import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetDataProvider;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.eresource.CDOResourceFolder;
@@ -127,16 +126,16 @@ public interface CDOTransaction extends CDOView, CDOCommonTransaction, CDOUserTr
    */
   public CDOSavepoint getLastSavepoint();
 
-  public Map<CDOID, CDOObject> getNewObjects();
+  public Map<Long, CDOObject> getNewObjects();
 
   /**
    * @since 2.0
    */
-  public Map<CDOID, CDOObject> getDetachedObjects();
+  public Map<Long, CDOObject> getDetachedObjects();
 
-  public Map<CDOID, CDOObject> getDirtyObjects();
+  public Map<Long, CDOObject> getDirtyObjects();
 
-  public Map<CDOID, CDORevisionDelta> getRevisionDeltas();
+  public Map<Long, CDORevisionDelta> getRevisionDeltas();
 
   /**
    * @since 3.0
@@ -147,8 +146,6 @@ public interface CDOTransaction extends CDOView, CDOCommonTransaction, CDOUserTr
    * @since 3.0
    */
   public CDOSavepoint[] importChanges(InputStream in, boolean reconstructSavepoints) throws IOException;
-
-  public long getLastCommitTime();
 
   /**
    * Returns the comment to be used in the next commit operation.

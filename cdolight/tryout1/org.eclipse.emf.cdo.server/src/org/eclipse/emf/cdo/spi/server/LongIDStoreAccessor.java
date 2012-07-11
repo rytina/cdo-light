@@ -12,7 +12,6 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.ISession;
 import org.eclipse.emf.cdo.server.ITransaction;
@@ -43,7 +42,7 @@ public abstract class LongIDStoreAccessor extends StoreAccessor
   }
 
   @Override
-  protected CDOID getNextCDOID(CDORevision revision)
+  protected long getNextCDOID(CDORevision revision)
   {
     return getStore().getNextCDOID(this, revision);
   }

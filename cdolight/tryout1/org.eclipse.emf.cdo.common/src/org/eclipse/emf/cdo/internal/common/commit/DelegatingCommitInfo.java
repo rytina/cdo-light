@@ -10,17 +10,16 @@
  */
 package org.eclipse.emf.cdo.internal.common.commit;
 
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-
-import java.util.List;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
 /**
  * @author Eike Stepper
@@ -33,25 +32,12 @@ public abstract class DelegatingCommitInfo implements CDOCommitInfo
 
   protected abstract CDOCommitInfo getDelegate();
 
-  public CDOBranch getBranch()
-  {
-    return getDelegate().getBranch();
-  }
 
   public CDOCommitInfoManager getCommitInfoManager()
   {
     return getDelegate().getCommitInfoManager();
   }
 
-  public long getPreviousTimeStamp()
-  {
-    return getDelegate().getPreviousTimeStamp();
-  }
-
-  public long getTimeStamp()
-  {
-    return getDelegate().getTimeStamp();
-  }
 
   public String getUserID()
   {
@@ -73,22 +59,22 @@ public abstract class DelegatingCommitInfo implements CDOCommitInfo
     return getDelegate().getNewPackageUnits();
   }
 
-  public List<CDOIDAndVersion> getNewObjects()
+  public List<CDORevision> getNewObjects()
   {
     return getDelegate().getNewObjects();
   }
 
-  public List<CDORevisionKey> getChangedObjects()
+  public List<CDORevisionDelta> getChangedObjects()
   {
     return getDelegate().getChangedObjects();
   }
 
-  public List<CDOIDAndVersion> getDetachedObjects()
+  public List<Long> getDetachedObjects()
   {
     return getDelegate().getDetachedObjects();
   }
 
-  public CDOChangeKind getChangeKind(CDOID id)
+  public CDOChangeKind getChangeKind(long id)
   {
     return getDelegate().getChangeKind(id);
   }

@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.internal.cdo.query;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOQueryInfo;
 import org.eclipse.emf.cdo.util.CDOUtil;
 import org.eclipse.emf.cdo.view.CDOView;
@@ -45,14 +44,14 @@ public class CDOQueryResultIteratorImpl<T> extends AbstractQueryIterator<T>
   @SuppressWarnings("unchecked")
   protected T adapt(Object object)
   {
-    if (object instanceof CDOID)
+    if (object instanceof Long)
     {
-      if (((CDOID)object).isNull())
+      if (((Long)object).longValue()==0)
       {
         return null;
       }
 
-      return (T)CDOUtil.getEObject(getView().getObject((CDOID)object, true));
+      return (T)CDOUtil.getEObject(getView().getObject((Long)object, true));
     }
 
     // Support a query return value of Object[]
@@ -62,7 +61,7 @@ public class CDOQueryResultIteratorImpl<T> extends AbstractQueryIterator<T>
       Object[] resolvedObjects = new Object[objects.length];
       for (int i = 0; i < objects.length; i++)
       {
-        if (objects[i] instanceof CDOID)
+        if (objects[i] instanceof Long)
         {
           resolvedObjects[i] = adapt(objects[i]);
         }

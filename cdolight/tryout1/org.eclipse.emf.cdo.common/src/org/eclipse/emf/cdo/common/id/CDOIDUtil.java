@@ -13,31 +13,8 @@
  */
 package org.eclipse.emf.cdo.common.id;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
-import org.eclipse.emf.cdo.common.id.CDOID.Type;
-import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDExternalImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDObjectLongImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDObjectLongWithClassifierImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDObjectStringImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDObjectStringWithClassifierImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDObjectUUIDImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDTempObjectExternalImpl;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDTempObjectImpl;
-import org.eclipse.emf.cdo.internal.common.messages.Messages;
-import org.eclipse.emf.cdo.internal.common.revision.CDOIDAndBranchImpl;
-import org.eclipse.emf.cdo.internal.common.revision.CDOIDAndVersionImpl;
-import org.eclipse.emf.cdo.spi.common.id.AbstractCDOID;
-import org.eclipse.emf.cdo.spi.common.id.AbstractCDOIDLong;
-import org.eclipse.emf.cdo.spi.common.id.AbstractCDOIDString;
-import org.eclipse.emf.cdo.spi.common.id.InternalCDOIDObject;
-
-import org.eclipse.net4j.util.ObjectUtil;
-
-import java.text.MessageFormat;
+import org.eclipse.emf.cdo.common.id1.CDOID;
+import org.eclipse.emf.cdo.common.id1.CDOID.Type;
 
 /**
  * Various static methods that may help with CDO {@link CDOID IDs}.
@@ -54,333 +31,31 @@ public final class CDOIDUtil
   /**
    * @since 2.0
    */
-  public static boolean isNull(CDOID id)
+  public static boolean isNull(long id)
   {
-    return id == null || id.isNull();
+    return id == 0;
   }
 
-  public static long getLong(CDOID id)
+
+  public static void write(StringBuilder builder, long id)
   {
-    if (id == null)
-    {
-      return AbstractCDOIDLong.NULL_VALUE;
-    }
 
-    switch (id.getType())
-    {
-    case NULL:
-      return AbstractCDOIDLong.NULL_VALUE;
-
-    case OBJECT:
-      if (id instanceof AbstractCDOIDLong)
-      {
-        return ((AbstractCDOIDLong)id).getLongValue();
-      }
-
-      throw new IllegalArgumentException(MessageFormat.format(
-          Messages.getString("CDOIDUtil.0"), id.getClass().getName())); //$NON-NLS-1$
-
-    case TEMP_OBJECT:
-      throw new IllegalArgumentException(Messages.getString("CDOIDUtil.1")); //$NON-NLS-1$
-
-    case EXTERNAL_OBJECT:
-    case EXTERNAL_TEMP_OBJECT:
-      throw new IllegalArgumentException(Messages.getString("CDOIDUtil.2")); //$NON-NLS-1$
-
-    default:
-      throw new IllegalArgumentException(MessageFormat.format(
-          Messages.getString("CDOIDUtil.3"), id.getClass().getName())); //$NON-NLS-1$
-    }
+   	builder.append(Type.OBJECT);
+    builder.append(CDOIDUtil.toURIFragment(id));
   }
 
-  /**
-   * @since 4.0
-   */
-  public static String getString(CDOID id)
-  {
-    if (id == null)
-    {
-      return AbstractCDOIDString.NULL_VALUE;
-    }
+  private static Object toURIFragment(long id) {
+	return String.valueOf(id);
+ }
 
-    switch (id.getType())
-    {
-    case NULL:
-      return AbstractCDOIDString.NULL_VALUE;
 
-    case OBJECT:
-      if (id instanceof AbstractCDOIDString)
-      {
-        return ((AbstractCDOIDString)id).getStringValue();
-      }
-
-      throw new IllegalArgumentException(MessageFormat.format(
-          Messages.getString("CDOIDUtil.0"), id.getClass().getName())); //$NON-NLS-1$
-
-    case TEMP_OBJECT:
-      throw new IllegalArgumentException(Messages.getString("CDOIDUtil.1")); //$NON-NLS-1$
-
-    case EXTERNAL_OBJECT:
-    case EXTERNAL_TEMP_OBJECT:
-      if (id instanceof CDOIDExternalImpl)
-      {
-        return ((CDOIDExternalImpl)id).getURI();
-      }
-
-      throw new IllegalArgumentException(MessageFormat.format(
-          Messages.getString("CDOIDUtil.0"), id.getClass().getName())); //$NON-NLS-1$
-
-    default:
-      throw new IllegalArgumentException(MessageFormat.format(
-          Messages.getString("CDOIDUtil.3"), id.getClass().getName())); //$NON-NLS-1$
-    }
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDOClassifierRef getClassifierRef(CDOID id)
-  {
-    if (id instanceof CDOClassifierRef.Provider)
-    {
-      return ((CDOClassifierRef.Provider)id).getClassifierRef();
-    }
-
-    return null;
-  }
-
-  public static CDOIDTemp createTempObject(int value)
-  {
-    return new CDOIDTempObjectImpl(value);
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDOIDExternal createTempObjectExternal(String uri)
-  {
-    return new CDOIDTempObjectExternalImpl(uri);
-  }
-
-  public static CDOID createLong(long value)
-  {
-    if (value == AbstractCDOIDLong.NULL_VALUE)
-    {
-      return CDOID.NULL;
-    }
-
-    return new CDOIDObjectLongImpl(value);
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDOID createLongWithClassifier(CDOClassifierRef classifierRef, long value)
-  {
-    return new CDOIDObjectLongWithClassifierImpl(classifierRef, value);
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static CDOID createString(String value)
-  {
-    return new CDOIDObjectStringImpl(value);
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDOID createStringWithClassifier(CDOClassifierRef classifierRef, String value)
-  {
-    return new CDOIDObjectStringWithClassifierImpl(classifierRef, value);
-  }
-
-  /**
-   * @since 2.0
-   */
-  public static CDOIDExternal createExternal(String uri)
-  {
-    return new CDOIDExternalImpl(uri);
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static CDOIDAndVersion createIDAndVersion(CDOID id, int version)
-  {
-    return new CDOIDAndVersionImpl(id, version);
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static CDOIDAndVersion createIDAndVersion(CDOIDAndVersion source)
-  {
-    return createIDAndVersion(source.getID(), source.getVersion());
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static CDOIDAndBranch createIDAndBranch(CDOID id, CDOBranch branch)
-  {
-    return new CDOIDAndBranchImpl(id, branch);
-  }
-
-  /**
-   * Creates the correct implementation class for the passed {@link CDOID.ObjectType}.
-   * 
-   * @param subType
-   *          the subType for which to create an empty CDOID instance
-   * @return the instance of CDOIDObject which represents the subtype.
-   * @since 3.0
-   */
-  public static AbstractCDOID createCDOIDObject(CDOID.ObjectType subType)
-  {
-    if (subType == null)
-    {
-      throw new IllegalArgumentException("SubType may not be null");
-    }
-
-    InternalCDOIDObject id;
-    switch (subType)
-    {
-    case LONG:
-      id = new CDOIDObjectLongImpl();
-      break;
-
-    case STRING:
-      id = new CDOIDObjectStringImpl();
-      break;
-
-    case LONG_WITH_CLASSIFIER:
-      id = new CDOIDObjectLongWithClassifierImpl();
-      break;
-
-    case STRING_WITH_CLASSIFIER:
-      id = new CDOIDObjectStringWithClassifierImpl();
-      break;
-
-    case UUID:
-      id = new CDOIDObjectUUIDImpl();
-      break;
-
-    default:
-      throw new IllegalArgumentException("Subtype " + subType.name() + " not supported");
-    }
-
-    if (id.getSubType() != subType)
-    {
-      throw new IllegalStateException("Subtype of created id " + id + " is unequal (" + id.getSubType().name()
-          + ") to requested subtype " + subType.name());
-    }
-
-    return (AbstractCDOID)id;
-  }
-
-  /**
-   * Format of the uri fragment.
-   * <p>
-   * Non-legacy: <code>&lt;ID TYPE>/&lt;CUSTOM STRING FROM OBJECT FACTORY></code>
-   * <p>
-   * Legacy: <code>&lt;ID TYPE>/&lt;PACKAGE URI>/&lt;CLASSIFIER ID>/&lt;CUSTOM STRING FROM OBJECT FACTORY></code>
-   * 
-   * @since 2.0
-   */
-  public static void write(StringBuilder builder, CDOID id)
-  {
-    if (id == null)
-    {
-      id = CDOID.NULL;
-    }
-
-    if (id instanceof InternalCDOIDObject)
-    {
-      ObjectType subType = ((InternalCDOIDObject)id).getSubType();
-      builder.append(subType.getID());
-    }
-    else
-    {
-      Type type = id.getType();
-      builder.append(type.getID());
-    }
-
-    builder.append(id.toURIFragment());
-  }
-
-  /**
-   * Format of the URI fragment.
-   * <p>
-   * Non-legacy: <code>&lt;ID TYPE>/&lt;CUSTOM STRING FROM OBJECT FACTORY></code>
-   * <p>
-   * Legacy: <code>&lt;ID TYPE>/&lt;PACKAGE URI>/&lt;CLASSIFIER ID>/&lt;CUSTOM STRING FROM OBJECT FACTORY></code>
-   * 
-   * @since 3.0
-   */
-  public static CDOID read(String uriFragment)
+  public static long read(String uriFragment)
   {
     char typeID = uriFragment.charAt(0);
-    Enum<?> literal = CDOID.Type.getLiteral(typeID);
-    if (literal == null)
-    {
-      throw new IllegalArgumentException("Unknown type ID: " + typeID);
-    }
-
+    Enum<?> literal = org.eclipse.emf.cdo.common.id1.CDOID.Type.OBJECT; 
     String fragment = uriFragment.substring(1);
-    if (literal instanceof ObjectType)
-    {
-      return readCDOIDObject((ObjectType)literal, fragment);
-    }
-
-    Type type = (Type)literal;
-    switch (type)
-    {
-    case NULL:
-      return CDOID.NULL;
-
-    case TEMP_OBJECT:
-      return new CDOIDTempObjectImpl(Integer.valueOf(fragment));
-
-    case EXTERNAL_OBJECT:
-      return new CDOIDExternalImpl(fragment);
-
-    case EXTERNAL_TEMP_OBJECT:
-      return new CDOIDTempObjectExternalImpl(fragment);
-
-    case OBJECT:
-    {
-      // Normally this case should not occur (is an OBJECT subtype).
-      throw new IllegalArgumentException();
-    }
-
-    default:
-      throw new IllegalArgumentException(MessageFormat.format(Messages.getString("CDOIDUtil.5"), uriFragment)); //$NON-NLS-1$
-    }
+    return Long.parseLong(fragment);
   }
 
-  private static CDOID readCDOIDObject(CDOID.ObjectType subType, String fragment)
-  {
-    AbstractCDOID id = createCDOIDObject(subType);
-    id.read(fragment);
-    return id;
-  }
 
-  /**
-   * @since 2.0
-   */
-  public static boolean equals(CDOID id1, CDOID id2)
-  {
-    if (id1 == null)
-    {
-      id1 = CDOID.NULL;
-    }
-
-    if (id2 == null)
-    {
-      id2 = CDOID.NULL;
-    }
-
-    return ObjectUtil.equals(id1, id2);
-  }
 }

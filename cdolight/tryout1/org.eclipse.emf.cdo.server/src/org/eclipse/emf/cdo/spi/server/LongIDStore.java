@@ -10,16 +10,11 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-
-import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
-
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
 
 /**
  * @author Eike Stepper
@@ -27,15 +22,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class LongIDStore extends Store
 {
-  /**
-   * @since 3.0
-   */
-  public static final Set<ObjectType> OBJECT_ID_TYPES = Collections.singleton(CDOID.ObjectType.LONG);
 
   /**
    * @since 3.0
    */
-  public static final long NULL = CDOIDUtil.getLong(CDOID.NULL);
+  public static final long NULL = 0;
 
   @ExcludeFromDump
   private transient AtomicLong lastObjectID = new AtomicLong();
@@ -46,16 +37,15 @@ public abstract class LongIDStore extends Store
   public LongIDStore(String type, Set<ChangeFormat> supportedChangeFormats,
       Set<RevisionTemporality> supportedRevisionTemporalities, Set<RevisionParallelism> supportedRevisionParallelisms)
   {
-    super(type, OBJECT_ID_TYPES, supportedChangeFormats, supportedRevisionTemporalities, supportedRevisionParallelisms);
+    super(type, supportedChangeFormats, supportedRevisionTemporalities, supportedRevisionParallelisms);
   }
 
   /**
    * @since 4.0
    */
-  public CDOID createObjectID(String val)
+  public long createObjectID(String val)
   {
-    Long id = Long.valueOf(val);
-    return CDOIDUtil.createLong(id);
+    return Long.valueOf(val);
   }
 
   public long getLastObjectID()
@@ -87,34 +77,27 @@ public abstract class LongIDStore extends Store
   /**
    * @since 4.0
    */
-  public CDOID getNextCDOID(LongIDStoreAccessor accessor, CDORevision revision)
+  public long getNextCDOID(LongIDStoreAccessor accessor, CDORevision revision)
   {
-    if (revision.getBranch().isLocal())
-    {
-      return CDOIDUtil.createLong(nextLocalObjectID.getAndDecrement());
-    }
-
-    return CDOIDUtil.createLong(lastObjectID.incrementAndGet());
+      return nextLocalObjectID.getAndDecrement();
   }
 
   /**
    * @since 4.0
    */
-  public boolean isLocal(CDOID id)
+  public boolean isLocal(long id)
   {
-    long value = CDOIDUtil.getLong(id);
-    return value > nextLocalObjectID.get();
+    return id > nextLocalObjectID.get();
   }
 
   /**
    * @since 4.0
    */
-  public void ensureLastObjectID(CDOID id)
+  public void ensureLastObjectID(long id)
   {
-    long addedID = CDOIDUtil.getLong(id);
-    if (addedID > getLastObjectID())
+    if (id > getLastObjectID())
     {
-      setLastObjectID(addedID);
+      setLastObjectID(id);
     }
   }
 }

@@ -14,8 +14,6 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.spi.common.revision.BaseCDORevision;
@@ -123,16 +121,6 @@ public class CDORevisionImpl extends BaseCDORevision
         return;
       }
 
-      // Exception 2a: Replacing a temp ID with a regular ID is allowed (happens during
-      // postCommit of new objects)
-      // Exception 2b: Replacing a temp ID with another temp ID is also allowed (happens
-      // when changes are imported in a PushTx).
-      if (oldValue instanceof CDOIDTemp && value instanceof CDOID)
-      {
-        return;
-      }
-
-      throw new IllegalStateException("Cannot modify a frozen revision");
     }
   }
 }

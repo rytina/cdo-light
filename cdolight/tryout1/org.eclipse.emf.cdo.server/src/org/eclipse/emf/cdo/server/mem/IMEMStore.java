@@ -10,14 +10,11 @@
  */
 package org.eclipse.emf.cdo.server.mem;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOAllRevisionsProvider;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.IStore;
-
-import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
-
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 
 /**
  * A simple in-memory store.
@@ -51,5 +48,5 @@ public interface IMEMStore extends IStore, CDOAllRevisionsProvider
   /**
    * @since 3.0
    */
-  public EClass getObjectType(CDOID id);
+  public EClass getObjectType(long id);
 }

@@ -11,16 +11,13 @@
  */
 package org.eclipse.emf.cdo.internal.server.mem;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.server.StoreChunkReader;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.List;
 
 /**
  * @author Simon McDuff
@@ -37,15 +34,14 @@ public class MEMStoreChunkReader extends StoreChunkReader
 
   public List<Chunk> executeRead()
   {
-    CDOID id = getRevision().getID();
-    CDOBranchVersion branchVersion = getRevision();
+    long id = getRevision().getID();
 
     MEMStore store = getAccessor().getStore();
     List<Chunk> chunks = getChunks();
     for (Chunk chunk : chunks)
     {
       int startIndex = chunk.getStartIndex();
-      InternalCDORevision revision = store.getRevisionByVersion(id, branchVersion);
+      InternalCDORevision revision = store.getRevision(id);
       for (int i = 0; i < chunk.size(); i++)
       {
         Object object = revision.get(getFeature(), startIndex + i);

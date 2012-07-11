@@ -271,23 +271,6 @@ public class SessionManager extends Container<ISession> implements InternalSessi
     }
   }
 
-  public void sendBranchNotification(InternalSession sender, InternalCDOBranch branch)
-  {
-    for (InternalSession session : getSessions())
-    {
-      if (session != sender)
-      {
-        try
-        {
-          session.sendBranchNotification(branch);
-        }
-        catch (Exception ex)
-        {
-          handleNotificationProblem(session, ex);
-        }
-      }
-    }
-  }
 
   public void sendCommitNotification(InternalSession sender, CDOCommitInfo commitInfo)
   {

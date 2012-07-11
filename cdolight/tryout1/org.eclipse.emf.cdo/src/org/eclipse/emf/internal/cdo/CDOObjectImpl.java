@@ -11,10 +11,14 @@
  */
 package org.eclipse.emf.internal.cdo;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.EMFUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.eresource.CDOResource;
@@ -22,16 +26,6 @@ import org.eclipse.emf.cdo.eresource.impl.CDOResourceImpl;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.util.CDOUtil;
 import org.eclipse.emf.cdo.view.CDOView;
-
-import org.eclipse.emf.internal.cdo.bundle.OM;
-import org.eclipse.emf.internal.cdo.messages.Messages;
-import org.eclipse.emf.internal.cdo.object.CDOLockImpl;
-import org.eclipse.emf.internal.cdo.view.CDOStateMachine;
-
-import org.eclipse.net4j.util.ObjectUtil;
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -56,16 +50,18 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.internal.cdo.bundle.OM;
+import org.eclipse.emf.internal.cdo.messages.Messages;
+import org.eclipse.emf.internal.cdo.object.CDOLockImpl;
+import org.eclipse.emf.internal.cdo.view.CDOStateMachine;
 import org.eclipse.emf.spi.cdo.CDOStore;
 import org.eclipse.emf.spi.cdo.FSMUtil;
 import org.eclipse.emf.spi.cdo.InternalCDOLoadable;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
 import org.eclipse.emf.spi.cdo.InternalCDOView;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import org.eclipse.net4j.util.ObjectUtil;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * The base class of all <em>native</em> {@link CDOObject objects}.
@@ -76,7 +72,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
 {
   private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_OBJECT, CDOObjectImpl.class);
 
-  private CDOID id;
+  private long id;
 
   private CDOState state;
 
@@ -99,7 +95,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
     cdoSettings = null;
   }
 
-  public CDOID cdoID()
+  public long cdoID()
   {
     return id;
   }
@@ -205,7 +201,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
     return new CDOLockImpl(this, LockType.WRITE);
   }
 
-  public void cdoInternalSetID(CDOID id)
+  public void cdoInternalSetID(long id)
   {
     if (TRACER.isEnabled())
     {
@@ -314,7 +310,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
       TRACER.format("Populating revision for {0}", this); //$NON-NLS-1$
     }
 
-    revision.setContainerID(eContainer == null ? CDOID.NULL : view.convertObjectToID(eContainer, true));
+    revision.setContainerID(eContainer == null ? 0 : view.convertObjectToID(eContainer, true));
     revision.setContainingFeatureID(eContainerFeatureID);
 
     Resource directResource = eDirectResource();
@@ -783,7 +779,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
   @Override
   public String toString()
   {
-    if (id == null)
+    if (id == 0)
     {
       return eClass().getName() + "?"; //$NON-NLS-1$
     }
@@ -1091,7 +1087,7 @@ public class CDOObjectImpl extends EStoreEObjectImpl implements InternalCDOObjec
     }
 
     EStructuralFeature.Internal internalFeature = (EStructuralFeature.Internal)eFeature;
-    EReference oppositeReference = instance.cdoID().isTemporary() ? null : internalFeature.getEOpposite();
+    EReference oppositeReference =  internalFeature.getEOpposite();
 
     CDOStore cdoStore = instance.cdoView().getStore();
     EStore eStore = instance.eStore();

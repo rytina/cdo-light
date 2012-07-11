@@ -16,7 +16,4 @@ package org.eclipse.emf.cdo.spi.common;
  */
 public interface CDOReplicationInfo
 {
-  public int getLastReplicatedBranchID();
-
-  public long getLastReplicatedCommitTime();
 }

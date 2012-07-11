@@ -15,15 +15,31 @@
  */
 package org.eclipse.emf.internal.cdo.session;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
@@ -74,7 +90,12 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.util.CDOUtil;
 import org.eclipse.emf.cdo.view.CDOFetchRuleManager;
 import org.eclipse.emf.cdo.view.CDOView;
-
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.internal.cdo.analyzer.NOOPFetchRuleManager;
 import org.eclipse.emf.internal.cdo.bundle.OM;
 import org.eclipse.emf.internal.cdo.messages.Messages;
@@ -82,7 +103,13 @@ import org.eclipse.emf.internal.cdo.object.CDOFactoryImpl;
 import org.eclipse.emf.internal.cdo.session.remote.CDORemoteSessionManagerImpl;
 import org.eclipse.emf.internal.cdo.transaction.CDOTransactionImpl;
 import org.eclipse.emf.internal.cdo.view.CDOViewImpl;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RefreshSessionResult;
+import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
+import org.eclipse.emf.spi.cdo.InternalCDOSession;
+import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
+import org.eclipse.emf.spi.cdo.InternalCDOView;
+import org.eclipse.emf.spi.cdo.InternalCDOViewSet;
 import org.eclipse.net4j.util.ObjectUtil;
 import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
 import org.eclipse.net4j.util.WrappedException;
@@ -102,38 +129,6 @@ import org.eclipse.net4j.util.lifecycle.LifecycleEventAdapter;
 import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.eclipse.net4j.util.om.log.OMLogger;
 import org.eclipse.net4j.util.options.OptionsEvent;
-
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RefreshSessionResult;
-import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
-import org.eclipse.emf.spi.cdo.InternalCDOSession;
-import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
-import org.eclipse.emf.spi.cdo.InternalCDOView;
-import org.eclipse.emf.spi.cdo.InternalCDOViewSet;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -166,14 +161,10 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
 
   private String userID;
 
-  private long lastUpdateTime;
-
   @ExcludeFromDump
   private LastUpdateTimeLock lastUpdateTimeLock = new LastUpdateTimeLock();
 
   private CDOSession.Options options = createOptions();
-
-  private OutOfSequenceInvalidations outOfSequenceInvalidations = new OutOfSequenceInvalidations();
 
   private CDORepositoryInfo repositoryInfo;
 
@@ -202,7 +193,7 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
    * A map to track for every object that was committed since this session's last refresh, onto what CDOBranchPoint it
    * was committed. (Used only for sticky transactions, see bug 290032 - Sticky views.)
    */
-  private Map<CDOID, CDOBranchPoint> committedSinceLastRefresh = new HashMap<CDOID, CDOBranchPoint>();
+  private Map<Long, CDOBranchPoint> committedSinceLastRefresh = new HashMap<Long, CDOBranchPoint>();
 
   @ExcludeFromDump
   private int lastViewID;
@@ -537,7 +528,6 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
 
   public CDOTransaction openTransaction(CDOBranchPoint target, ResourceSet resourceSet)
   {
-    checkArg(target.getTimeStamp() == CDOBranchPoint.UNSPECIFIED_DATE, "Target is not head of a branch: " + target);
     return null;
   }
 
@@ -590,7 +580,7 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
    */
   protected InternalCDOTransaction createTransaction(CDOBranch branch)
   {
-    return new CDOTransactionImpl(branch);
+    return new CDOTransactionImpl();
   }
 
   /**
@@ -601,51 +591,22 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     return new CDOTransactionImpl(durableLockingID);
   }
 
-  public CDOView openView(CDOBranchPoint target, ResourceSet resourceSet)
-  {
-    return openView(target.getBranch(), target.getTimeStamp(), resourceSet);
-  }
 
-  public CDOView openView(CDOBranchPoint target)
-  {
-    return openView(target, createResourceSet());
-  }
 
-  public InternalCDOView openView(CDOBranch branch, long timeStamp, ResourceSet resourceSet)
+  public InternalCDOView openView(ResourceSet resourceSet)
   {
     checkActive();
-    InternalCDOView view = createView(branch, timeStamp);
+    InternalCDOView view = createView();
     initView(view, resourceSet);
     return view;
   }
 
-  public InternalCDOView openView(CDOBranch branch, long timeStamp)
-  {
-    return openView(branch, timeStamp, createResourceSet());
-  }
-
-  public InternalCDOView openView(CDOBranch branch)
-  {
-    return openView(branch, CDOBranchPoint.UNSPECIFIED_DATE);
-  }
-
-  public InternalCDOView openView(long timeStamp)
-  {
-    return openView(getBranchManager().getMainBranch(), timeStamp);
-  }
-
-  public InternalCDOView openView(ResourceSet resourceSet)
-  {
-    return openView(getBranchManager().getMainBranch(), CDOBranchPoint.UNSPECIFIED_DATE, resourceSet);
-  }
-
-  /**
-   * @since 2.0
-   */
   public InternalCDOView openView()
   {
-    return openView(CDOBranchPoint.UNSPECIFIED_DATE);
+    return openView(createResourceSet());
   }
+
+
 
   public CDOView openView(String durableLockingID)
   {
@@ -663,9 +624,9 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
   /**
    * @since 2.0
    */
-  protected InternalCDOView createView(CDOBranch branch, long timeStamp)
+  protected InternalCDOView createView()
   {
-    return new CDOViewImpl(branch, timeStamp);
+    return new CDOViewImpl();
   }
 
   /**
@@ -747,54 +708,38 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
   /**
    * @since 2.0
    */
-  public long refresh()
+  public void refresh()
   {
     checkActive();
-    if (options().isPassiveUpdateEnabled())
-    {
-      return CDOBranchPoint.UNSPECIFIED_DATE;
-    }
-
-    return refresh(false);
+    refresh(false);
   }
 
-  private long refresh(boolean enablePassiveUpdates)
+  private void refresh(boolean enablePassiveUpdates)
   {
-    synchronized (outOfSequenceInvalidations)
-    {
-      Map<CDOBranch, List<InternalCDOView>> views = new HashMap<CDOBranch, List<InternalCDOView>>();
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions = new HashMap<CDOBranch, Map<CDOID, InternalCDORevision>>();
+      List<InternalCDOView> views = new ArrayList<InternalCDOView>();
+      Map<Long, InternalCDORevision> viewedRevisions = new HashMap<Long, InternalCDORevision>();
       collectViewedRevisions(views, viewedRevisions);
       cleanupRevisionCache(viewedRevisions);
 
       CDOSessionProtocol sessionProtocol = getSessionProtocol();
-      long lastUpdateTime = getLastUpdateTime();
       int initialChunkSize = options().getCollectionLoadingPolicy().getInitialChunkSize();
 
-      RefreshSessionResult result = sessionProtocol.refresh(lastUpdateTime, viewedRevisions, initialChunkSize,
+      RefreshSessionResult result = sessionProtocol.refresh(viewedRevisions, initialChunkSize,
           enablePassiveUpdates);
 
-      setLastUpdateTime(result.getLastUpdateTime());
       registerPackageUnits(result.getPackageUnits());
 
-      for (Entry<CDOBranch, List<InternalCDOView>> entry : views.entrySet())
-      {
-        CDOBranch branch = entry.getKey();
-        List<InternalCDOView> branchViews = entry.getValue();
-        processRefreshSessionResult(result, branch, branchViews, viewedRevisions);
-      }
-
-      return result.getLastUpdateTime();
-    }
+        List<InternalCDOView> branchViews = views;
+        processRefreshSessionResult(result, branchViews, viewedRevisions);
   }
 
-  public void processRefreshSessionResult(RefreshSessionResult result, CDOBranch branch,
-      List<InternalCDOView> branchViews, Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions)
+  public void processRefreshSessionResult(RefreshSessionResult result, 
+      List<InternalCDOView> branchViews, Map<Long, InternalCDORevision> viewedRevisions)
   {
-    Map<CDOID, InternalCDORevision> oldRevisions = viewedRevisions.get(branch);
+    Map<Long, InternalCDORevision> oldRevisions = viewedRevisions;
 
-    List<CDORevisionKey> changedObjects = new ArrayList<CDORevisionKey>();
-    for (InternalCDORevision newRevision : result.getChangedObjects(branch))
+    List<CDORevisionDelta> changedObjects = new ArrayList<CDORevisionDelta>();
+    for (InternalCDORevision newRevision : result.getChangedObjects())
     {
       getRevisionManager().addRevision(newRevision);
 
@@ -803,65 +748,43 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       changedObjects.add(delta);
     }
 
-    List<CDOIDAndVersion> detachedObjects = result.getDetachedObjects(branch);
-    for (CDOIDAndVersion detachedObject : detachedObjects)
-    {
-      getRevisionManager().reviseLatest(detachedObject.getID(), branch);
-    }
+    List<Long> detachedObjects = result.getDetachedObjects();
 
     for (InternalCDOView view : branchViews)
     {
-      view.invalidate(view.getBranch(), result.getLastUpdateTime(), changedObjects, detachedObjects, oldRevisions,
+      view.invalidate(changedObjects, detachedObjects, oldRevisions,
           false);
     }
   }
 
-  private void collectViewedRevisions(Map<CDOBranch, List<InternalCDOView>> views,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions)
+  private void collectViewedRevisions(List<InternalCDOView> views,
+      Map<Long, InternalCDORevision> viewedRevisions)
   {
     for (InternalCDOView view : getViews())
     {
-      if (view.getTimeStamp() == CDOView.UNSPECIFIED_DATE)
-      {
-        CDOBranch branch = view.getBranch();
-        Map<CDOID, InternalCDORevision> revisions = viewedRevisions.get(branch);
+        Map<Long, InternalCDORevision> revisions = viewedRevisions;
         boolean needNewMap = revisions == null;
         if (needNewMap)
         {
-          revisions = new HashMap<CDOID, InternalCDORevision>();
+          revisions = new HashMap<Long, InternalCDORevision>();
         }
 
         view.collectViewedRevisions(revisions);
         if (!revisions.isEmpty())
         {
-          List<InternalCDOView> list = views.get(branch);
-          if (list == null)
-          {
-            list = new ArrayList<InternalCDOView>();
-            views.put(branch, list);
-          }
-
+          List<InternalCDOView> list = views;
           list.add(view);
-
-          if (needNewMap)
-          {
-            viewedRevisions.put(branch, revisions);
-          }
         }
-      }
     }
   }
 
-  private void cleanupRevisionCache(Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions)
+  private void cleanupRevisionCache(Map<Long, InternalCDORevision> viewedRevisions)
   {
     Set<InternalCDORevision> set = new HashSet<InternalCDORevision>();
-    for (Map<CDOID, InternalCDORevision> revisions : viewedRevisions.values())
-    {
-      for (InternalCDORevision revision : revisions.values())
+      for (InternalCDORevision revision : viewedRevisions.values())
       {
         set.add(revision);
       }
-    }
 
     InternalCDORevisionCache cache = getRevisionManager().getCache();
     List<CDORevision> currentRevisions = cache.getCurrentRevisions();
@@ -869,52 +792,11 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     {
       if (!set.contains(revision))
       {
-        cache.removeRevision(revision.getID(), revision);
+        cache.removeRevision(revision.getID());
       }
     }
   }
 
-  public long getLastUpdateTime()
-  {
-    synchronized (lastUpdateTimeLock)
-    {
-      return lastUpdateTime;
-    }
-  }
-
-  public void setLastUpdateTime(long lastUpdateTime)
-  {
-    synchronized (lastUpdateTimeLock)
-    {
-      if (this.lastUpdateTime < lastUpdateTime)
-      {
-        this.lastUpdateTime = lastUpdateTime;
-      }
-
-      lastUpdateTimeLock.notifyAll();
-    }
-  }
-
-  public void waitForUpdate(long updateTime)
-  {
-    waitForUpdate(updateTime, NO_TIMEOUT);
-  }
-
-  public boolean waitForUpdate(long updateTime, long timeoutMillis)
-  {
-    long end = timeoutMillis == NO_TIMEOUT ? Long.MAX_VALUE : System.currentTimeMillis() + timeoutMillis;
-    for (CDOView view : views)
-    {
-      long viewTimeoutMillis = timeoutMillis == NO_TIMEOUT ? NO_TIMEOUT : end - System.currentTimeMillis();
-      boolean ok = view.waitForUpdate(updateTime, viewTimeoutMillis);
-      if (!ok)
-      {
-        return false;
-      }
-    }
-
-    return true;
-  }
 
   /**
    * @since 3.0
@@ -963,20 +845,13 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     fireEvent(new RepositoryStateChangedEvent(this, oldState, newState));
   }
 
-  public void handleBranchNotification(InternalCDOBranch branch)
-  {
-    getBranchManager().handleBranchCreated(branch);
-  }
 
   public void handleCommitNotification(CDOCommitInfo commitInfo)
   {
     try
     {
-      synchronized (outOfSequenceInvalidations)
-      {
         registerPackageUnits(commitInfo.getNewPackageUnits());
         invalidate(commitInfo, null);
-      }
     }
     catch (RuntimeException ex)
     {
@@ -1000,21 +875,16 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     }
   }
 
-  private Map<CDOID, InternalCDORevision> reviseRevisions(CDOCommitInfo commitInfo)
+  private Map<Long, InternalCDORevision> reviseRevisions(CDOCommitInfo commitInfo)
   {
-    Map<CDOID, InternalCDORevision> oldRevisions = null;
-    CDOBranch newBranch = commitInfo.getBranch();
-    long timeStamp = commitInfo.getTimeStamp();
+    Map<Long, InternalCDORevision> oldRevisions = null;
     InternalCDORevisionManager revisionManager = getRevisionManager();
 
     // Cache new revisions
-    for (CDOIDAndVersion key : commitInfo.getNewObjects())
+    for (CDORevision key : commitInfo.getNewObjects())
     {
-      if (key instanceof InternalCDORevision)
-      {
         InternalCDORevision newRevision = (InternalCDORevision)key;
         revisionManager.addRevision(newRevision);
-      }
     }
 
     // Apply deltas and cache the resulting new revisions, if possible...
@@ -1024,8 +894,7 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       if (key instanceof CDORevisionDelta)
       {
         final CDORevisionDelta revisionDelta = (CDORevisionDelta)key;
-        final CDORevision oldRevision = revisionManager.getRevisionByVersion(revisionDelta.getID(), revisionDelta,
-            CDORevision.UNCHUNKED, false);
+        final CDORevision oldRevision = revisionManager.getRevision(revisionDelta.getID(),  CDORevision.UNCHUNKED, CDORevision.DEPTH_INFINITE, false);
 
         if (oldRevision != null)
         {
@@ -1097,7 +966,7 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
         }
       }
 
-      CDOID id = key.getID();
+      long id = key.getID();
       Pair<InternalCDORevision, InternalCDORevision> pair = createNewRevision(key, commitInfo);
       if (pair != null)
       {
@@ -1105,37 +974,14 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
         revisionManager.addRevision(newRevision);
         if (oldRevisions == null)
         {
-          oldRevisions = new HashMap<CDOID, InternalCDORevision>();
+          oldRevisions = new HashMap<Long, InternalCDORevision>();
         }
 
         InternalCDORevision oldRevision = pair.getElement1();
         oldRevisions.put(id, oldRevision);
       }
-      else
-      {
-        // ... otherwise try to revise old revision if it is in the same branch
-        if (ObjectUtil.equals(key.getBranch(), newBranch))
-        {
-          revisionManager.reviseVersion(id, key, timeStamp);
-        }
-      }
     }
 
-    // Revise old revisions
-    for (CDOIDAndVersion key : commitInfo.getDetachedObjects())
-    {
-      CDOID id = key.getID();
-      int version = key.getVersion();
-      if (version == CDOBranchVersion.UNSPECIFIED_VERSION)
-      {
-        revisionManager.reviseLatest(id, newBranch);
-      }
-      else
-      {
-        CDOBranchVersion branchVersion = newBranch.getVersion(version);
-        revisionManager.reviseVersion(id, branchVersion, timeStamp);
-      }
-    }
 
     return oldRevisions;
   }
@@ -1146,15 +992,15 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     if (potentialDelta instanceof CDORevisionDelta)
     {
       CDORevisionDelta delta = (CDORevisionDelta)potentialDelta;
-      CDOID id = delta.getID();
+      long id = delta.getID();
 
       InternalCDORevisionManager revisionManager = getRevisionManager();
-      InternalCDORevision oldRevision = revisionManager.getRevisionByVersion(id, potentialDelta, CDORevision.UNCHUNKED,
+      InternalCDORevision oldRevision = (InternalCDORevision) revisionManager.getRevision(id, CDORevision.UNCHUNKED, CDORevision.DEPTH_INFINITE,
           false);
       if (oldRevision != null)
       {
         InternalCDORevision newRevision = oldRevision.copy();
-        newRevision.adjustForCommit(commitInfo.getBranch(), commitInfo.getTimeStamp());
+        newRevision.adjustForCommit();
         delta.apply(newRevision);
         return new Pair<InternalCDORevision, InternalCDORevision>(oldRevision, newRevision);
       }
@@ -1168,57 +1014,18 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
    */
   public void invalidate(CDOCommitInfo commitInfo, InternalCDOTransaction sender)
   {
-    synchronized (outOfSequenceInvalidations)
-    {
-      long previousTimeStamp = commitInfo.getPreviousTimeStamp();
-      long lastUpdateTime = getLastUpdateTime();
 
-      if (previousTimeStamp < lastUpdateTime)
-      {
-        previousTimeStamp = lastUpdateTime;
-      }
-
-      outOfSequenceInvalidations.put(previousTimeStamp, new Pair<CDOCommitInfo, InternalCDOTransaction>(commitInfo,
-          sender));
-
-      long nextPreviousTimeStamp = lastUpdateTime;
-      while (!outOfSequenceInvalidations.isEmpty())
-      {
-        Pair<CDOCommitInfo, InternalCDOTransaction> currentPair = outOfSequenceInvalidations
-            .remove(nextPreviousTimeStamp);
-
-        if (currentPair == null)
-        {
-          break;
-        }
-
-        CDOCommitInfo currentCommitInfo = currentPair.getElement1();
-        InternalCDOTransaction currentSender = currentPair.getElement2();
-        nextPreviousTimeStamp = currentCommitInfo.getTimeStamp();
-
+        CDOCommitInfo currentCommitInfo = commitInfo;
+        InternalCDOTransaction currentSender = sender;
         invalidateOrdered(currentCommitInfo, currentSender);
-      }
-    }
   }
 
   private void invalidateOrdered(CDOCommitInfo commitInfo, InternalCDOTransaction sender)
   {
-    Map<CDOID, InternalCDORevision> oldRevisions = null;
-    boolean success = commitInfo.getBranch() != null;
-    if (success)
-    {
+    Map<Long, InternalCDORevision> oldRevisions = null;
       oldRevisions = reviseRevisions(commitInfo);
-    }
 
-    if (options.isPassiveUpdateEnabled())
-    {
-      setLastUpdateTime(commitInfo.getTimeStamp());
-    }
-
-    if (success)
-    {
       fireInvalidationEvent(sender, commitInfo);
-    }
 
     for (InternalCDOView view : getViews())
     {
@@ -1226,23 +1033,17 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       {
         invalidateView(commitInfo, view, oldRevisions);
       }
-      else
-      {
-        view.setLastUpdateTime(commitInfo.getTimeStamp());
-      }
     }
   }
 
   private void invalidateView(CDOCommitInfo commitInfo, InternalCDOView view,
-      Map<CDOID, InternalCDORevision> oldRevisions)
+      Map<Long, InternalCDORevision> oldRevisions)
   {
     try
     {
-      CDOBranch branch = commitInfo.getBranch();
-      long lastUpdateTime = commitInfo.getTimeStamp();
-      List<CDORevisionKey> allChangedObjects = commitInfo.getChangedObjects();
-      List<CDOIDAndVersion> allDetachedObjects = commitInfo.getDetachedObjects();
-      view.invalidate(branch, lastUpdateTime, allChangedObjects, allDetachedObjects, oldRevisions, true);
+      List<CDORevisionDelta> allChangedObjects = commitInfo.getChangedObjects();
+      List<Long> allDetachedObjects = commitInfo.getDetachedObjects();
+      view.invalidate(allChangedObjects, allDetachedObjects, oldRevisions, true);
     }
     catch (RuntimeException ex)
     {
@@ -1272,65 +1073,24 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     return MessageFormat.format("Session{0} [{1}]", sessionID, name); //$NON-NLS-1$
   }
 
-  public CDOBranchPoint getCommittedSinceLastRefresh(CDOID id)
+  public CDOBranchPoint getCommittedSinceLastRefresh(long id)
   {
-    if (isSticky())
-    {
-      return committedSinceLastRefresh.get(id);
-    }
 
     return null;
   }
 
-  public void setCommittedSinceLastRefresh(CDOID id, CDOBranchPoint branchPoint)
+  public void setCommittedSinceLastRefresh(long id, CDOBranchPoint branchPoint)
   {
-    if (isSticky())
-    {
-      committedSinceLastRefresh.put(id, branchPoint);
-    }
   }
 
   public void clearCommittedSinceLastRefresh()
   {
-    if (isSticky())
-    {
-      committedSinceLastRefresh.clear();
-    }
   }
 
-  public boolean isSticky()
-  {
-    return !options().isPassiveUpdateEnabled() && getRepositoryInfo().isSupportingAudits();
-  }
-
-  public CDOChangeSetData compareRevisions(CDOBranchPoint source, CDOBranchPoint target)
-  {
-    long now = getLastUpdateTime();
-
-    if (target.getTimeStamp() == CDOBranchPoint.UNSPECIFIED_DATE)
-    {
-      target = target.getBranch().getPoint(now);
-    }
-
-    if (source.getTimeStamp() == CDOBranchPoint.UNSPECIFIED_DATE)
-    {
-      source = source.getBranch().getPoint(now);
-    }
-
-    CDORevisionAvailabilityInfo targetInfo = createRevisionAvailabilityInfo(target);
-    CDORevisionAvailabilityInfo sourceInfo = createRevisionAvailabilityInfo(source);
-
-    Set<CDOID> ids = sessionProtocol.loadMergeData(targetInfo, sourceInfo, null, null);
-
-    cacheRevisions(targetInfo);
-    cacheRevisions(sourceInfo);
-
-    return CDORevisionUtil.createChangeSetData(ids, sourceInfo, targetInfo);
-  }
 
   public CDORevisionAvailabilityInfo createRevisionAvailabilityInfo(CDOBranchPoint branchPoint)
   {
-    CDORevisionAvailabilityInfo info = new CDORevisionAvailabilityInfo(branchPoint);
+    CDORevisionAvailabilityInfo info = new CDORevisionAvailabilityInfo();
 
     InternalCDORevisionManager revisionManager = getRevisionManager();
     InternalCDORevisionCache cache = revisionManager.getCache();
@@ -1341,11 +1101,7 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       if (revision instanceof PointerCDORevision)
       {
         PointerCDORevision pointer = (PointerCDORevision)revision;
-        CDOBranchVersion target = pointer.getTarget();
-        if (target != null)
-        {
-          revision = cache.getRevisionByVersion(pointer.getID(), target);
-        }
+        revision = cache.getRevision(pointer.getID());
       }
       else if (revision instanceof DetachedCDORevision)
       {
@@ -1365,25 +1121,17 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
   public void cacheRevisions(CDORevisionAvailabilityInfo info)
   {
     InternalCDORevisionManager revisionManager = getRevisionManager();
-    CDOBranch branch = info.getBranchPoint().getBranch();
     for (CDORevisionKey key : info.getAvailableRevisions().values())
     {
       CDORevision revision = (CDORevision)key;
       revisionManager.addRevision(revision);
 
-      if (!ObjectUtil.equals(revision.getBranch(), branch))
-      {
-        CDOID id = revision.getID();
-        CDORevision firstRevision = revisionManager.getCache().getRevisionByVersion(id,
-            branch.getVersion(CDOBranchVersion.FIRST_VERSION));
+        long id = revision.getID();
+        CDORevision firstRevision = revisionManager.getCache().getRevision(id);
         if (firstRevision != null)
         {
-          long revised = firstRevision.getTimeStamp() - 1L;
-          CDOBranchVersion target = CDOBranchUtil.copyBranchVersion(revision);
-          PointerCDORevision pointer = new PointerCDORevision(revision.getEClass(), id, branch, revised, target);
-          revisionManager.addRevision(pointer);
+          revisionManager.addRevision(revision);
         }
-      }
     }
   }
 
@@ -1455,7 +1203,6 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
     }
 
     views.clear();
-    outOfSequenceInvalidations.clear();
 
     unhookSessionProtocol();
 
@@ -1501,14 +1248,6 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
   {
   }
 
-  /**
-   * @author Eike Stepper
-   */
-  private static final class OutOfSequenceInvalidations extends
-      HashMap<Long, Pair<CDOCommitInfo, InternalCDOTransaction>>
-  {
-    private static final long serialVersionUID = 1L;
-  }
 
   /**
    * @author Eike Stepper
@@ -1829,20 +1568,6 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       return sender == null;
     }
 
-    public CDOBranch getBranch()
-    {
-      return commitInfo.getBranch();
-    }
-
-    public long getTimeStamp()
-    {
-      return commitInfo.getTimeStamp();
-    }
-
-    public long getPreviousTimeStamp()
-    {
-      return commitInfo.getPreviousTimeStamp();
-    }
 
     public String getUserID()
     {
@@ -1874,22 +1599,22 @@ public abstract class CDOSessionImpl extends Container<CDOView> implements Inter
       return commitInfo.getNewPackageUnits();
     }
 
-    public List<CDOIDAndVersion> getNewObjects()
+    public List<CDORevision> getNewObjects()
     {
       return commitInfo.getNewObjects();
     }
 
-    public List<CDORevisionKey> getChangedObjects()
+    public List<CDORevisionDelta> getChangedObjects()
     {
       return commitInfo.getChangedObjects();
     }
 
-    public List<CDOIDAndVersion> getDetachedObjects()
+    public List<Long> getDetachedObjects()
     {
       return commitInfo.getDetachedObjects();
     }
 
-    public CDOChangeKind getChangeKind(CDOID id)
+    public CDOChangeKind getChangeKind(long id)
     {
       return commitInfo.getChangeKind(id);
     }

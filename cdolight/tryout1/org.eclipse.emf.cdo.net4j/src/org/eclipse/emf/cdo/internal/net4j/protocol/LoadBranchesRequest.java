@@ -47,14 +47,6 @@ public class LoadBranchesRequest extends CDOClientRequest<Integer>
   @Override
   protected Integer confirming(CDODataInput in) throws IOException
   {
-    int count = 0;
-    while (in.readByte() == CDOProtocolConstants.REPLICATE_BRANCH)
-    {
-      CDOBranch branch = in.readCDOBranch();
-      handler.handleBranch(branch);
-      ++count;
-    }
-
-    return count;
+    return 0;
   }
 }

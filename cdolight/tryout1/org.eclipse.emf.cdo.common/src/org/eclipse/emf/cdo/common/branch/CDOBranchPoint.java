@@ -29,30 +29,7 @@ import org.eclipse.emf.cdo.spi.common.branch.CDOBranchUtil;
  */
 public interface CDOBranchPoint
 {
-  /**
-   * The fixed special time stamp <i>unspecified</i>.
-   * 
-   * @see CDOBranch#getHead()
-   */
-  public static final long UNSPECIFIED_DATE = 0;
 
-  /**
-   * The fixed special time stamp <i>invalid</i>.
-   * 
-   * @since 4.0
-   */
-  public static final long INVALID_DATE = -1;
 
-  /**
-   * Returns the branch of this branch point, or <code>null</code> if this branch point is the
-   * {@link CDOBranch#getBase() base} of the {@link CDOBranchManager#getMainBranch() main branch}.
-   */
-  public CDOBranch getBranch();
 
-  /**
-   * Returns the time stamp of this branch point, or the fixed special time stamp <i>
-   * {@link CDOBranchPoint#UNSPECIFIED_DATE unspecified}</i> if this branch point marks the {@link CDOBranch#getHead()
-   * head} of a branch.
-   */
-  public long getTimeStamp();
 }

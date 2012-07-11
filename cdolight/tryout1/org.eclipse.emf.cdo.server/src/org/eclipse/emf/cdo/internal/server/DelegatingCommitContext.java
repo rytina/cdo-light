@@ -10,8 +10,9 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.server.IStoreAccessor.CommitContext;
@@ -20,10 +21,7 @@ import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
-
 import org.eclipse.emf.ecore.EClass;
-
-import java.util.Map;
 
 /**
  * @author Eike Stepper
@@ -35,11 +33,6 @@ public abstract class DelegatingCommitContext implements IStoreAccessor.CommitCo
   public ITransaction getTransaction()
   {
     return getDelegate().getTransaction();
-  }
-
-  public CDOBranchPoint getBranchPoint()
-  {
-    return getDelegate().getBranchPoint();
   }
 
   public String getUserID()
@@ -82,25 +75,21 @@ public abstract class DelegatingCommitContext implements IStoreAccessor.CommitCo
     return getDelegate().getDirtyObjectDeltas();
   }
 
-  public CDOID[] getDetachedObjects()
+  public Long[] getDetachedObjects()
   {
     return getDelegate().getDetachedObjects();
   }
 
-  public Map<CDOID, EClass> getDetachedObjectTypes()
+  public Map<Long, EClass> getDetachedObjectTypes()
   {
     return getDelegate().getDetachedObjectTypes();
   }
 
-  public CDORevision getRevision(CDOID id)
+  public CDORevision getRevision(long id)
   {
     return getDelegate().getRevision(id);
   }
 
-  public Map<CDOID, CDOID> getIDMappings()
-  {
-    return getDelegate().getIDMappings();
-  }
 
   public String getRollbackMessage()
   {

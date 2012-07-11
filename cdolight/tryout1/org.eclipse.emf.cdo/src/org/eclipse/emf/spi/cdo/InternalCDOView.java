@@ -13,10 +13,9 @@ package org.eclipse.emf.spi.cdo;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.eresource.impl.CDOResourceImpl;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.view.CDOFeatureAnalyzer;
@@ -37,7 +36,7 @@ import java.util.Map;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface InternalCDOView extends CDOView, CDOIDProvider, ILifecycle
+public interface InternalCDOView extends CDOView, ILifecycle
 {
   public void setViewID(int viewId);
 
@@ -58,7 +57,7 @@ public interface InternalCDOView extends CDOView, CDOIDProvider, ILifecycle
    * 
    * @since 4.0
    */
-  public Map<CDOID, InternalCDOObject> getObjects();
+  public Map<Long, InternalCDOObject> getObjects();
 
   /**
    * @since 4.0
@@ -77,22 +76,17 @@ public interface InternalCDOView extends CDOView, CDOIDProvider, ILifecycle
   /**
    * @since 4.0
    */
-  public void invalidate(CDOBranch branch, long lastUpdateTime, List<CDORevisionKey> allChangedObjects,
-      List<CDOIDAndVersion> allDetachedObjects, Map<CDOID, InternalCDORevision> oldRevisions, boolean async);
+  public void invalidate(List<CDORevisionDelta> allChangedObjects,
+      List<Long> allDetachedObjects, Map<Long, InternalCDORevision> oldRevisions, boolean async);
 
   /**
    * @since 3.0
    */
-  public void setLastUpdateTime(long lastUpdateTime);
+  public void collectViewedRevisions(Map<Long, InternalCDORevision> revisions);
 
-  /**
-   * @since 3.0
-   */
-  public void collectViewedRevisions(Map<CDOID, InternalCDORevision> revisions);
+  public void remapObject(long oldID);
 
-  public void remapObject(CDOID oldID);
-
-  public CDOID getResourceNodeID(String path);
+  public long getResourceNodeID(String path);
 
   public void registerProxyResource(CDOResourceImpl resource);
 
@@ -100,18 +94,18 @@ public interface InternalCDOView extends CDOView, CDOIDProvider, ILifecycle
 
   public void deregisterObject(InternalCDOObject object);
 
-  public InternalCDORevision getRevision(CDOID id, boolean loadOnDemand);
+  public InternalCDORevision getRevision(long id, boolean loadOnDemand);
 
   /**
    * @since 3.0
    */
-  public void prefetchRevisions(CDOID id, int depth);
+  public void prefetchRevisions(long id, int depth);
 
-  public Object convertObjectToID(Object potentialObject);
+  public long convertObjectToID(Object potentialObject);
 
-  public Object convertObjectToID(Object potentialObject, boolean onlyPersistedID);
+  public long convertObjectToID(Object potentialObject, boolean onlyPersistedID);
 
-  public Object convertIDToObject(Object potentialID);
+  public Object convertIDToObject(long potentialID);
 
   /**
    * @since 3.0
@@ -126,7 +120,7 @@ public interface InternalCDOView extends CDOView, CDOIDProvider, ILifecycle
 
   public void unsubscribe(EObject eObject, Adapter adapter);
 
-  public boolean hasSubscription(CDOID id);
+  public boolean hasSubscription(long id);
 
   // /**
   // * Each time CDORevision or CDOState of an CDOObject is modified, ensure that no concurrent access is modifying it

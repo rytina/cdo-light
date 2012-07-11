@@ -13,7 +13,6 @@
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -63,28 +62,18 @@ public class LockObjectsIndication extends CDOServerWriteIndication
     int viewID = in.readInt();
     LockType lockType = in.readCDOLockType();
     long timeout = in.readLong();
-    CDOBranch viewedBranch = in.readCDOBranch();
 
     int nRevisions = in.readInt();
-    CDORevisionKey[] revKeys = new CDORevisionKey[nRevisions];
+    Long[] revKeys = new Long[nRevisions];
     for (int i = 0; i < nRevisions; i++)
     {
-      revKeys[i] = in.readCDORevisionKey();
+      revKeys[i] = in.readLong();
     }
 
     List<Object> objectsToBeLocked = new ArrayList<Object>();
-    boolean isSupportingBranches = getRepository().isSupportingBranches();
-    for (CDORevisionKey revKey : revKeys)
+    for (Long revKey : revKeys)
     {
-      CDOID id = revKey.getID();
-      if (isSupportingBranches)
-      {
-        objectsToBeLocked.add(CDOIDUtil.createIDAndBranch(id, viewedBranch));
-      }
-      else
-      {
-        objectsToBeLocked.add(id);
-      }
+        objectsToBeLocked.add(revKey);
     }
 
     IView view = getSession().getView(viewID);
@@ -106,9 +95,9 @@ public class LockObjectsIndication extends CDOServerWriteIndication
 
     try
     {
-      for (CDORevisionKey revKey : revKeys)
+      for (Long revKey : revKeys)
       {
-        checkStale(viewedBranch, revKey);
+        checkStale(revKey);
       }
     }
     catch (IllegalArgumentException ex)
@@ -149,28 +138,13 @@ public class LockObjectsIndication extends CDOServerWriteIndication
         out.writeInt(staleRevisions.size());
         for (CDORevisionKey staleRevision : staleRevisions)
         {
-          out.writeCDORevisionKey(staleRevision);
+          out.writeLong(staleRevision.getID());
         }
       }
     }
   }
 
-  private void checkStale(CDOBranch viewedBranch, CDORevisionKey revKey)
+  private void checkStale(long revKey)
   {
-    CDOID id = revKey.getID();
-    InternalCDORevision rev = getRepository().getRevisionManager().getRevision(id, viewedBranch.getHead(),
-        CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE, true);
-
-    if (rev == null)
-    {
-      throw new IllegalArgumentException(String.format("Object %s not found in branch %s (possibly detached)", id,
-          viewedBranch));
-    }
-
-    if (!revKey.equals(rev))
-    {
-      staleRevisions.add(revKey);
-      requiredTimestamp = Math.max(requiredTimestamp, rev.getTimeStamp());
-    }
   }
 }

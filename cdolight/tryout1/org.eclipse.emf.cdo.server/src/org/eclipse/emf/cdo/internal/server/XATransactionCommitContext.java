@@ -94,39 +94,6 @@ public class XATransactionCommitContext extends TransactionCommitContext
     state.set(CommitState.ROLLED_BACK);
   }
 
-  /**
-   * Wait until another thread fills ID mapping for external objects.
-   */
-  @Override
-  public void applyIDMappings(OMMonitor monitor)
-  {
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Notify phase2 to fill ID mapping."); //$NON-NLS-1$
-    }
-
-    state.set(CommitState.APPLY_ID_MAPPING);
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Waiting for phase2 to be completed before continueing."); //$NON-NLS-1$
-    }
-
-    try
-    {
-      state.acquire(PHASEAPPLYMAPPING_DONE);
-    }
-    catch (InterruptedException ex)
-    {
-      throw WrappedException.wrap(ex);
-    }
-
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Received signal to continue."); //$NON-NLS-1$
-    }
-
-    super.applyIDMappings(monitor);
-  }
 
   /**
    * Object to test if the process is at ApplyIDMapping

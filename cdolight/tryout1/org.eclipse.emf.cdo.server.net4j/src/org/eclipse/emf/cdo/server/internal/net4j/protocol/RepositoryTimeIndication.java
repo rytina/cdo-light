@@ -49,16 +49,8 @@ public class RepositoryTimeIndication extends CDOServerIndication
   protected void responding(CDODataOutput out) throws IOException
   {
     long responded = System.currentTimeMillis();
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Writing indicated: {0}", CDOCommonUtil.formatTimeStamp(indicated)); //$NON-NLS-1$
-    }
 
     out.writeLong(indicated);
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Writing responded: {0}", CDOCommonUtil.formatTimeStamp(responded)); //$NON-NLS-1$
-    }
 
     out.writeLong(responded);
   }

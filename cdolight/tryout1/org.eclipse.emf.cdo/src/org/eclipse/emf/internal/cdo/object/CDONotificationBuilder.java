@@ -12,7 +12,6 @@
 package org.eclipse.emf.internal.cdo.object;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.delta.CDOAddFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOClearFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOContainerFeatureDelta;
@@ -28,6 +27,7 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.notify.impl.NotificationChainImpl;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -94,9 +94,9 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
     int oldPosition = delta.getOldPosition();
     int newPosition = delta.getNewPosition();
     Object oldValue = delta.getValue();
-    if (oldValue instanceof CDOID)
+    if (feature  instanceof EReference)
     {
-      CDOID oldID = (CDOID)oldValue;
+      long oldID = (Long)oldValue;
       CDOObject object = findObjectByID(oldID);
       if (object != null)
       {
@@ -123,9 +123,9 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
     int index = delta.getIndex();
 
     Object oldValue = delta.getValue();
-    if (oldValue instanceof CDOID)
+    if (feature instanceof EReference)
     {
-      CDOID oldID = (CDOID)oldValue;
+      long oldID = (Long)oldValue;
       CDOObject object = findObjectByID(oldID);
       if (object != null)
       {
@@ -141,9 +141,9 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
   {
     EStructuralFeature feature = delta.getFeature();
     Object oldValue = getOldValue(feature);
-    if (oldValue instanceof CDOID)
+    if (feature instanceof EReference)
     {
-      CDOID oldID = (CDOID)oldValue;
+      long oldID = (Long)oldValue;
       CDOObject object = findObjectByID(oldID);
       if (object != null)
       {
@@ -159,9 +159,9 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
   {
     EStructuralFeature feature = delta.getFeature();
     Object oldValue = getOldValue(feature);
-    if (oldValue instanceof CDOID)
+    if (feature instanceof EReference)
     {
-      CDOID oldID = (CDOID)oldValue;
+      long oldID = (Long)oldValue;
       CDOObject object = findObjectByID(oldID);
       if (object != null)
       {
@@ -189,9 +189,9 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
         for (ListIterator<Object> it = list.listIterator(); it.hasNext();)
         {
           Object element = it.next();
-          if (element instanceof CDOID)
+          if (feature instanceof EReference)
           {
-            CDOID id = (CDOID)element;
+            long id = (Long)element;
             CDOObject oldObject = findObjectByID(id);
             if (oldObject != null)
             {
@@ -211,7 +211,7 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
     add(new CDODeltaNotificationImpl(object, Notification.REMOVE_MANY, getEFeatureID(feature), oldValue, null));
   }
 
-  private CDOObject findObjectByID(CDOID id)
+  private CDOObject findObjectByID(long id)
   {
     CDOObject object = view.getObject(id, false);
     if (object == null)
@@ -222,13 +222,13 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
     return object;
   }
 
-  private CDOObject findDetachedObjectByID(CDOID id)
+  private CDOObject findDetachedObjectByID(long id)
   {
     if (detachedObjects != null)
     {
       for (CDOObject object : detachedObjects)
       {
-        if (id.equals(object.cdoID()))
+        if (id == object.cdoID())
         {
           return object;
         }
@@ -241,24 +241,8 @@ public class CDONotificationBuilder extends CDOFeatureDeltaVisitorImpl
   @Override
   public void visit(CDOContainerFeatureDelta delta)
   {
-    Object oldValue = null;
-    if (oldRevision != null)
-    {
-      oldValue = oldRevision.getContainerID();
 
-      if (oldValue instanceof CDOID)
-      {
-        CDOID oldID = (CDOID)oldValue;
-        CDOObject object = findObjectByID(oldID);
-        if (object != null)
-        {
-          oldValue = object;
-        }
-      }
-
-    }
-
-    add(new CDODeltaNotificationImpl(object, Notification.SET, EcorePackage.eINSTANCE.eContainmentFeature(), oldValue,
+    add(new CDODeltaNotificationImpl(object, Notification.SET, EcorePackage.eINSTANCE.eContainmentFeature(), findObjectByID(oldRevision.getContainerID()),
         delta.getContainerID()));
   }
 

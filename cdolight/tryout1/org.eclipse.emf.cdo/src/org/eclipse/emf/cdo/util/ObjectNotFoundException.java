@@ -12,7 +12,6 @@
 package org.eclipse.emf.cdo.util;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
 import org.eclipse.emf.cdo.common.util.CDOException;
 
@@ -32,11 +31,11 @@ public class ObjectNotFoundException extends CDOException
 {
   private static final long serialVersionUID = 1L;
 
-  private CDOID id;
+  private long id;
 
   private CDOBranchPoint branchPoint;
 
-  public ObjectNotFoundException(CDOID id)
+  public ObjectNotFoundException(long id)
   {
     super(MessageFormat.format(Messages.getString("ObjectNotFoundException.0"), id)); //$NON-NLS-1$
     this.id = id;
@@ -45,10 +44,10 @@ public class ObjectNotFoundException extends CDOException
   /**
    * @since 3.0
    */
-  public ObjectNotFoundException(CDOID id, CDOBranchPoint branchPoint)
+  public ObjectNotFoundException(long id, CDOBranchPoint branchPoint)
   {
     super(MessageFormat.format(Messages.getString("ObjectNotFoundException.1"), //$NON-NLS-1$
-        id, branchPoint.getBranch().getID(), CDOCommonUtil.formatTimeStamp(branchPoint.getTimeStamp())));
+        id));
     this.id = id;
     this.branchPoint = branchPoint;
   }
@@ -56,7 +55,7 @@ public class ObjectNotFoundException extends CDOException
   /**
    * @since 3.0
    */
-  public CDOID getID()
+  public long getID()
   {
     return id;
   }

@@ -32,9 +32,5 @@ public class BranchNotificationIndication extends CDOClientIndication
   @Override
   protected void indicating(CDODataInput in) throws IOException
   {
-    CDOBranch branch = in.readCDOBranch();
-
-    InternalCDOBranchManager branchManager = getSession().getBranchManager();
-    branchManager.handleBranchCreated((InternalCDOBranch)branch);
   }
 }

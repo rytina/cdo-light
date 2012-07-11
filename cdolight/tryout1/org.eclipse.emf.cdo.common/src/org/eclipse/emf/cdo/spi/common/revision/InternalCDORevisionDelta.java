@@ -10,14 +10,13 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.revision.CDORevisable;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.Map;
 
 /**
  * @author Eike Stepper
@@ -33,23 +32,9 @@ public interface InternalCDORevisionDelta extends CDORevisionDelta
 
   public void addFeatureDelta(CDOFeatureDelta delta);
 
-  /**
-   * @since 4.0
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster idMappings);
-
-  /**
-   * @since 3.0
-   */
-  public void setBranch(CDOBranch branch);
-
-  /**
-   * @since 3.0
-   */
-  public void setVersion(int version);
 
   /**
    * @since 4.0
    */
-  public void setTarget(CDORevisable target);
+  public void setTarget(long target);
 }

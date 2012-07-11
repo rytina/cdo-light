@@ -13,7 +13,6 @@
 package org.eclipse.emf.cdo.internal.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
@@ -44,11 +43,9 @@ public abstract class AbstractCDORevisionCache extends ReferenceQueueWorker<Inte
   {
     CDORevisionKey key = (CDORevisionKey)reference;
 
-    CDOID id = key.getID();
-    CDOBranch branch = key.getBranch();
-    int version = key.getVersion();
+    long id = key.getID();
 
-    InternalCDORevision revision = (InternalCDORevision)removeRevision(id, branch.getVersion(version));
+    InternalCDORevision revision = (InternalCDORevision)removeRevision(id);
     if (revision == null)
     {
       // Use revision in eviction event
@@ -77,7 +74,7 @@ public abstract class AbstractCDORevisionCache extends ReferenceQueueWorker<Inte
    */
   private static final class CacheSoftReference extends SoftReference<InternalCDORevision> implements CDORevisionKey
   {
-    private CDOID id;
+    private long id;
 
     private CDOBranch branch;
 
@@ -87,11 +84,9 @@ public abstract class AbstractCDORevisionCache extends ReferenceQueueWorker<Inte
     {
       super(revision, queue);
       id = revision.getID();
-      branch = revision.getBranch();
-      version = revision.getVersion();
     }
 
-    public CDOID getID()
+    public long getID()
     {
       return id;
     }
@@ -118,7 +113,7 @@ public abstract class AbstractCDORevisionCache extends ReferenceQueueWorker<Inte
    */
   private static final class CacheStrongReference extends SoftReference<InternalCDORevision> implements CDORevisionKey
   {
-    private CDOID id;
+    private long id;
 
     private CDOBranch branch;
 
@@ -128,11 +123,9 @@ public abstract class AbstractCDORevisionCache extends ReferenceQueueWorker<Inte
     {
       super(revision);
       id = revision.getID();
-      branch = revision.getBranch();
-      version = revision.getVersion();
     }
 
-    public CDOID getID()
+    public long getID()
     {
       return id;
     }

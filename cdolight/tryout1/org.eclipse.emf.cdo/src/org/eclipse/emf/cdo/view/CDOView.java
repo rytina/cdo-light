@@ -20,7 +20,6 @@ import org.eclipse.emf.cdo.common.CDOCommonView;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.eresource.CDOResourceFolder;
@@ -104,38 +103,7 @@ public interface CDOView extends CDOCommonView, CDOUpdatable, INotifier, IOption
 
   public URIHandler getURIHandler();
 
-  /**
-   * Sets the {@link CDOBranch branch} and the point in (repository) time this view should refer to. {@link CDOObject
-   * Objects} provided by this view will be {@link CDORevision#isValid(long) valid} at this time. The special value
-   * {@link CDOCommonView#UNSPECIFIED_DATE UNSPECIFIED_DATE} denotes a "floating view" that always shows the latest
-   * state of the repository.
-   * 
-   * @return <code>true</code> if the branch point was changed, <code>false</code> otherwise.
-   * @since 3.0
-   */
-  public boolean setBranchPoint(CDOBranch branch, long timeStamp);
 
-  /**
-   * Same as calling {@link #setBranchPoint(CDOBranch, long) setBranchPoint(branchPoint.getBranch(),
-   * branchPoint.getTimeStamp())}.
-   * 
-   * @since 3.0
-   */
-  public boolean setBranchPoint(CDOBranchPoint branchPoint);
-
-  /**
-   * Same as calling {@link #setBranchPoint(CDOBranch, long) setBranchPoint(branch, getTimeStamp())}.
-   * 
-   * @since 3.0
-   */
-  public boolean setBranch(CDOBranch branch);
-
-  /**
-   * Same as calling {@link #setBranchPoint(CDOBranch, long) setBranchPoint(getBranch(), timeStamp)}.
-   * 
-   * @since 3.0
-   */
-  public boolean setTimeStamp(long timeStamp);
 
   /**
    * @since 4.0
@@ -280,7 +248,7 @@ public interface CDOView extends CDOCommonView, CDOUpdatable, INotifier, IOption
    * @return the object resolved by the CDOID if the id is not <code>null</code>, or <code>null</code> if there isn't
    *         one and loadOnDemand is <code>false</code>.
    */
-  public CDOObject getObject(CDOID id, boolean loadOnDemand);
+  public CDOObject getObject(long id, boolean loadOnDemand);
 
   /**
    * Returns the object for the given CDOID.
@@ -289,7 +257,7 @@ public interface CDOView extends CDOCommonView, CDOUpdatable, INotifier, IOption
    * 
    * @see #getObject(CDOID, boolean)
    */
-  public CDOObject getObject(CDOID id);
+  public CDOObject getObject(long id);
 
   /**
    * Takes an object from a (possibly) different view and <em>contextifies</em> it for the usage with this view.
@@ -307,7 +275,7 @@ public interface CDOView extends CDOCommonView, CDOUpdatable, INotifier, IOption
    * Returns <code>true</code> if an {@link CDOObject object} with the given {@link CDOID id} is currently registered in
    * this view, <code>false</code> otherwise.
    */
-  public boolean isObjectRegistered(CDOID id);
+  public boolean isObjectRegistered(long id);
 
   /**
    * Reloads the given {@link CDOObject objects} from the repository.
@@ -381,10 +349,6 @@ public interface CDOView extends CDOCommonView, CDOUpdatable, INotifier, IOption
    */
   public CDOQuery createQuery(String language, String queryString, Object context);
 
-  /**
-   * @since 4.0
-   */
-  public CDOChangeSetData compareRevisions(CDOBranchPoint source);
 
   /**
    * @since 2.0

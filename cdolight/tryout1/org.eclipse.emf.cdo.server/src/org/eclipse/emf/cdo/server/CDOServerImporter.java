@@ -12,7 +12,6 @@ package org.eclipse.emf.cdo.server;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.lob.CDOLobHandler;
 import org.eclipse.emf.cdo.common.lob.CDOLobUtil;
@@ -117,7 +116,7 @@ public abstract class CDOServerImporter
    */
   public static interface Handler extends CDORevisionHandler, CDOLobHandler
   {
-    public void handleRepository(String name, String uuid, CDOID root, long created, long committed);
+    public void handleRepository(String name, String uuid, long root, long created, long committed);
 
     public InternalCDOPackageUnit handlePackageUnit(String id, Type type, long time, String data);
 
@@ -127,7 +126,7 @@ public abstract class CDOServerImporter
 
     public InternalCDOBranch handleBranch(int id, String name, long time, int parentID);
 
-    public void handleCommitInfo(long time, long previous, int branch, String user, String comment);
+    public void handleCommitInfo(String user, String comment);
 
     public void flush();
 
@@ -154,7 +153,7 @@ public abstract class CDOServerImporter
     {
     }
 
-    public void handleRepository(String name, String uuid, CDOID root, long created, long committed)
+    public void handleRepository(String name, String uuid, long root, long created, long committed)
     {
       repository.getStore().setCreationTime(created);
       repository.getStore().setLastCommitTime(committed);
@@ -179,7 +178,6 @@ public abstract class CDOServerImporter
 
       InternalCDOPackageUnit packageUnit = packageRegistry.createPackageUnit();
       packageUnit.setOriginalType(type);
-      packageUnit.setTimeStamp(time);
 
       models.put(id, data);
       packageUnits.add(packageUnit);
@@ -234,14 +232,8 @@ public abstract class CDOServerImporter
 
     public InternalCDOBranch handleBranch(int id, String name, long time, int parentID)
     {
-      InternalCDOBranchManager branchManager = repository.getBranchManager();
-      if (id == CDOBranch.MAIN_BRANCH_ID)
-      {
+    	InternalCDOBranchManager branchManager = repository.getBranchManager();
         return branchManager.getMainBranch();
-      }
-
-      InternalCDOBranch parent = branchManager.getBranch(parentID);
-      return branchManager.createBranch(id, name, parent, time);
     }
 
     public boolean handleRevision(CDORevision revision)
@@ -274,10 +266,9 @@ public abstract class CDOServerImporter
       };
     }
 
-    public void handleCommitInfo(long time, long previous, int branchID, String user, String comment)
+    public void handleCommitInfo(String user, String comment)
     {
-      CDOBranch branch = repository.getBranchManager().getBranch(branchID);
-      accessor.rawStore(branch, time, previous, user, comment, monitor);
+      accessor.rawStore(user, comment, monitor);
     }
 
     public void flush()
@@ -347,7 +338,7 @@ public abstract class CDOServerImporter
         {
           String name = attributes.getValue(REPOSITORY_NAME);
           String uuid = attributes.getValue(REPOSITORY_UUID);
-          CDOID root = id(attributes.getValue(REPOSITORY_ROOT));
+          long root = Long.parseLong(attributes.getValue(REPOSITORY_ROOT));
           long created = Long.parseLong(attributes.getValue(REPOSITORY_CREATED));
           long committed = Long.parseLong(attributes.getValue(REPOSITORY_COMMITTED));
           handler.handleRepository(name, uuid, root, created, committed);
@@ -379,25 +370,18 @@ public abstract class CDOServerImporter
           CDOClassifierRef classifierRef = new CDOClassifierRef(attributes.getValue(REVISION_CLASS));
           EClass eClass = (EClass)classifierRef.resolve(packageRegistry);
           revision = (InternalCDORevision)CDORevisionFactory.DEFAULT.createRevision(eClass);
-          revision.setID(id(attributes.getValue(REVISION_ID)));
-          revision.setBranchPoint(branch.getPoint(Long.parseLong(attributes.getValue(REVISION_TIME))));
-          revision.setVersion(Integer.parseInt(attributes.getValue(REVISION_VERSION)));
-          String revised = attributes.getValue(REVISION_REVISED);
-          if (revised != null)
-          {
-            revision.setRevised(Long.parseLong(revised));
-          }
+          revision.setID(Long.parseLong(attributes.getValue(REVISION_ID)));
 
           String resourceID = attributes.getValue(REVISION_RESOURCE);
           if (resourceID != null)
           {
-            revision.setResourceID(id(resourceID));
+            revision.setResourceID(Long.parseLong(resourceID));
           }
 
           String containerID = attributes.getValue(REVISION_CONTAINER);
           if (containerID != null)
           {
-            revision.setContainerID(id(containerID));
+            revision.setContainerID(Long.parseLong(containerID));
           }
 
           String featureID = attributes.getValue(REVISION_FEATURE);
@@ -462,7 +446,6 @@ public abstract class CDOServerImporter
           long time = Long.parseLong(attributes.getValue(COMMIT_TIME));
 
           String value = attributes.getValue(COMMIT_PREVIOUS);
-          long previous = value == null ? CDOBranchPoint.UNSPECIFIED_DATE : Long.parseLong(value);
 
           value = attributes.getValue(COMMIT_BRANCH);
           int branch = value == null ? CDOBranch.MAIN_BRANCH_ID : Integer.parseInt(value);
@@ -470,7 +453,7 @@ public abstract class CDOServerImporter
           String user = attributes.getValue(COMMIT_USER);
           String comment = attributes.getValue(COMMIT_COMMENT);
 
-          handler.handleCommitInfo(time, previous, branch, user, comment);
+          handler.handleCommitInfo(user, comment);
         }
       }
 
@@ -555,10 +538,6 @@ public abstract class CDOServerImporter
         }
       }
 
-      protected final CDOID id(String str)
-      {
-        return CDOIDUtil.read(str);
-      }
 
       protected Object value(Attributes attributes)
       {
@@ -607,7 +586,7 @@ public abstract class CDOServerImporter
 
         if (Object.class.getSimpleName().equals(type))
         {
-          return id(str);
+          return Long.parseLong(str);
         }
 
         if (Boolean.class.getSimpleName().equals(type))

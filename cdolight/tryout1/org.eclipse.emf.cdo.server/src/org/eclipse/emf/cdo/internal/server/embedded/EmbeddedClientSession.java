@@ -74,13 +74,10 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
     protocol.activate();
     protocol.openSession(options().isPassiveUpdateEnabled());
 
-    setLastUpdateTime(repository.getLastCommitTimeStamp());
     setRepositoryInfo(new RepositoryInfo(this));
 
     InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager();
     setRevisionManager(revisionManager);
-    revisionManager.setSupportingAudits(getRepositoryInfo().isSupportingAudits());
-    revisionManager.setSupportingBranches(getRepositoryInfo().isSupportingBranches());
     revisionManager.setCache(CDORevisionCache.NOOP);
     revisionManager.setRevisionLoader(getSessionProtocol());
     revisionManager.setRevisionLocker(this);

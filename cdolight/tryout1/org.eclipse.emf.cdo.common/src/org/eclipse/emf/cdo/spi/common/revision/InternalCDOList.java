@@ -25,12 +25,6 @@ public interface InternalCDOList extends CDOList
 {
   public static final Object UNINITIALIZED = CDORevisionUtil.UNINITIALIZED;
 
-  /**
-   * Adjusts references according to the passed adjuster and resynchronizes indexes.
-   * 
-   * @since 4.0
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster adjuster, EStructuralFeature feature);
 
   /**
    * Clones the list.

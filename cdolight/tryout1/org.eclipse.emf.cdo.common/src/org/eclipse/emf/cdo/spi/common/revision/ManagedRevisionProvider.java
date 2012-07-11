@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.spi.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
 import org.eclipse.emf.cdo.common.revision.CDORevisionProvider;
@@ -24,11 +23,8 @@ public class ManagedRevisionProvider implements CDORevisionProvider
 {
   private CDORevisionManager revisionManager;
 
-  private CDOBranchPoint branchPoint;
-
   public ManagedRevisionProvider(CDORevisionManager revisionManager, CDOBranchPoint branchPoint)
   {
-    this.branchPoint = branchPoint;
     this.revisionManager = revisionManager;
   }
 
@@ -37,13 +33,9 @@ public class ManagedRevisionProvider implements CDORevisionProvider
     return revisionManager;
   }
 
-  public CDOBranchPoint getBranchPoint()
-  {
-    return branchPoint;
-  }
 
-  public CDORevision getRevision(CDOID id)
+  public CDORevision getRevision(long id)
   {
-    return revisionManager.getRevision(id, branchPoint, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE, true);
+    return revisionManager.getRevision(id, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE, true);
   }
 }

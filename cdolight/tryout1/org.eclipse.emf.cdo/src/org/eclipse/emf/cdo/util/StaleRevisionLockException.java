@@ -25,15 +25,15 @@ public class StaleRevisionLockException extends CDOException
 {
   private static final long serialVersionUID = 5821185370877023119L;
 
-  private final CDORevisionKey[] staleRevisions;
+  private final long[] staleRevisions;
 
-  public StaleRevisionLockException(CDORevisionKey[] staleRevisions)
+  public StaleRevisionLockException(long[] staleRevisions)
   {
     CheckUtil.checkArg(staleRevisions, "staleRevisions");
     this.staleRevisions = staleRevisions;
   }
 
-  public CDORevisionKey[] getStaleRevisions()
+  public long[] getStaleRevisions()
   {
     return staleRevisions;
   }

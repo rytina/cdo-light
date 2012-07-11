@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.cdo.transaction;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.view.CDOViewEvent;
 
 import java.util.Map;
@@ -29,7 +28,6 @@ public interface CDOTransactionFinishedEvent extends CDOViewEvent
 {
   public Type getType();
 
-  public Map<CDOID, CDOID> getIDMappings();
 
   /**
    * Enumerates the possible {@link CDOTransactionFinishedEvent#getType() causes} for a {@link CDOTransaction

@@ -11,19 +11,15 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision;
 
+import java.util.Collection;
+
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.common.revision.CDOList;
 import org.eclipse.emf.cdo.common.revision.CDOListFactory;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOList;
-
-import org.eclipse.net4j.util.collection.MoveableArrayList;
-
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.Collection;
+import org.eclipse.net4j.util.collection.MoveableArrayList;
 
 /**
  * @author Simon McDuff
@@ -70,28 +66,7 @@ public class CDOListImpl extends MoveableArrayList<Object> implements InternalCD
     return super.get(index);
   }
 
-  /**
-   * There's a duplicate of this method in WrappedHibernateList!!!
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster revisionAdjuster, EStructuralFeature feature)
-  {
-    boolean changed = false;
-    CDOType type = CDOModelUtil.getType(feature);
-    int size = size();
-    for (int i = 0; i < size; i++)
-    {
-      Object element = super.get(i);
-      handleAdjustReference(i, element);
-      Object newID = type.adjustReferences(revisionAdjuster, element, feature, i);
-      if (newID != element) // Just an optimization for NOOP adjusters
-      {
-        super.set(i, newID);
-        changed = true;
-      }
-    }
 
-    return changed;
-  }
 
   protected void handleAdjustReference(int index, Object element)
   {

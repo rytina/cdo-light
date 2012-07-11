@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.cdo.view;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.util.CDOUtil;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 
@@ -39,7 +38,7 @@ public interface CDOStaleReferencePolicy
    */
   public static final CDOStaleReferencePolicy EXCEPTION = new CDOStaleReferencePolicy()
   {
-    public Object processStaleReference(EObject source, EStructuralFeature feature, int index, CDOID target)
+    public Object processStaleReference(EObject source, EStructuralFeature feature, int index, long target)
     {
       throw new ObjectNotFoundException(target);
     }
@@ -59,7 +58,7 @@ public interface CDOStaleReferencePolicy
    */
   public static final CDOStaleReferencePolicy PROXY = new CDOStaleReferencePolicy()
   {
-    public Object processStaleReference(EObject source, final EStructuralFeature feature, int index, final CDOID target)
+    public Object processStaleReference(EObject source, final EStructuralFeature feature, int index, final long target)
     {
       final EClassifier type = feature.getEType();
       InvocationHandler handler = new InvocationHandler()
@@ -107,5 +106,5 @@ public interface CDOStaleReferencePolicy
    * Returns an object that we want to return to the caller (clients). Exception thrown will be received by the caller
    * (clients).
    */
-  public Object processStaleReference(EObject source, EStructuralFeature feature, int index, CDOID target);
+  public Object processStaleReference(EObject source, EStructuralFeature feature, int index, long target);
 }

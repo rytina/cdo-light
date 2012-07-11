@@ -12,7 +12,6 @@ package org.eclipse.emf.cdo.common.lock;
 
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
 
@@ -29,8 +28,7 @@ import java.util.Map;
  */
 public interface IDurableLockingManager
 {
-  public LockArea createLockArea(String userID, CDOBranchPoint branchPoint, boolean readOnly,
-      Map<CDOID, LockGrade> locks);
+  public LockArea createLockArea(String userID, boolean readOnly, Map<Long, LockGrade> locks);
 
   /**
    * Returns the {@link LockArea lock area} specified by the given durableLockingID, never <code>null</code>.
@@ -60,7 +58,7 @@ public interface IDurableLockingManager
 
     public boolean isReadOnly();
 
-    public Map<CDOID, LockGrade> getLocks();
+    public Map<Long, LockGrade> getLocks();
 
     /**
      * A call-back interface for <em>handling</em> {@link LockArea lock area} objects.

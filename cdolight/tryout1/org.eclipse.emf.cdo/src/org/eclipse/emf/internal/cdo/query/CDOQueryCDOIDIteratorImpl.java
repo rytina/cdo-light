@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @author Simon McDuff
  */
-public class CDOQueryCDOIDIteratorImpl<CDOID> extends AbstractQueryIterator<CDOID>
+public class CDOQueryCDOIDIteratorImpl<T> extends AbstractQueryIterator<T>
 {
   public CDOQueryCDOIDIteratorImpl(CDOView view, CDOQueryInfo queryInfo)
   {
@@ -30,9 +30,9 @@ public class CDOQueryCDOIDIteratorImpl<CDOID> extends AbstractQueryIterator<CDOI
   }
 
   @Override
-  public List<CDOID> asList()
+  public List<T> asList()
   {
-    ArrayList<CDOID> result = new ArrayList<CDOID>();
+    ArrayList<T> result = new ArrayList<T>();
     while (hasNext())
     {
       result.add(next());

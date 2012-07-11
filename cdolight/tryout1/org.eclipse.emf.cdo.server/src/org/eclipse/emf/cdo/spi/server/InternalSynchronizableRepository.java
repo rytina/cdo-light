@@ -29,7 +29,4 @@ public interface InternalSynchronizableRepository extends ISynchronizableReposit
 
   public InternalSession getReplicatorSession();
 
-  public void setLastReplicatedBranchID(int lastReplicatedBranchID);
-
-  public void setLastReplicatedCommitTime(long lastReplicatedCommitTime);
 }

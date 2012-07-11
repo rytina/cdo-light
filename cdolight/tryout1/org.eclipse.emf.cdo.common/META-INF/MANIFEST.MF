@@ -10,54 +10,80 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
  on="[2.4.0,3.0.0)",org.eclipse.emf.ecore.xmi;bundle-version="[2.4.0,3
  .0.0)",org.eclipse.net4j.util;bundle-version="[3.0.0,4.0.0)";visibili
  ty:=reexport
-Export-Package: org.eclipse.emf.cdo.common;version="4.0.0",org.eclipse
- .emf.cdo.common.branch;version="4.0.0",org.eclipse.emf.cdo.common.com
- mit;version="4.0.0",org.eclipse.emf.cdo.common.commit.handler;version
- ="4.0.0",org.eclipse.emf.cdo.common.id;version="4.0.0",org.eclipse.em
- f.cdo.common.lob;version="4.0.0",org.eclipse.emf.cdo.common.lock;vers
- ion="4.0.0",org.eclipse.emf.cdo.common.model;version="4.0.0",org.ecli
- pse.emf.cdo.common.protocol;version="4.0.0",org.eclipse.emf.cdo.commo
- n.revision;version="4.0.0",org.eclipse.emf.cdo.common.revision.delta;
- version="4.0.0",org.eclipse.emf.cdo.common.util;version="4.0.0",org.e
- clipse.emf.cdo.internal.common;version="4.0.0"; x-friends:="org.eclip
- se.emf.cdo.common,  org.eclipse.emf.cdo.common.db,  org.eclipse.emf.c
- do,  org.eclipse.emf.cdo.net4j,  org.eclipse.emf.cdo.server,  org.ecl
- ipse.emf.cdo.server.net4j,  org.eclipse.emf.cdo.ui,  org.eclipse.emf.
- cdo.tests",org.eclipse.emf.cdo.internal.common.branch;version="4.0.0"
- ;x-friends:="org.eclipse.emf.cdo.tests",org.eclipse.emf.cdo.internal.
- common.bundle;version="4.0.0";x-internal:=true,org.eclipse.emf.cdo.in
- ternal.common.commit;version="4.0.0"; x-friends:="org.eclipse.emf.cdo
- .common,  org.eclipse.emf.cdo.common.db,  org.eclipse.emf.cdo,  org.e
- clipse.emf.cdo.net4j,  org.eclipse.emf.cdo.server,  org.eclipse.emf.c
- do.server.net4j,  org.eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.tests"
- ,org.eclipse.emf.cdo.internal.common.id;version="4.0.0"; x-friends:="
- org.eclipse.emf.cdo.common,  org.eclipse.emf.cdo.common.db,  org.ecli
- pse.emf.cdo,  org.eclipse.emf.cdo.net4j,  org.eclipse.emf.cdo.server,
-   org.eclipse.emf.cdo.server.net4j,  org.eclipse.emf.cdo.ui,  org.ecl
- ipse.emf.cdo.tests",org.eclipse.emf.cdo.internal.common.messages;vers
- ion="4.0.0";x-internal:=true,org.eclipse.emf.cdo.internal.common.mode
- l;version="4.0.0"; x-friends:="org.eclipse.emf.cdo.common,  org.eclip
- se.emf.cdo.common.db,  org.eclipse.emf.cdo,  org.eclipse.emf.cdo.net4
- j,  org.eclipse.emf.cdo.server,  org.eclipse.emf.cdo.server.net4j,  o
- rg.eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.tests",org.eclipse.emf.cd
- o.internal.common.protocol;version="4.0.0"; x-friends:="org.eclipse.e
- mf.cdo.common,  org.eclipse.emf.cdo.common.db,  org.eclipse.emf.cdo, 
-  org.eclipse.emf.cdo.net4j,  org.eclipse.emf.cdo.server,  org.eclipse
- .emf.cdo.server.net4j,  org.eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.
- tests",org.eclipse.emf.cdo.internal.common.revision;version="4.0.0"; 
- x-friends:="org.eclipse.emf.cdo.common,  org.eclipse.emf.cdo.common.d
- b,  org.eclipse.emf.cdo,  org.eclipse.emf.cdo.net4j,  org.eclipse.emf
- .cdo.server,  org.eclipse.emf.cdo.server.net4j,  org.eclipse.emf.cdo.
- ui,  org.eclipse.emf.cdo.tests",org.eclipse.emf.cdo.internal.common.r
- evision.delta;version="4.0.0"; x-friends:="org.eclipse.emf.cdo.common
- ,  org.eclipse.emf.cdo.common.db,  org.eclipse.emf.cdo,  org.eclipse.
- emf.cdo.net4j,  org.eclipse.emf.cdo.server,  org.eclipse.emf.cdo.serv
- er.net4j,  org.eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.tests",org.ec
- lipse.emf.cdo.spi.common;version="4.0.0",org.eclipse.emf.cdo.spi.comm
- on.branch;version="4.0.0",org.eclipse.emf.cdo.spi.common.commit;versi
- on="4.0.0",org.eclipse.emf.cdo.spi.common.id;version="4.0.0",org.ecli
- pse.emf.cdo.spi.common.model;version="4.0.0",org.eclipse.emf.cdo.spi.
- common.revision;version="4.0.0"
+Export-Package: org.eclipse.emf.cdo.common;version="4.0.0",
+ org.eclipse.emf.cdo.common.branch;version="4.0.0",
+ org.eclipse.emf.cdo.common.commit;version="4.0.0",
+ org.eclipse.emf.cdo.common.commit.handler;version="4.0.0",
+ org.eclipse.emf.cdo.common.id,
+ org.eclipse.emf.cdo.common.lob;version="4.0.0",
+ org.eclipse.emf.cdo.common.lock;version="4.0.0",
+ org.eclipse.emf.cdo.common.model;version="4.0.0",
+ org.eclipse.emf.cdo.common.protocol;version="4.0.0",
+ org.eclipse.emf.cdo.common.revision;version="4.0.0",
+ org.eclipse.emf.cdo.common.revision.delta;version="4.0.0",
+ org.eclipse.emf.cdo.common.util;version="4.0.0",
+ org.eclipse.emf.cdo.internal.common;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.branch;version="4.0.0";x-friends:="org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.bundle;version="4.0.0";x-internal:=true,
+ org.eclipse.emf.cdo.internal.common.commit;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.messages;version="4.0.0";x-internal:=true,
+ org.eclipse.emf.cdo.internal.common.model;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.protocol;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.revision;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.internal.common.revision.delta;version="4.0.0";
+  x-friends:="org.eclipse.emf.cdo.common,
+   org.eclipse.emf.cdo.common.db,
+   org.eclipse.emf.cdo,
+   org.eclipse.emf.cdo.net4j,
+   org.eclipse.emf.cdo.server,
+   org.eclipse.emf.cdo.server.net4j,
+   org.eclipse.emf.cdo.ui,
+   org.eclipse.emf.cdo.tests",
+ org.eclipse.emf.cdo.spi.common;version="4.0.0",
+ org.eclipse.emf.cdo.spi.common.branch;version="4.0.0",
+ org.eclipse.emf.cdo.spi.common.commit;version="4.0.0",
+ org.eclipse.emf.cdo.spi.common.model;version="4.0.0",
+ org.eclipse.emf.cdo.spi.common.revision;version="4.0.0"
 Bundle-Version: 4.0.0.v20110608-1639
 Ant-Version: Apache Ant 1.8.2
 Bundle-ClassPath: .

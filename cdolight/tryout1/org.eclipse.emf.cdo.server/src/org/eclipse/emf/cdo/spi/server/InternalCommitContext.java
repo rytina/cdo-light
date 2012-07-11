@@ -10,20 +10,17 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
-
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.net4j.util.io.ExtendedDataInputStream;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.om.monitor.ProgressDistributable;
 import org.eclipse.net4j.util.om.monitor.ProgressDistributor;
-
-import org.eclipse.emf.ecore.EClass;
-
-import java.util.Map;
 
 /**
  * @author Eike Stepper
@@ -81,12 +78,12 @@ public interface InternalCommitContext extends IStoreAccessor.CommitContext
 
   public void setDirtyObjectDeltas(InternalCDORevisionDelta[] dirtyObjectDeltas);
 
-  public void setDetachedObjects(CDOID[] detachedObjects);
+  public void setDetachedObjects(Long[] detachedObjects);
 
   /**
    * @since 4.0
    */
-  public void setDetachedObjectTypes(Map<CDOID, EClass> detachedObjectTypes);
+  public void setDetachedObjectTypes(Map<Long, EClass> detachedObjectTypes);
 
   public void setAutoReleaseLocksEnabled(boolean on);
 
@@ -97,7 +94,4 @@ public interface InternalCommitContext extends IStoreAccessor.CommitContext
    */
   public void setLobs(ExtendedDataInputStream in);
 
-  public void addIDMapping(CDOID oldID, CDOID newID);
-
-  public void applyIDMappings(OMMonitor monitor);
 }

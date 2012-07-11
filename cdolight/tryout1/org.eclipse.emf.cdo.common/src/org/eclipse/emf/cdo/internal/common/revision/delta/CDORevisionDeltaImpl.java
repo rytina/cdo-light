@@ -12,36 +12,6 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOWithID;
-import org.eclipse.emf.cdo.common.model.CDOModelUtil;
-import org.eclipse.emf.cdo.common.protocol.CDODataInput;
-import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
-import org.eclipse.emf.cdo.common.revision.CDOElementProxy;
-import org.eclipse.emf.cdo.common.revision.CDOList;
-import org.eclipse.emf.cdo.common.revision.CDORevisable;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionData;
-import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
-import org.eclipse.emf.cdo.common.revision.delta.CDOClearFeatureDelta;
-import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
-import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDeltaVisitor;
-import org.eclipse.emf.cdo.common.revision.delta.CDOListFeatureDelta;
-import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-import org.eclipse.emf.cdo.common.revision.delta.CDOUnsetFeatureDelta;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
-
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.change.ListChange;
-import org.eclipse.emf.ecore.change.util.ListDifferenceAnalyzer;
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -52,6 +22,30 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.emf.cdo.common.model.CDOModelUtil;
+import org.eclipse.emf.cdo.common.protocol.CDODataInput;
+import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
+import org.eclipse.emf.cdo.common.revision.CDOElementProxy;
+import org.eclipse.emf.cdo.common.revision.CDOList;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.CDORevisionData;
+import org.eclipse.emf.cdo.common.revision.delta.CDOClearFeatureDelta;
+import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
+import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDeltaVisitor;
+import org.eclipse.emf.cdo.common.revision.delta.CDOListFeatureDelta;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
+import org.eclipse.emf.cdo.common.revision.delta.CDOUnsetFeatureDelta;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.change.ListChange;
+import org.eclipse.emf.ecore.change.util.ListDifferenceAnalyzer;
+
 /**
  * @author Eike Stepper
  */
@@ -59,13 +53,10 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
 {
   private EClass eClass;
 
-  private CDOID id;
+  private long id;
 
-  private CDOBranch branch;
 
-  private int version;
-
-  private CDORevisable target;
+  private long target;
 
   private Map<EStructuralFeature, CDOFeatureDelta> featureDeltas = new HashMap<EStructuralFeature, CDOFeatureDelta>();
 
@@ -73,16 +64,12 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
   {
     eClass = revision.getEClass();
     id = revision.getID();
-    branch = revision.getBranch();
-    version = revision.getVersion();
   }
 
   public CDORevisionDeltaImpl(CDORevisionDelta revisionDelta, boolean copyFeatureDeltas)
   {
     eClass = revisionDelta.getEClass();
     id = revisionDelta.getID();
-    branch = revisionDelta.getBranch();
-    version = revisionDelta.getVersion();
 
     if (copyFeatureDeltas)
     {
@@ -102,20 +89,14 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
 
     eClass = sourceRevision.getEClass();
     id = sourceRevision.getID();
-    branch = sourceRevision.getBranch();
-    version = sourceRevision.getVersion();
-    target = CDORevisionUtil.copyRevisable(targetRevision);
+    target = targetRevision.getID();
 
     compare(sourceRevision, targetRevision);
 
     CDORevisionData originData = sourceRevision.data();
     CDORevisionData dirtyData = targetRevision.data();
 
-    Object dirtyContainerID = dirtyData.getContainerID();
-    if (dirtyContainerID instanceof CDOWithID)
-    {
-      dirtyContainerID = ((CDOWithID)dirtyContainerID).cdoID();
-    }
+    long dirtyContainerID = dirtyData.getContainerID();
 
     if (!compare(originData.getContainerID(), dirtyContainerID)
         || !compare(originData.getContainingFeatureID(), dirtyData.getContainingFeatureID())
@@ -130,13 +111,8 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
   {
     eClass = (EClass)in.readCDOClassifierRefAndResolve();
     id = in.readCDOID();
-    branch = in.readCDOBranch();
-    version = in.readInt();
-    if (version < 0)
-    {
-      version = -version;
-      target = in.readCDORevisable();
-    }
+    
+    target = in.readCDOID();
 
     int size = in.readInt();
     for (int i = 0; i < size; i++)
@@ -150,16 +126,7 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
   {
     out.writeCDOClassifierRef(eClass);
     out.writeCDOID(id);
-    out.writeCDOBranch(branch);
-    if (target == null)
-    {
-      out.writeInt(version);
-    }
-    else
-    {
-      out.writeInt(-version);
-      out.writeCDORevisable(target);
-    }
+    out.writeCDOID(target);
 
     out.writeInt(featureDeltas.size());
     for (CDOFeatureDelta featureDelta : featureDeltas.values())
@@ -173,37 +140,18 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
     return eClass;
   }
 
-  public CDOID getID()
+  public long getID()
   {
     return id;
   }
 
-  public CDOBranch getBranch()
-  {
-    return branch;
-  }
 
-  public void setBranch(CDOBranch branch)
-  {
-    this.branch = branch;
-  }
-
-  public int getVersion()
-  {
-    return version;
-  }
-
-  public void setVersion(int version)
-  {
-    this.version = version;
-  }
-
-  public CDORevisable getTarget()
+  public long getTarget()
   {
     return target;
   }
 
-  public void setTarget(CDORevisable target)
+  public void setTarget(long target)
   {
     this.target = target;
   }
@@ -283,16 +231,6 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
     }
   }
 
-  public boolean adjustReferences(CDOReferenceAdjuster idMappings)
-  {
-    boolean changed = false;
-    for (CDOFeatureDelta featureDelta : featureDeltas.values())
-    {
-      changed |= ((CDOFeatureDeltaImpl)featureDelta).adjustReferences(idMappings);
-    }
-
-    return changed;
-  }
 
   public void accept(CDOFeatureDeltaVisitor visitor)
   {
@@ -410,8 +348,7 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
   @Override
   public String toString()
   {
-    return MessageFormat.format("CDORevisionDelta[{0}@{1}:{2}v{3} --> {4}]", eClass.getName(), id, branch.getID(),
-        version, featureDeltas.values());
+    return MessageFormat.format("CDORevisionDelta[{0}@{1}:{2}v{3} --> {4}]", eClass.getName(), id,  featureDeltas.values());
   }
 
   /**
@@ -547,4 +484,5 @@ public class CDORevisionDeltaImpl implements InternalCDORevisionDelta
       return null;
     }
   }
+
 }

@@ -13,7 +13,6 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.model.EMFUtil;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
@@ -119,7 +118,7 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
     InternalCDOPackageUnit[] newPackageUnits = new InternalCDOPackageUnit[in.readInt()];
     InternalCDORevision[] newObjects = new InternalCDORevision[in.readInt()];
     InternalCDORevisionDelta[] dirtyObjectDeltas = new InternalCDORevisionDelta[in.readInt()];
-    CDOID[] detachedObjects = new CDOID[in.readInt()];
+    Long[] detachedObjects = new Long[in.readInt()];
     monitor.begin(newPackageUnits.length + newObjects.length + dirtyObjectDeltas.length + detachedObjects.length);
 
     try
@@ -160,7 +159,7 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
       {
         public int compare(InternalCDORevision r1, InternalCDORevision r2)
         {
-          return r1.getID().compareTo(r2.getID());
+          return Long.valueOf(r1.getID()).compareTo( Long.valueOf(r2.getID()));
         }
       });
 
@@ -176,15 +175,15 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
         monitor.worked();
       }
 
-      Map<CDOID, EClass> detachedObjectTypes = null;
+      Map<Long, EClass> detachedObjectTypes = null;
       if (getRepository().isEnsuringReferentialIntegrity())
       {
-        detachedObjectTypes = new HashMap<CDOID, EClass>();
+        detachedObjectTypes = new HashMap<Long, EClass>();
       }
 
       for (int i = 0; i < detachedObjects.length; i++)
       {
-        CDOID id = in.readCDOID();
+        long id = in.readCDOID();
         detachedObjects[i] = id;
 
         if (detachedObjectTypes != null)
@@ -272,8 +271,6 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
     if (!success)
     {
       out.writeString(rollbackMessage);
-      out.writeCDOBranchPoint(commitContext.getBranchPoint());
-      out.writeLong(commitContext.getPreviousTimeStamp());
 
       if (xRefs != null)
       {
@@ -294,22 +291,10 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
 
   protected void respondingResult(CDODataOutput out) throws Exception
   {
-    out.writeCDOBranchPoint(commitContext.getBranchPoint());
-    out.writeLong(commitContext.getPreviousTimeStamp());
   }
 
   protected void respondingMappingNewObjects(CDODataOutput out) throws Exception
   {
-    Map<CDOID, CDOID> idMappings = commitContext.getIDMappings();
-    for (Entry<CDOID, CDOID> entry : idMappings.entrySet())
-    {
-      CDOID oldID = entry.getKey();
-      CDOID newID = entry.getValue();
-      out.writeCDOID(oldID);
-      out.writeCDOID(newID);
-    }
-
-    out.writeCDOID(CDOID.NULL);
   }
 
   protected InternalTransaction getTransaction(int viewID)

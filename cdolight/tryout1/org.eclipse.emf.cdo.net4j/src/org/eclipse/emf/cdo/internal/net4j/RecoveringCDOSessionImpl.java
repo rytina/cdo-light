@@ -265,20 +265,18 @@ public abstract class RecoveringCDOSessionImpl extends CDONet4jSessionImpl
   {
     private int viewID;
 
-    private CDOBranchPoint branchPoint;
 
     private boolean transaction;
 
     public OpenViewRunnable(InternalCDOView view)
     {
       viewID = view.getViewID();
-      branchPoint = CDOBranchUtil.copyBranchPoint(view);
       transaction = view instanceof CDOTransaction;
     }
 
     public void run(CDOSessionProtocol sessionProtocol)
     {
-      sessionProtocol.openView(viewID, !transaction, branchPoint);
+      sessionProtocol.openView(viewID, !transaction);
     }
   }
 

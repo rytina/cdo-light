@@ -25,7 +25,6 @@ import java.io.IOException;
  */
 public class OpenViewIndication extends CDOServerReadIndication
 {
-  private CDOBranchPoint result;
 
   private String message;
 
@@ -44,14 +43,13 @@ public class OpenViewIndication extends CDOServerReadIndication
 
     if (in.readBoolean())
     {
-      CDOBranchPoint branchPoint = in.readCDOBranchPoint();
       if (readOnly)
       {
-        session.openView(viewID, branchPoint);
+        session.openView(viewID);
       }
       else
       {
-        session.openTransaction(viewID, branchPoint);
+        session.openTransaction(viewID);
       }
     }
     else
@@ -61,7 +59,7 @@ public class OpenViewIndication extends CDOServerReadIndication
       try
       {
         String durableLockingID = in.readString();
-        result = lockManager.openView(session, viewID, readOnly, durableLockingID);
+        lockManager.openView(session, viewID, readOnly, durableLockingID);
       }
       catch (LockAreaNotFoundException ex)
       {
@@ -77,15 +75,7 @@ public class OpenViewIndication extends CDOServerReadIndication
   @Override
   protected void responding(CDODataOutput out) throws IOException
   {
-    if (result != null)
-    {
-      out.writeBoolean(true);
-      out.writeCDOBranchPoint(result);
-    }
-    else
-    {
       out.writeBoolean(false);
       out.writeString(message);
-    }
   }
 }

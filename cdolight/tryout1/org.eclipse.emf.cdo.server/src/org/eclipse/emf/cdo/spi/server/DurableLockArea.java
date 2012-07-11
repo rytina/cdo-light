@@ -10,17 +10,15 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.lock.IDurableLockingManager.LockArea;
-import org.eclipse.emf.cdo.common.lock.IDurableLockingManager.LockGrade;
-
-import org.eclipse.net4j.util.HexUtil;
-
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Random;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.common.lock.IDurableLockingManager.LockArea;
+import org.eclipse.emf.cdo.common.lock.IDurableLockingManager.LockGrade;
+import org.eclipse.net4j.util.HexUtil;
 
 /**
  * @author Eike Stepper
@@ -35,18 +33,15 @@ public class DurableLockArea implements LockArea
 
   private String userID;
 
-  private CDOBranchPoint branchPoint;
-
   private boolean readOnly;
 
-  private Map<CDOID, LockGrade> locks;
+  private Map<Long, LockGrade> locks;
 
-  public DurableLockArea(String durableLockingID, String userID, CDOBranchPoint branchPoint, boolean readOnly,
-      Map<CDOID, LockGrade> locks)
+  public DurableLockArea(String durableLockingID, String userID, boolean readOnly,
+      Map<Long, LockGrade> locks)
   {
     this.durableLockingID = durableLockingID;
     this.userID = userID;
-    this.branchPoint = branchPoint;
     this.readOnly = readOnly;
     this.locks = locks;
   }
@@ -61,22 +56,12 @@ public class DurableLockArea implements LockArea
     return userID;
   }
 
-  public CDOBranch getBranch()
-  {
-    return branchPoint.getBranch();
-  }
-
-  public long getTimeStamp()
-  {
-    return branchPoint.getTimeStamp();
-  }
-
   public boolean isReadOnly()
   {
     return readOnly;
   }
 
-  public Map<CDOID, LockGrade> getLocks()
+  public Map<Long, LockGrade> getLocks()
   {
     return locks;
   }
@@ -85,7 +70,7 @@ public class DurableLockArea implements LockArea
   public String toString()
   {
     return MessageFormat.format("DurableLockArea[id={0}, user={1}, branchPoint={2}, readOnly={3}, locks={4}]",
-        durableLockingID, userID, branchPoint, readOnly, locks);
+        durableLockingID, userID, readOnly, locks);
   }
 
   public static String createDurableLockingID()

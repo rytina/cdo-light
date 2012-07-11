@@ -10,8 +10,8 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
@@ -20,12 +20,8 @@ import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOList;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * @author Eike Stepper
@@ -61,27 +57,14 @@ public class LoadChunkRequest extends CDOClientRequest<Object>
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    CDOID id = revision.getID();
+    long id = revision.getID();
     if (TRACER.isEnabled())
     {
       TRACER.format("Writing revision ID: {0}", id); //$NON-NLS-1$
     }
 
     out.writeCDOID(id);
-    CDOBranch branch = revision.getBranch();
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Writing branch: {0}", branch); //$NON-NLS-1$
-    }
 
-    out.writeCDOBranch(branch);
-    int version = revision.getVersion();
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Writing  version: {0}", version); //$NON-NLS-1$
-    }
-
-    out.writeInt(version);
     if (TRACER.isEnabled())
     {
       TRACER.format("Writing feature: {0}", feature); //$NON-NLS-1$

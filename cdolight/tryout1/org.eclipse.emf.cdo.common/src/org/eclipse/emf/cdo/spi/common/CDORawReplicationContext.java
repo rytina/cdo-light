@@ -22,8 +22,4 @@ import java.io.IOException;
  */
 public interface CDORawReplicationContext extends CDOReplicationInfo
 {
-  /**
-   * @since 4.0
-   */
-  public void replicateRaw(CDODataInput in, OMMonitor monitor) throws IOException;
 }

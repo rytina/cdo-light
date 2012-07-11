@@ -10,15 +10,14 @@
  */
 package org.eclipse.emf.cdo.spi.common.commit;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.revision.CDORevisionProvider;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.CDORevisionProvider;
 
 /**
  * @author Eike Stepper
@@ -26,21 +25,14 @@ import java.util.Map;
  */
 public final class CDORevisionAvailabilityInfo implements CDORevisionProvider
 {
-  private CDOBranchPoint branchPoint;
 
-  private Map<CDOID, CDORevisionKey> availableRevisions = new HashMap<CDOID, CDORevisionKey>();
+  private Map<Long, CDORevisionKey> availableRevisions = new HashMap<Long, CDORevisionKey>();
 
-  public CDORevisionAvailabilityInfo(CDOBranchPoint branchPoint)
+  public CDORevisionAvailabilityInfo()
   {
-    this.branchPoint = branchPoint;
   }
 
-  public CDOBranchPoint getBranchPoint()
-  {
-    return branchPoint;
-  }
-
-  public Map<CDOID, CDORevisionKey> getAvailableRevisions()
+  public Map<Long, CDORevisionKey> getAvailableRevisions()
   {
     return availableRevisions;
   }
@@ -50,24 +42,19 @@ public final class CDORevisionAvailabilityInfo implements CDORevisionProvider
     availableRevisions.put(key.getID(), key);
   }
 
-  public void removeRevision(CDOID id)
+  public void removeRevision(long id)
   {
     availableRevisions.remove(id);
   }
 
-  public boolean containsRevision(CDOID id)
+  public boolean containsRevision(long id)
   {
     return availableRevisions.containsKey(id);
   }
 
-  public CDORevision getRevision(CDOID id)
+  public CDORevision getRevision(long id)
   {
     return (CDORevision)availableRevisions.get(id);
   }
 
-  @Override
-  public String toString()
-  {
-    return MessageFormat.format("CDORevisionAvailabilityInfo[{0} -> {1} ]", branchPoint, availableRevisions.values());
-  }
 }

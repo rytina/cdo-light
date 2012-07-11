@@ -72,20 +72,6 @@ public interface IRepository extends CDOCommonRepository, IQueryHandlerProvider,
    */
   public IQueryHandlerProvider getQueryHandlerProvider();
 
-  /**
-   * Returns the time stamp of the last commit operation.
-   * 
-   * @since 3.0
-   */
-  public long getLastCommitTimeStamp();
-
-  /**
-   * Blocks the calling thread until the next commit operation has succeeded and returns the last (highest) commit time
-   * stamp.
-   * 
-   * @since 3.0
-   */
-  public long waitForCommit(long timeout);
 
   /**
    * Validates the given timeStamp against the repository time.
@@ -215,15 +201,6 @@ public interface IRepository extends CDOCommonRepository, IQueryHandlerProvider,
      */
     public static final String OVERRIDE_UUID = "overrideUUID"; //$NON-NLS-1$
 
-    /**
-     * @since 2.0
-     */
-    public static final String SUPPORTING_AUDITS = "supportingAudits"; //$NON-NLS-1$
-
-    /**
-     * @since 3.0
-     */
-    public static final String SUPPORTING_BRANCHES = "supportingBranches"; //$NON-NLS-1$
 
     /**
      * @since 4.0

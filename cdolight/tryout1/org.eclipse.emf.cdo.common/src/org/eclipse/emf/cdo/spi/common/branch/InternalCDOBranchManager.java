@@ -47,15 +47,12 @@ public interface InternalCDOBranchManager extends CDOBranchManager, ILifecycle
 
   public InternalCDOBranch getBranch(int branchID);
 
-  public InternalCDOBranch getBranch(int id, String name, InternalCDOBranch baseBranch, long baseTimeStamp);
+  public InternalCDOBranch getBranch(int id, String name);
 
   public InternalCDOBranch getBranch(int id, BranchInfo branchInfo);
 
   public InternalCDOBranch getBranch(String path);
 
-  public InternalCDOBranch createBranch(int id, String name, InternalCDOBranch baseBranch, long baseTimeStamp);
-
-  public void handleBranchCreated(InternalCDOBranch branch);
 
   /**
    * @author Eike Stepper
@@ -73,15 +70,6 @@ public interface InternalCDOBranchManager extends CDOBranchManager, ILifecycle
      */
     public static final int NEW_LOCAL_BRANCH = Integer.MIN_VALUE;
 
-    /**
-     * Creates a new branch with the given id and branch info. If the id is equal to {@link #NEW_BRANCH} the implementor
-     * of this method will determine a new positive unique branch id. If the id is equal to {@link #NEW_LOCAL_BRANCH}
-     * the implementor of this method will determine a new negative unique branch id, so that the new branch becomes a
-     * local branch. In either case the used branch id is returned to the caller.
-     * 
-     * @since 4.0
-     */
-    public Pair<Integer, Long> createBranch(int branchID, BranchInfo branchInfo);
 
     public BranchInfo loadBranch(int branchID);
 
@@ -97,44 +85,24 @@ public interface InternalCDOBranchManager extends CDOBranchManager, ILifecycle
     {
       private String name;
 
-      private int baseBranchID;
-
-      private long baseTimeStamp;
-
-      public BranchInfo(String name, int baseBranchID, long baseTimeStamp)
+      public BranchInfo(String name)
       {
         this.name = name;
-        this.baseBranchID = baseBranchID;
-        this.baseTimeStamp = baseTimeStamp;
       }
 
       public BranchInfo(CDODataInput in) throws IOException
       {
         name = in.readString();
-        baseBranchID = in.readInt();
-        baseTimeStamp = in.readLong();
       }
 
       public void write(CDODataOutput out) throws IOException
       {
         out.writeString(name);
-        out.writeInt(baseBranchID);
-        out.writeLong(baseTimeStamp);
       }
 
       public String getName()
       {
         return name;
-      }
-
-      public int getBaseBranchID()
-      {
-        return baseBranchID;
-      }
-
-      public long getBaseTimeStamp()
-      {
-        return baseTimeStamp;
       }
     }
 
@@ -148,27 +116,22 @@ public interface InternalCDOBranchManager extends CDOBranchManager, ILifecycle
 
       private String name;
 
-      private long baseTimeStamp;
-
-      public SubBranchInfo(int id, String name, long baseTimeStamp)
+      public SubBranchInfo(int id, String name)
       {
         this.id = id;
         this.name = name;
-        this.baseTimeStamp = baseTimeStamp;
       }
 
       public SubBranchInfo(CDODataInput in) throws IOException
       {
         id = in.readInt();
         name = in.readString();
-        baseTimeStamp = in.readLong();
       }
 
       public void write(CDODataOutput out) throws IOException
       {
         out.writeInt(id);
         out.writeString(name);
-        out.writeLong(baseTimeStamp);
       }
 
       public int getID()
@@ -181,10 +144,6 @@ public interface InternalCDOBranchManager extends CDOBranchManager, ILifecycle
         return name;
       }
 
-      public long getBaseTimeStamp()
-      {
-        return baseTimeStamp;
-      }
     }
   }
 }

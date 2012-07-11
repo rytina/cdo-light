@@ -70,12 +70,6 @@ public class EmbeddedServerSessionProtocol extends Lifecycle implements ISession
     clientSession.handleRepositoryStateChanged(oldState, newState);
   }
 
-  public void sendBranchNotification(InternalCDOBranch branch)
-  {
-    EmbeddedClientSession clientSession = clientSessionProtocol.getSession();
-    clientSession.handleBranchNotification(branch);
-  }
-
   public void sendCommitNotification(CDOCommitInfo commitInfo)
   {
     EmbeddedClientSession clientSession = clientSessionProtocol.getSession();

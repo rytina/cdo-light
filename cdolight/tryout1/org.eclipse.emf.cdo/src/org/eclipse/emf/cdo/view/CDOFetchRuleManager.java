@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.cdo.view;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 import org.eclipse.emf.cdo.session.CDOCollectionLoadingPolicy;
@@ -30,9 +29,9 @@ import java.util.List;
  */
 public interface CDOFetchRuleManager
 {
-  public CDOID getContext();
+  public long getContext();
 
-  public List<CDOFetchRule> getFetchRules(Collection<CDOID> ids);
+  public List<CDOFetchRule> getFetchRules(Collection<Long> ids);
 
   public CDOCollectionLoadingPolicy getCollectionLoadingPolicy();
 }

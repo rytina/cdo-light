@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.internal.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
 
 import org.eclipse.net4j.util.CheckUtil;
@@ -24,11 +23,11 @@ import java.text.MessageFormat;
  */
 public class CDOIDAndBranchImpl implements CDOIDAndBranch
 {
-  private CDOID id;
+  private long id;
 
   private CDOBranch branch;
 
-  public CDOIDAndBranchImpl(CDOID id, CDOBranch branch)
+  public CDOIDAndBranchImpl(long id, CDOBranch branch)
   {
     CheckUtil.checkNull(id, "id");
     CheckUtil.checkNull(branch, "branch");
@@ -37,7 +36,7 @@ public class CDOIDAndBranchImpl implements CDOIDAndBranch
     this.branch = branch;
   }
 
-  public CDOID getID()
+  public long getID()
   {
     return id;
   }
@@ -67,7 +66,7 @@ public class CDOIDAndBranchImpl implements CDOIDAndBranch
   @Override
   public int hashCode()
   {
-    return id.hashCode() ^ branch.hashCode();
+    return ((int) id % Integer.MAX_VALUE) ^ branch.hashCode();
   }
 
   @Override

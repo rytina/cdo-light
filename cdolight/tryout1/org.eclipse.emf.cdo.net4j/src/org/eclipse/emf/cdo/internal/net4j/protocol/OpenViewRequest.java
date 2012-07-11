@@ -27,16 +27,13 @@ public class OpenViewRequest extends CDOClientRequest<CDOBranchPoint>
 
   private boolean readOnly;
 
-  private CDOBranchPoint branchPoint;
-
   private String durableLockingID;
 
-  public OpenViewRequest(CDOClientProtocol protocol, int viewID, boolean readOnly, CDOBranchPoint branchPoint)
+  public OpenViewRequest(CDOClientProtocol protocol, int viewID, boolean readOnly)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_OPEN_VIEW);
     this.viewID = viewID;
     this.readOnly = readOnly;
-    this.branchPoint = branchPoint;
   }
 
   public OpenViewRequest(CDOClientProtocol protocol, int viewID, boolean readOnly, String durableLockingID)
@@ -53,25 +50,13 @@ public class OpenViewRequest extends CDOClientRequest<CDOBranchPoint>
     out.writeInt(viewID);
     out.writeBoolean(readOnly);
 
-    if (branchPoint != null)
-    {
-      out.writeBoolean(true);
-      out.writeCDOBranchPoint(branchPoint);
-    }
-    else
-    {
       out.writeBoolean(false);
       out.writeString(durableLockingID);
-    }
   }
 
   @Override
   protected CDOBranchPoint confirming(CDODataInput in) throws IOException
   {
-    if (in.readBoolean())
-    {
-      return in.readCDOBranchPoint();
-    }
 
     if (durableLockingID != null)
     {

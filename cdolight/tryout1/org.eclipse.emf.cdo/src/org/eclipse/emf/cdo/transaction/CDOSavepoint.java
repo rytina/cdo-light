@@ -13,7 +13,6 @@ package org.eclipse.emf.cdo.transaction;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetDataProvider;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
@@ -47,65 +46,65 @@ public interface CDOSavepoint extends CDOUserSavepoint, CDOChangeSetDataProvider
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDORevision> getBaseNewObjects();
+  public Map<Long, CDORevision> getBaseNewObjects();
 
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getNewObjects();
+  public Map<Long, CDOObject> getNewObjects();
 
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getDetachedObjects();
+  public Map<Long, CDOObject> getDetachedObjects();
 
   /**
    * Bug 283985 (Re-attachment)
    * 
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getReattachedObjects();
+  public Map<Long, CDOObject> getReattachedObjects();
 
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getDirtyObjects();
+  public Map<Long, CDOObject> getDirtyObjects();
 
   /**
    * @since 3.0
    */
-  public ConcurrentMap<CDOID, CDORevisionDelta> getRevisionDeltas();
+  public ConcurrentMap<Long, CDORevisionDelta> getRevisionDeltas();
 
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDORevision> getAllBaseNewObjects();
+  public Map<Long, CDORevision> getAllBaseNewObjects();
 
   /**
    * Return the list of new objects from this point without objects that are removed.
    * 
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getAllNewObjects();
+  public Map<Long, CDOObject> getAllNewObjects();
 
   /**
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getAllDetachedObjects();
+  public Map<Long, CDOObject> getAllDetachedObjects();
 
   /**
    * Return the list of new objects from this point.
    * 
    * @since 3.0
    */
-  public Map<CDOID, CDOObject> getAllDirtyObjects();
+  public Map<Long, CDOObject> getAllDirtyObjects();
 
   /**
    * Return the list of all deltas without objects that are removed.
    * 
    * @since 3.0
    */
-  public Map<CDOID, CDORevisionDelta> getAllRevisionDeltas();
+  public Map<Long, CDORevisionDelta> getAllRevisionDeltas();
 
   /**
    * @since 4.0

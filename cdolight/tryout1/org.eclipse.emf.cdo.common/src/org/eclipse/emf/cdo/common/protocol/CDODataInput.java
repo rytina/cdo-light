@@ -11,36 +11,30 @@
  */
 package org.eclipse.emf.cdo.common.protocol;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
 import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDOList;
-import org.eclipse.emf.cdo.common.revision.CDORevisable;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.io.ExtendedDataInput;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-
-import java.io.IOException;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.io.ExtendedDataInput;
 
 /**
  * Provides I/O methods for reading various CDO data types and concepts from streams.
@@ -72,11 +66,6 @@ public interface CDODataInput extends ExtendedDataInput
 
   // /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public CDOBranch readCDOBranch() throws IOException;
-
-  public CDOBranchPoint readCDOBranchPoint() throws IOException;
-
-  public CDOBranchVersion readCDOBranchVersion() throws IOException;
 
   public CDOChangeSetData readCDOChangeSetData() throws IOException;
 
@@ -86,33 +75,20 @@ public interface CDODataInput extends ExtendedDataInput
 
   // /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public CDOID readCDOID() throws IOException;
+  public long readCDOID() throws IOException;
 
   /**
    * @since 4.0
    */
   public CDOIDReference readCDOIDReference() throws IOException;
 
-  /**
-   * @since 4.0
-   */
-  public CDOIDAndVersion readCDOIDAndVersion() throws IOException;
 
-  /**
-   * @since 4.0
-   */
-  public CDOIDAndBranch readCDOIDAndBranch() throws IOException;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  public CDORevisionKey readCDORevisionKey() throws IOException;
 
   public CDORevision readCDORevision() throws IOException;
 
-  /**
-   * @since 4.0
-   */
-  public CDORevisable readCDORevisable() throws IOException;
 
   public CDOList readCDOList(EClass owner, EStructuralFeature feature) throws IOException;
 

@@ -75,8 +75,7 @@ public abstract class AbstractChangeSetsConflictResolver extends AbstractConflic
 
   public CDOChangeSet getLocalChangeSet()
   {
-    CDOTransaction transaction = getTransaction();
-    return CDORevisionUtil.createChangeSet(transaction, transaction, getLocalChangeSetData());
+    return CDORevisionUtil.createChangeSet(getLocalChangeSetData());
   }
 
   public CDOChangeSetData getRemoteChangeSetData()
@@ -86,8 +85,7 @@ public abstract class AbstractChangeSetsConflictResolver extends AbstractConflic
 
   public CDOChangeSet getRemoteChangeSet()
   {
-    CDOTransaction transaction = getTransaction();
-    return CDORevisionUtil.createChangeSet(transaction, transaction, getRemoteChangeSetData());
+    return CDORevisionUtil.createChangeSet(getRemoteChangeSetData());
   }
 
   @Override
@@ -123,10 +121,7 @@ public abstract class AbstractChangeSetsConflictResolver extends AbstractConflic
     @Override
     protected void handleEvent(CDOSessionInvalidationEvent event) throws Exception
     {
-      if (event.getBranch() == getTransaction().getBranch())
-      {
         super.handleEvent(event);
-      }
     }
   }
 }

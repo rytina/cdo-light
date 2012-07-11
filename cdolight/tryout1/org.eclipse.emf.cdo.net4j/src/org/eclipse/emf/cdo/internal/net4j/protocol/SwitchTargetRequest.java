@@ -10,22 +10,16 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
-
-import java.io.IOException;
-import java.util.List;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * @author Eike Stepper
@@ -38,19 +32,18 @@ public class SwitchTargetRequest extends CDOClientRequestWithMonitoring<Object>
 
   private List<InternalCDOObject> invalidObjects;
 
-  private List<CDORevisionKey> allChangedObjects;
+  private List<CDORevisionDelta> allChangedObjects;
 
-  private List<CDOIDAndVersion> allDetachedObjects;
+  private List<Long> allDetachedObjects;
 
-  public SwitchTargetRequest(CDOClientProtocol protocol, int viewID, CDOBranchPoint branchPoint,
-      List<InternalCDOObject> invalidObjects, List<CDORevisionKey> allChangedObjects,
-      List<CDOIDAndVersion> allDetachedObjects)
+  public SwitchTargetRequest(CDOClientProtocol protocol, int viewID, 
+      List<InternalCDOObject> invalidObjects, List<Long> allChangedObjects,
+      List<Long> allDetachedObjects)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_SWITCH_TARGET);
     this.viewID = viewID;
-    this.branchPoint = branchPoint;
     this.invalidObjects = invalidObjects;
-    this.allChangedObjects = allChangedObjects;
+    this.allChangedObjects = null;
     this.allDetachedObjects = allDetachedObjects;
   }
 
@@ -58,7 +51,6 @@ public class SwitchTargetRequest extends CDOClientRequestWithMonitoring<Object>
   protected void requesting(CDODataOutput out, OMMonitor monitor) throws IOException
   {
     out.writeInt(viewID);
-    out.writeCDOBranchPoint(branchPoint);
 
     out.writeInt(invalidObjects.size());
     for (InternalCDOObject object : invalidObjects)
@@ -79,8 +71,8 @@ public class SwitchTargetRequest extends CDOClientRequestWithMonitoring<Object>
     size = in.readInt();
     for (int i = 0; i < size; i++)
     {
-      CDOID id = in.readCDOID();
-      allDetachedObjects.add(CDOIDUtil.createIDAndVersion(id, CDOBranchVersion.UNSPECIFIED_VERSION));
+      long id = in.readCDOID();
+      allDetachedObjects.add(id);
     }
 
     return null;

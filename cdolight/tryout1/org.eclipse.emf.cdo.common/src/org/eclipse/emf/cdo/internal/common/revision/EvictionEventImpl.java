@@ -10,13 +10,10 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache.EvictionEvent;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
 import org.eclipse.net4j.util.event.Event;
 
 /**
@@ -40,20 +37,11 @@ public class EvictionEventImpl extends Event implements EvictionEvent
     return (CDORevisionCache)super.getSource();
   }
 
-  public CDOID getID()
+  public long getID()
   {
     return key.getID();
   }
 
-  public CDOBranch getBranch()
-  {
-    return key.getBranch();
-  }
-
-  public int getVersion()
-  {
-    return key.getVersion();
-  }
 
   public InternalCDORevision getRevision()
   {

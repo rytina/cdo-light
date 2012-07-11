@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.spi.cdo;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.transaction.CDOSavepoint;
 
 import java.util.Set;
@@ -33,7 +32,7 @@ public interface InternalCDOSavepoint extends CDOSavepoint, InternalCDOUserSavep
 
   public void clear();
 
-  public Set<CDOID> getSharedDetachedObjects();
+  public Set<Long> getSharedDetachedObjects();
 
   public void recalculateSharedDetachedObjects();
 }

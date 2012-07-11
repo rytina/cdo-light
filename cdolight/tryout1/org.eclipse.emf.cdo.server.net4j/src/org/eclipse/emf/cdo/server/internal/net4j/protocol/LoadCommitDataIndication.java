@@ -22,8 +22,6 @@ import java.io.IOException;
  */
 public class LoadCommitDataIndication extends CDOServerReadIndication
 {
-  private long timeStamp;
-
   public LoadCommitDataIndication(CDOServerProtocol protocol)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOAD_COMMIT_DATA);
@@ -32,13 +30,12 @@ public class LoadCommitDataIndication extends CDOServerReadIndication
   @Override
   protected void indicating(CDODataInput in) throws IOException
   {
-    timeStamp = in.readLong();
   }
 
   @Override
   protected void responding(final CDODataOutput out) throws IOException
   {
-    CDOCommitData commitData = getRepository().loadCommitData(timeStamp);
+    CDOCommitData commitData = getRepository().loadCommitData();
     out.writeCDOCommitData(commitData);
   }
 }

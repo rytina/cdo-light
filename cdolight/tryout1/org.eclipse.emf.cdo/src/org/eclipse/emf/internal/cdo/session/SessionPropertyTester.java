@@ -52,17 +52,6 @@ public class SessionPropertyTester extends PropertyTester
       return ObjectUtil.equals(session.options().getPassiveUpdateMode().toString(), expected);
     }
 
-    if ("supportingAudits".equals(property)) //$NON-NLS-1$
-    {
-      boolean expected = (Boolean)expectedValue;
-      return session.getRepositoryInfo().isSupportingAudits() == expected;
-    }
-
-    if ("supportingBranches".equals(property)) //$NON-NLS-1$
-    {
-      boolean expected = (Boolean)expectedValue;
-      return session.getRepositoryInfo().isSupportingBranches() == expected;
-    }
 
     if ("repositoryName".equals(property)) //$NON-NLS-1$
     {

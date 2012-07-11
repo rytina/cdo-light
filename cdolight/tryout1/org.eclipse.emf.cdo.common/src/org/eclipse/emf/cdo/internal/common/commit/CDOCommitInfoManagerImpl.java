@@ -11,12 +11,10 @@
  */
 package org.eclipse.emf.cdo.internal.common.commit;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
 import org.eclipse.emf.cdo.spi.common.commit.InternalCDOCommitInfoManager;
-
 import org.eclipse.net4j.util.lifecycle.Lifecycle;
 
 /**
@@ -41,18 +39,18 @@ public class CDOCommitInfoManagerImpl extends Lifecycle implements InternalCDOCo
     this.commitInfoLoader = commitInfoLoader;
   }
 
-  public CDOCommitInfo createCommitInfo(CDOBranch branch, long timeStamp, long previousTimeStamp, String userID,
+  public CDOCommitInfo createCommitInfo(String userID,
       String comment, CDOCommitData commitData)
   {
     checkActive();
-    return new CDOCommitInfoImpl(this, branch, timeStamp, previousTimeStamp, userID, comment, commitData);
+    return new CDOCommitInfoImpl(this, userID, comment, commitData);
   }
 
   public CDOCommitInfo getCommitInfo(long timeStamp)
   {
     checkActive();
     final CDOCommitInfo[] result = { null };
-    getCommitInfos(null, timeStamp, timeStamp, new CDOCommitInfoHandler()
+    getCommitInfos(new CDOCommitInfoHandler()
     {
       public void handleCommitInfo(CDOCommitInfo commitInfo)
       {
@@ -63,13 +61,13 @@ public class CDOCommitInfoManagerImpl extends Lifecycle implements InternalCDOCo
     return result[0];
   }
 
-  public void getCommitInfos(CDOBranch branch, long startTime, long endTime, CDOCommitInfoHandler handler)
+  public void getCommitInfos(CDOCommitInfoHandler handler)
   {
     checkActive();
-    commitInfoLoader.loadCommitInfos(branch, startTime, endTime, handler);
+    commitInfoLoader.loadCommitInfos(handler);
   }
 
-  public void getCommitInfos(CDOBranch branch, long startTime, String userID, String comment, int count,
+  public void getCommitInfos(String userID, String comment, int count,
       CDOCommitInfoHandler handler)
   {
     checkActive();
@@ -84,4 +82,6 @@ public class CDOCommitInfoManagerImpl extends Lifecycle implements InternalCDOCo
     super.doBeforeActivate();
     checkState(commitInfoLoader, "commitInfoLoader"); //$NON-NLS-1$
   }
+
+
 }

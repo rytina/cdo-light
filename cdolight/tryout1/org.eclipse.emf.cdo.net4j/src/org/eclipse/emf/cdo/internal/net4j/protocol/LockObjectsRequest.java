@@ -41,13 +41,8 @@ public class LockObjectsRequest extends CDOClientRequest<LockObjectsResult>
 
   private List<InternalCDORevision> viewedRevisions;
 
-  /**
-   * The branch being viewed
-   */
-  private CDOBranch viewedBranch;
 
-  public LockObjectsRequest(CDOClientProtocol protocol, List<InternalCDORevision> viewedRevisions, int viewID,
-      CDOBranch viewedBranch, LockType lockType, long timeout)
+  public LockObjectsRequest(CDOClientProtocol protocol, List<InternalCDORevision> viewedRevisions, int viewID, LockType lockType, long timeout)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOCK_OBJECTS);
 
@@ -55,7 +50,6 @@ public class LockObjectsRequest extends CDOClientRequest<LockObjectsResult>
     this.lockType = lockType;
     this.timeout = timeout;
     this.viewedRevisions = viewedRevisions;
-    this.viewedBranch = viewedBranch;
   }
 
   @Override
@@ -64,12 +58,11 @@ public class LockObjectsRequest extends CDOClientRequest<LockObjectsResult>
     out.writeInt(viewID);
     out.writeCDOLockType(lockType);
     out.writeLong(timeout);
-    out.writeCDOBranch(viewedBranch);
 
     out.writeInt(viewedRevisions.size());
     for (CDORevision revision : viewedRevisions)
     {
-      out.writeCDORevisionKey(revision);
+      out.writeCDOID(revision.getID());
     }
   }
 
@@ -80,28 +73,23 @@ public class LockObjectsRequest extends CDOClientRequest<LockObjectsResult>
     if (succesful)
     {
       boolean clientMustWait = in.readBoolean();
-      long requiredTimestamp = CDOBranchPoint.UNSPECIFIED_DATE;
-      if (clientMustWait)
-      {
-        requiredTimestamp = in.readLong();
-      }
 
-      return new LockObjectsResult(true, false, clientMustWait, requiredTimestamp, null);
+      return new LockObjectsResult(true, false, clientMustWait, null);
     }
 
     boolean timedOut = in.readBoolean();
     if (timedOut)
     {
-      return new LockObjectsResult(false, true, false, 0, null);
+      return new LockObjectsResult(false, true, false, null);
     }
 
     int nStaleRevisions = in.readInt();
-    CDORevisionKey[] staleRevisions = new CDORevisionKey[nStaleRevisions];
+    long[] staleRevisions = new long[nStaleRevisions];
     for (int i = 0; i < nStaleRevisions; i++)
     {
-      staleRevisions[i] = in.readCDORevisionKey();
+      staleRevisions[i] = in.readCDOID();
     }
 
-    return new LockObjectsResult(false, false, false, 0, staleRevisions);
+    return new LockObjectsResult(false, false, false, staleRevisions);
   }
 }

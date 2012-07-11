@@ -18,5 +18,5 @@ package org.eclipse.emf.cdo.common.id;
  */
 public interface CDOWithID
 {
-  public CDOID cdoID();
+  public long cdoID();
 }

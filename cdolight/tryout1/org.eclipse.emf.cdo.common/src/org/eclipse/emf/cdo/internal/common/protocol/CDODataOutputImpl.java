@@ -10,15 +10,17 @@
  */
 package org.eclipse.emf.cdo.internal.common.protocol;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Collection;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
+import org.eclipse.emf.cdo.common.id1.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
@@ -29,7 +31,6 @@ import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDOList;
-import org.eclipse.emf.cdo.common.revision.CDORevisable;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
@@ -40,17 +41,9 @@ import org.eclipse.emf.cdo.internal.common.messages.Messages;
 import org.eclipse.emf.cdo.internal.common.model.CDOTypeImpl;
 import org.eclipse.emf.cdo.internal.common.revision.delta.CDOFeatureDeltaImpl;
 import org.eclipse.emf.cdo.internal.common.revision.delta.CDORevisionDeltaImpl;
-import org.eclipse.emf.cdo.spi.common.id.AbstractCDOID;
-import org.eclipse.emf.cdo.spi.common.id.InternalCDOIDObject;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageInfo;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.io.ExtendedDataOutput;
-import org.eclipse.net4j.util.io.StringIO;
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -59,10 +52,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Collection;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.io.ExtendedDataOutput;
+import org.eclipse.net4j.util.io.StringIO;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * @author Eike Stepper
@@ -126,62 +119,28 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
     ((CDOTypeImpl)cdoType).write(this);
   }
 
-  public void writeCDOBranch(CDOBranch branch) throws IOException
-  {
-    writeInt(branch.getID());
-  }
-
-  public void writeCDOBranchPoint(CDOBranchPoint branchPoint) throws IOException
-  {
-    writeCDOBranch(branchPoint.getBranch());
-    writeLong(branchPoint.getTimeStamp());
-  }
-
-  public void writeCDOBranchVersion(CDOBranchVersion branchVersion) throws IOException
-  {
-    writeCDOBranch(branchVersion.getBranch());
-    writeInt(branchVersion.getVersion());
-  }
 
   public void writeCDOChangeSetData(CDOChangeSetData changeSetData) throws IOException
   {
-    Collection<CDOIDAndVersion> newObjects = changeSetData.getNewObjects();
+    Collection<CDORevision> newObjects = changeSetData.getNewObjects();
     writeInt(newObjects.size());
-    for (CDOIDAndVersion data : newObjects)
+    for (CDORevision data : newObjects)
     {
-      if (data instanceof CDORevision)
-      {
-        writeBoolean(true);
         writeCDORevision((CDORevision)data, CDORevision.UNCHUNKED);
-      }
-      else
-      {
-        writeBoolean(false);
-        writeCDOIDAndVersion(data);
-      }
     }
 
-    Collection<CDORevisionKey> changedObjects = changeSetData.getChangedObjects();
+    Collection<CDORevisionDelta> changedObjects = changeSetData.getChangedObjects();
     writeInt(changedObjects.size());
     for (CDORevisionKey data : changedObjects)
     {
-      if (data instanceof CDORevisionDelta)
-      {
-        writeBoolean(true);
         writeCDORevisionDelta((CDORevisionDelta)data);
-      }
-      else
-      {
-        writeBoolean(false);
-        writeCDORevisionKey(data);
-      }
     }
 
-    Collection<CDOIDAndVersion> detachedObjects = changeSetData.getDetachedObjects();
+    Collection<Long> detachedObjects = changeSetData.getDetachedObjects();
     writeInt(detachedObjects.size());
-    for (CDOIDAndVersion data : detachedObjects)
+    for (Long id : detachedObjects)
     {
-      writeCDOIDAndVersion(data);
+      writeCDOID(id);
     }
   }
 
@@ -199,58 +158,15 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
 
   public void writeCDOCommitInfo(CDOCommitInfo commitInfo) throws IOException
   {
-    writeLong(commitInfo.getTimeStamp());
-    writeLong(commitInfo.getPreviousTimeStamp());
-
-    CDOBranch branch = commitInfo.getBranch();
-    if (branch != null)
-    {
       writeBoolean(true);
-      writeCDOBranch(branch);
       writeString(commitInfo.getUserID());
       writeString(commitInfo.getComment());
       writeCDOCommitData(commitInfo);
-    }
-    else
-    {
-      // FailureCommitInfo
-      writeBoolean(false);
-    }
   }
 
-  public void writeCDOID(CDOID id) throws IOException
+  public void writeCDOID(long id) throws IOException
   {
-    if (id == null)
-    {
-      id = CDOID.NULL;
-    }
-
-    if (id instanceof InternalCDOIDObject)
-    {
-      CDOID.ObjectType subType = ((InternalCDOIDObject)id).getSubType();
-      int ordinal = subType.ordinal();
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Writing CDOIDObject of subtype {0} ({1})", ordinal, subType); //$NON-NLS-1$
-      }
-
-      // Negated to distinguish between the subtypes and the maintypes.
-      // Note: Added 1 because ordinal start at 0
-      writeByte(-ordinal - 1);
-    }
-    else
-    {
-      CDOID.Type type = id.getType();
-      int ordinal = type.ordinal();
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Writing CDOID of type {0} ({1})", ordinal, type); //$NON-NLS-1$
-      }
-
-      writeByte(ordinal);
-    }
-
-    ((AbstractCDOID)id).write(this);
+    writeLong(id);
   }
 
   public void writeCDOIDReference(CDOIDReference idReference) throws IOException
@@ -258,24 +174,8 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
     idReference.write(this);
   }
 
-  public void writeCDOIDAndVersion(CDOIDAndVersion idAndVersion) throws IOException
-  {
-    writeCDOID(idAndVersion.getID());
-    writeInt(idAndVersion.getVersion());
-  }
 
-  public void writeCDOIDAndBranch(CDOIDAndBranch idAndBranch) throws IOException
-  {
-    writeCDOID(idAndBranch.getID());
-    writeCDOBranch(idAndBranch.getBranch());
-  }
 
-  public void writeCDORevisionKey(CDORevisionKey revisionKey) throws IOException
-  {
-    writeCDOID(revisionKey.getID());
-    writeCDOBranch(revisionKey.getBranch());
-    writeInt(revisionKey.getVersion());
-  }
 
   public void writeCDORevision(CDORevision revision, int referenceChunk) throws IOException
   {
@@ -290,13 +190,6 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
     }
   }
 
-  public void writeCDORevisable(CDORevisable revisable) throws IOException
-  {
-    writeCDOBranch(revisable.getBranch());
-    writeInt(revisable.getVersion());
-    writeLong(revisable.getTimeStamp());
-    writeLong(revisable.getRevised());
-  }
 
   public void writeCDOList(EClass owner, EStructuralFeature feature, CDOList list, int referenceChunk)
       throws IOException
@@ -342,7 +235,6 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
       writeInt(size);
     }
 
-    CDOIDProvider idProvider = getIDProvider();
     boolean isFeatureMap = FeatureMapUtil.isFeatureMap(feature);
     for (int j = 0; j < size; j++)
     {
@@ -358,10 +250,6 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
         writeInt(featureID);
       }
 
-      if (value != null && innerFeature instanceof EReference)
-      {
-        value = idProvider.provideCDOID(value);
-      }
 
       if (TRACER.isEnabled())
       {
@@ -396,7 +284,9 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
     }
     else if (value instanceof EObject)
     {
-      value = getIDProvider().provideCDOID(value);
+    	//rytina todo
+    	throw new RuntimeException("implement it!");
+//      value = getIDProvider().provideCDOID(value);
     }
     else if (value instanceof CDORevision)
     {
@@ -442,11 +332,6 @@ public abstract class CDODataOutputImpl extends ExtendedDataOutput.Delegating im
   }
 
   public CDOPackageRegistry getPackageRegistry()
-  {
-    return null;
-  }
-
-  public CDOIDProvider getIDProvider()
   {
     return null;
   }

@@ -11,10 +11,9 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.model.CDOClassInfo;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -22,11 +21,8 @@ import org.eclipse.emf.cdo.common.revision.CDOList;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionData;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
 
 /**
  * @author Eike Stepper
@@ -40,30 +36,9 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
 
   public abstract InternalCDORevision getDelegate();
 
-  /**
-   * @since 4.0
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    return getDelegate().adjustReferences(referenceAdjuster);
-  }
 
-  public long getTimeStamp()
-  {
-    return getDelegate().getTimeStamp();
-  }
 
-  public CDOBranch getBranch()
-  {
-    return getDelegate().getBranch();
-  }
-
-  public boolean isHistorical()
-  {
-    return getDelegate().isHistorical();
-  }
-
-  public CDOID getID()
+  public long getID()
   {
     return getDelegate().getID();
   }
@@ -73,12 +48,12 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().revision();
   }
 
-  public CDOID getResourceID()
+  public long getResourceID()
   {
     return getDelegate().getResourceID();
   }
 
-  public Object getContainerID()
+  public long getContainerID()
   {
     return getDelegate().getContainerID();
   }
@@ -98,38 +73,19 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().getEClass();
   }
 
-  public int getVersion()
-  {
-    return getDelegate().getVersion();
-  }
 
   public int size(EStructuralFeature feature)
   {
     return getDelegate().size(feature);
   }
 
-  public long getRevised()
-  {
-    return getDelegate().getRevised();
-  }
 
   public boolean isEmpty(EStructuralFeature feature)
   {
     return getDelegate().isEmpty(feature);
   }
 
-  public boolean isValid(long timeStamp)
-  {
-    return getDelegate().isValid(timeStamp);
-  }
 
-  /**
-   * @since 4.0
-   */
-  public boolean isValid(CDOBranchPoint branchPoint)
-  {
-    return getDelegate().isValid(branchPoint);
-  }
 
   /**
    * @since 4.0
@@ -144,7 +100,7 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().getClassInfo();
   }
 
-  public void setID(CDOID id)
+  public void setID(long id)
   {
     getDelegate().setID(id);
   }
@@ -159,10 +115,6 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().isResourceNode();
   }
 
-  public void setVersion(int version)
-  {
-    getDelegate().setVersion(version);
-  }
 
   public boolean isResourceFolder()
   {
@@ -179,14 +131,10 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().isResource();
   }
 
-  public void setBranchPoint(CDOBranchPoint branchPoint)
-  {
-    getDelegate().setBranchPoint(branchPoint);
-  }
 
-  public void adjustForCommit(CDOBranch branch, long timeStamp)
+  public void adjustForCommit()
   {
-    getDelegate().adjustForCommit(branch, timeStamp);
+    getDelegate().adjustForCommit();
   }
 
   public CDORevisionData data()
@@ -199,17 +147,13 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().lastIndexOf(feature, value);
   }
 
-  public void setRevised(long revised)
-  {
-    getDelegate().setRevised(revised);
-  }
 
   public InternalCDORevisionDelta compare(CDORevision origin)
   {
     return getDelegate().compare(origin);
   }
 
-  public void setResourceID(CDOID resourceID)
+  public void setResourceID(long resourceID)
   {
     getDelegate().setResourceID(resourceID);
   }
@@ -224,7 +168,7 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     return getDelegate().toArray(feature, array);
   }
 
-  public void setContainerID(Object containerID)
+  public void setContainerID(long containerID)
   {
     getDelegate().setContainerID(containerID);
   }
@@ -309,10 +253,6 @@ public abstract class DelegatingCDORevision implements InternalCDORevision
     getDelegate().write(out, referenceChunk);
   }
 
-  public void convertEObjects(CDOIDProvider oidProvider)
-  {
-    getDelegate().convertEObjects(oidProvider);
-  }
 
   /**
    * @since 4.0

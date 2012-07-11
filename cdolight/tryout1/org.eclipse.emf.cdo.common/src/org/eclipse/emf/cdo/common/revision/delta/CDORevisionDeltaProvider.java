@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.cdo.common.revision.delta;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 /**
  * @author Eike Stepper
@@ -18,5 +17,5 @@ import org.eclipse.emf.cdo.common.id.CDOID;
  */
 public interface CDORevisionDeltaProvider
 {
-  public CDORevisionDelta getRevisionDelta(CDOID id);
+  public CDORevisionDelta getRevisionDelta(long id);
 }

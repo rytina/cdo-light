@@ -34,8 +34,6 @@ public interface InternalCDOPackageUnit extends CDOPackageUnit
 
   public void setOriginalType(Type originalType);
 
-  public void setTimeStamp(long timeStamp);
-
   public InternalCDOPackageInfo getTopLevelPackageInfo();
 
   public InternalCDOPackageInfo getPackageInfo(String packageURI);

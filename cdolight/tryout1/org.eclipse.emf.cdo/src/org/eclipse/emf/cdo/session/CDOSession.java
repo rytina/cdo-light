@@ -115,29 +115,6 @@ public interface CDOSession extends CDOCommonSession, CDOUpdatable, IContainer<C
 
   public CDOSession.ExceptionHandler getExceptionHandler();
 
-  /**
-   * Opens and returns a new {@link CDOTransaction transaction} on the given EMF {@link ResourceSet resource set}.
-   * 
-   * @see #openTransaction()
-   * @since 4.0
-   */
-  public CDOTransaction openTransaction(CDOBranchPoint target, ResourceSet resourceSet);
-
-  /**
-   * Opens and returns a new {@link CDOTransaction transaction} on a new EMF {@link ResourceSet resource set}.
-   * 
-   * @see #openTransaction()
-   * @since 4.0
-   */
-  public CDOTransaction openTransaction(CDOBranchPoint target);
-
-  /**
-   * Opens and returns a new {@link CDOTransaction transaction} on the given EMF {@link ResourceSet resource set}.
-   * 
-   * @see #openTransaction()
-   * @since 3.0
-   */
-  public CDOTransaction openTransaction(CDOBranch branch, ResourceSet resourceSet);
 
   /**
    * Opens and returns a new {@link CDOTransaction transaction} on the given EMF {@link ResourceSet resource set}.
@@ -147,15 +124,6 @@ public interface CDOSession extends CDOCommonSession, CDOUpdatable, IContainer<C
    */
   public CDOTransaction openTransaction(ResourceSet resourceSet);
 
-  /**
-   * Opens and returns a new {@link CDOTransaction transaction} on a new EMF {@link ResourceSet resource set}.
-   * <p>
-   * Same as calling <code>openTransaction(new ResourceSetImpl())</code>.
-   * 
-   * @see #openTransaction(ResourceSet)
-   * @since 3.0
-   */
-  public CDOTransaction openTransaction(CDOBranch branch);
 
   /**
    * Opens and returns a new {@link CDOTransaction transaction} on a new EMF {@link ResourceSet resource set}.
@@ -188,13 +156,6 @@ public interface CDOSession extends CDOCommonSession, CDOUpdatable, IContainer<C
    */
   public CDOTransaction openTransaction(String durableLockingID, ResourceSet resourceSet);
 
-  /**
-   * Opens and returns a new {@link CDOView view} on the given EMF {@link ResourceSet resource set}.
-   * 
-   * @see #openView()
-   * @since 4.0
-   */
-  public CDOView openView(CDOBranchPoint target, ResourceSet resourceSet);
 
   /**
    * Opens and returns a new {@link CDOView view} on a new EMF {@link ResourceSet resource set}.
@@ -202,62 +163,16 @@ public interface CDOSession extends CDOCommonSession, CDOUpdatable, IContainer<C
    * @see #openView()
    * @since 4.0
    */
-  public CDOView openView(CDOBranchPoint target);
+  public CDOView openView();
 
   /**
    * Opens and returns a new {@link CDOView view} on the given EMF {@link ResourceSet resource set}.
    * 
    * @see #openView()
    * @since 3.0
-   */
-  public CDOView openView(CDOBranch branch, long timeStamp, ResourceSet resourceSet);
-
-  /**
-   * Opens and returns a new {@link CDOView view} on a new EMF {@link ResourceSet resource set}.
-   * <p>
-   * Same as calling <code>openView(new ResourceSetImpl())</code>.
-   * 
-   * @see #openView(CDOBranch, long, ResourceSet)
-   * @since 3.0
-   */
-  public CDOView openView(CDOBranch branch, long timeStamp);
-
-  /**
-   * Opens and returns a new {@link CDOView view} on a new EMF {@link ResourceSet resource set}.
-   * <p>
-   * Same as calling <code>openView(new ResourceSetImpl())</code>.
-   * 
-   * @see #openView(CDOBranch, long, ResourceSet)
-   * @since 3.0
-   */
-  public CDOView openView(CDOBranch branch);
-
-  /**
-   * Opens and returns a new {@link CDOView view} on a new EMF {@link ResourceSet resource set}.
-   * <p>
-   * Same as calling <code>openView(new ResourceSetImpl())</code>.
-   * 
-   * @see #openView(CDOBranch, long, ResourceSet)
-   * @since 3.0
-   */
-  public CDOView openView(long timeStamp);
-
-  /**
-   * Opens and returns a new {@link CDOView view} on the given EMF {@link ResourceSet resource set}.
-   * 
-   * @see #openView(CDOBranch, long, ResourceSet)
-   * @since 4.0
    */
   public CDOView openView(ResourceSet resourceSet);
 
-  /**
-   * Opens and returns a new {@link CDOView view} on a new EMF {@link ResourceSet resource set}.
-   * <p>
-   * Same as calling <code>openView(new ResourceSetImpl())</code>.
-   * 
-   * @see #openView(CDOBranch, long, ResourceSet)
-   */
-  public CDOView openView();
 
   /**
    * Opens and returns a {@link CDOView view} on a new EMF {@link ResourceSet resource set} by resuming a view that has
@@ -299,26 +214,8 @@ public interface CDOSession extends CDOCommonSession, CDOUpdatable, IContainer<C
    * 
    * @since 3.0
    */
-  public long refresh();
+  public void refresh();
 
-  /**
-   * Equivalent to calling {@link CDOView#waitForUpdate(long)} on each of this session's views. That is, this blocks the
-   * calling thread until all of this session's views have incorporated a commit operation with the given time stamp (or
-   * higher).
-   */
-  public void waitForUpdate(long updateTime);
-
-  /**
-   * Equivalent to calling {@link CDOView#waitForUpdate(long)} on each of this session's views. That is, this blocks the
-   * calling thread until all of this session's views have incorporated a commit operation with the given time stamp (or
-   * higher) or the given total timeout has expired.
-   */
-  public boolean waitForUpdate(long updateTime, long timeoutMillis);
-
-  /**
-   * @since 4.0
-   */
-  public CDOChangeSetData compareRevisions(CDOBranchPoint source, CDOBranchPoint target);
 
   /**
    * Returns the {@link Options options} of this session.

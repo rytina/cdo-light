@@ -25,6 +25,4 @@ public interface ISynchronizableRepository extends IRepository
   public ISession getReplicatorSession();
 
   public int getLastReplicatedBranchID();
-
-  public long getLastReplicatedCommitTime();
 }

@@ -11,26 +11,19 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.OpenSessionResult;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.OpenSessionResult;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -120,32 +113,32 @@ public class OpenSessionRequest extends CDOClientRequestWithMonitoring<OpenSessi
       TRACER.format("Read storeType: {0}", storeType); //$NON-NLS-1$
     }
 
-    Set<CDOID.ObjectType> objectIDTypes = new HashSet<ObjectType>();
-    int types = in.readInt();
-    for (int i = 0; i < types; i++)
-    {
-      CDOID.ObjectType objectIDType = in.readEnum(CDOID.ObjectType.class);
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Read objectIDType: {0}", objectIDType); //$NON-NLS-1$
-      }
-
-      objectIDTypes.add(objectIDType);
-    }
+//    Set<CDOID.ObjectType> objectIDTypes = new HashSet<ObjectType>();
+//    int types = in.readInt();
+//    for (int i = 0; i < types; i++)
+//    {
+//      CDOID.ObjectType objectIDType = in.readEnum(CDOID.ObjectType.class);
+//      if (TRACER.isEnabled())
+//      {
+//        TRACER.format("Read objectIDType: {0}", objectIDType); //$NON-NLS-1$
+//      }
+//
+//      objectIDTypes.add(objectIDType);
+//    }
 
     long repositoryCreationTime = in.readLong();
     if (TRACER.isEnabled())
     {
-      TRACER.format("Read repositoryCreationTime: {0}", CDOCommonUtil.formatTimeStamp(repositoryCreationTime)); //$NON-NLS-1$
+      TRACER.format("Read repositoryCreationTime: {0}", repositoryCreationTime); //$NON-NLS-1$
     }
 
     long lastUpdateTime = in.readLong();
     if (TRACER.isEnabled())
     {
-      TRACER.format("Read lastUpdateTime: {0}", CDOCommonUtil.formatTimeStamp(lastUpdateTime)); //$NON-NLS-1$
+      TRACER.format("Read lastUpdateTime: {0}", lastUpdateTime); //$NON-NLS-1$
     }
 
-    CDOID rootResourceID = in.readCDOID();
+    long rootResourceID = in.readCDOID();
     if (TRACER.isEnabled())
     {
       TRACER.format("Read rootResourceID: {0}", rootResourceID); //$NON-NLS-1$
@@ -175,8 +168,7 @@ public class OpenSessionRequest extends CDOClientRequestWithMonitoring<OpenSessi
       TRACER.format("Read repositoryEnsuringReferentialIntegrity: {0}", repositoryEnsuringReferentialIntegrity); //$NON-NLS-1$
     }
 
-    result = new OpenSessionResult(sessionID, userID, repositoryUUID, repositoryType, repositoryState, storeType,
-        objectIDTypes, repositoryCreationTime, lastUpdateTime, rootResourceID, repositorySupportingAudits,
+    result = new OpenSessionResult(sessionID, userID, repositoryUUID, repositoryType, repositoryState, storeType, repositoryCreationTime, lastUpdateTime, rootResourceID, repositorySupportingAudits,
         repositorySupportingBranches, repositorySupportingEcore, repositoryEnsuringReferentialIntegrity);
 
     CDOPackageUnit[] packageUnits = in.readCDOPackageUnits(null);

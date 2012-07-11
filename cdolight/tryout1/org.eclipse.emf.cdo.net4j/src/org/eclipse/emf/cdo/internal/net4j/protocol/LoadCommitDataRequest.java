@@ -22,18 +22,15 @@ import java.io.IOException;
  */
 public class LoadCommitDataRequest extends CDOClientRequest<CDOCommitData>
 {
-  private long timeStamp;
 
-  public LoadCommitDataRequest(CDOClientProtocol protocol, long timeStamp)
+  public LoadCommitDataRequest(CDOClientProtocol protocol)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOAD_COMMIT_DATA);
-    this.timeStamp = timeStamp;
   }
 
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    out.writeLong(timeStamp);
   }
 
   @Override

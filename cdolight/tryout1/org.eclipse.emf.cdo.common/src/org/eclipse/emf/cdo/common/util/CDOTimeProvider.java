@@ -16,5 +16,4 @@ package org.eclipse.emf.cdo.common.util;
  */
 public interface CDOTimeProvider
 {
-  public long getTimeStamp();
 }

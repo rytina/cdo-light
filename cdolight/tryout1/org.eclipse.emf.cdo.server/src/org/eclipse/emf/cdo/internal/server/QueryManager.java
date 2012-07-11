@@ -172,7 +172,6 @@ public class QueryManager extends Lifecycle implements InternalQueryManager
    */
   private class QueryContext implements IQueryContext, Runnable
   {
-    private CDOBranchPoint branchPoint;
 
     private InternalQueryResult queryResult;
 
@@ -216,7 +215,6 @@ public class QueryManager extends Lifecycle implements InternalQueryManager
       //
       // branchPoint = view.getBranch().getPoint(timeStamp);
 
-      branchPoint = CDOBranchUtil.copyBranchPoint(view);
     }
 
     public InternalQueryResult getQueryResult()
@@ -227,16 +225,6 @@ public class QueryManager extends Lifecycle implements InternalQueryManager
     public InternalView getView()
     {
       return queryResult.getView();
-    }
-
-    public CDOBranch getBranch()
-    {
-      return branchPoint.getBranch();
-    }
-
-    public long getTimeStamp()
-    {
-      return branchPoint.getTimeStamp();
     }
 
     public Future<?> getFuture()

@@ -10,23 +10,20 @@
  */
 package org.eclipse.emf.cdo.internal.common.commit;
 
+import java.text.MessageFormat;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.common.branch.CDOBranchPointImpl;
 import org.eclipse.emf.cdo.spi.common.commit.InternalCDOCommitInfoManager;
-
 import org.eclipse.net4j.util.CheckUtil;
-
-import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -35,21 +32,16 @@ public class CDOCommitInfoImpl extends CDOBranchPointImpl implements CDOCommitIn
 {
   private InternalCDOCommitInfoManager commitInfoManager;
 
-  private long previousTimeStamp;
-
   private String userID;
 
   private String comment;
 
   private CDOCommitData commitData;
 
-  public CDOCommitInfoImpl(InternalCDOCommitInfoManager commitInfoManager, CDOBranch branch, long timeStamp,
-      long previousTimeStamp, String userID, String comment, CDOCommitData commitData)
+  public CDOCommitInfoImpl(InternalCDOCommitInfoManager commitInfoManager, String userID, String comment, CDOCommitData commitData)
   {
-    super(branch, timeStamp);
     CheckUtil.checkArg(commitInfoManager, "commitInfoManager"); //$NON-NLS-1$
     this.commitInfoManager = commitInfoManager;
-    this.previousTimeStamp = previousTimeStamp;
     this.userID = userID;
     this.comment = comment;
     this.commitData = commitData;
@@ -60,10 +52,6 @@ public class CDOCommitInfoImpl extends CDOBranchPointImpl implements CDOCommitIn
     return commitInfoManager;
   }
 
-  public long getPreviousTimeStamp()
-  {
-    return previousTimeStamp;
-  }
 
   public String getUserID()
   {
@@ -97,25 +85,25 @@ public class CDOCommitInfoImpl extends CDOBranchPointImpl implements CDOCommitIn
     return commitData.getNewPackageUnits();
   }
 
-  public synchronized List<CDOIDAndVersion> getNewObjects()
+  public synchronized List<CDORevision> getNewObjects()
   {
     loadCommitDataIfNeeded();
     return commitData.getNewObjects();
   }
 
-  public synchronized List<CDORevisionKey> getChangedObjects()
+  public synchronized List<CDORevisionDelta> getChangedObjects()
   {
     loadCommitDataIfNeeded();
     return commitData.getChangedObjects();
   }
 
-  public synchronized List<CDOIDAndVersion> getDetachedObjects()
+  public synchronized List<Long> getDetachedObjects()
   {
     loadCommitDataIfNeeded();
     return commitData.getDetachedObjects();
   }
 
-  public CDOChangeKind getChangeKind(CDOID id)
+  public CDOChangeKind getChangeKind(long id)
   {
     loadCommitDataIfNeeded();
     return commitData.getChangeKind(id);
@@ -130,17 +118,16 @@ public class CDOCommitInfoImpl extends CDOBranchPointImpl implements CDOCommitIn
       data = commitData.toString();
     }
 
-    String timeStamp = CDOCommonUtil.formatTimeStamp(getTimeStamp());
     return MessageFormat
         .format(
-            "CommitInfo[{0}, {1}, {2}, {3}, {4}, {5}]", getPreviousTimeStamp(), getBranch(), timeStamp, getUserID(), getComment(), data); //$NON-NLS-1$
+            "CommitInfo[{0}, {1}, {2}, {3}, {4}, {5}]", getUserID(), getComment(), data); //$NON-NLS-1$
   }
 
   private void loadCommitDataIfNeeded()
   {
     if (commitData == null)
     {
-      commitData = commitInfoManager.getCommitInfoLoader().loadCommitData(getTimeStamp());
+      commitData = commitInfoManager.getCommitInfoLoader().loadCommitData();
     }
   }
 }

@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -32,7 +31,7 @@ public class SwitchTargetIndication extends CDOServerReadIndicationWithMonitorin
 {
   private List<CDORevisionDelta> allChangedObjects = new ArrayList<CDORevisionDelta>();
 
-  private List<CDOID> allDetachedObjects = new ArrayList<CDOID>();
+  private List<Long> allDetachedObjects = new ArrayList<Long>();
 
   public SwitchTargetIndication(CDOServerProtocol protocol)
   {
@@ -50,18 +49,18 @@ public class SwitchTargetIndication extends CDOServerReadIndicationWithMonitorin
       try
       {
         int viewID = in.readInt();
-        CDOBranchPoint branchPoint = in.readCDOBranchPoint();
+        long branchPoint = in.readLong();
 
         int size = in.readInt();
-        List<CDOID> invalidObjects = new ArrayList<CDOID>(size);
+        List<Long> invalidObjects = new ArrayList<Long>(size);
         for (int i = 0; i < size; i++)
         {
-          CDOID id = in.readCDOID();
+          long id = in.readCDOID();
           invalidObjects.add(id);
         }
 
         InternalView view = getSession().getView(viewID);
-        view.changeTarget(branchPoint, invalidObjects, allChangedObjects, allDetachedObjects);
+        view.changeTarget(invalidObjects, allChangedObjects, allDetachedObjects);
       }
       finally
       {
@@ -85,7 +84,7 @@ public class SwitchTargetIndication extends CDOServerReadIndicationWithMonitorin
     }
 
     out.writeInt(allDetachedObjects.size());
-    for (CDOID id : allDetachedObjects)
+    for (Long id : allDetachedObjects)
     {
       out.writeCDOID(id);
     }

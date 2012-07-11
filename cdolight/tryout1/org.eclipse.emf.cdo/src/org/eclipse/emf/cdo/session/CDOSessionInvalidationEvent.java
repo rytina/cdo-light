@@ -32,7 +32,6 @@ import org.eclipse.emf.cdo.view.CDOView;
  */
 public interface CDOSessionInvalidationEvent extends CDOSessionEvent, CDOCommitInfo
 {
-  public static final long LOCAL_ROLLBACK = CDORevision.UNSPECIFIED_DATE;
 
   /**
    * Returns the transaction that was committed and thereby caused this event to be emitted if this transaction is

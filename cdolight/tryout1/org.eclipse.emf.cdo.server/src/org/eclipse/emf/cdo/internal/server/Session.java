@@ -14,18 +14,22 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.CDOCommonSession;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.common.commit.DelegatingCommitInfo;
 import org.eclipse.emf.cdo.server.IView;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSessionMessage;
@@ -37,7 +41,9 @@ import org.eclipse.emf.cdo.spi.server.InternalSession;
 import org.eclipse.emf.cdo.spi.server.InternalSessionManager;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
 import org.eclipse.emf.cdo.spi.server.InternalView;
-
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
 import org.eclipse.net4j.util.collection.IndexedList;
 import org.eclipse.net4j.util.container.Container;
@@ -47,17 +53,6 @@ import org.eclipse.net4j.util.lifecycle.ILifecycle;
 import org.eclipse.net4j.util.lifecycle.LifecycleEventAdapter;
 import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.eclipse.net4j.util.om.log.OMLogger;
-
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Eike Stepper
@@ -76,7 +71,6 @@ public class Session extends Container<IView> implements InternalSession
 
   private PassiveUpdateMode passiveUpdateMode = PassiveUpdateMode.INVALIDATIONS;
 
-  private long lastUpdateTime;
 
   @ExcludeFromDump
   private Object lastUpdateTimeLock = new Object();
@@ -202,13 +196,6 @@ public class Session extends Container<IView> implements InternalSession
     this.passiveUpdateMode = passiveUpdateMode;
   }
 
-  public long getLastUpdateTime()
-  {
-    synchronized (lastUpdateTimeLock)
-    {
-      return lastUpdateTime;
-    }
-  }
 
   public InternalView[] getElements()
   {
@@ -243,7 +230,7 @@ public class Session extends Container<IView> implements InternalSession
   /**
    * @since 2.0
    */
-  public InternalView openView(int viewID, CDOBranchPoint branchPoint)
+  public InternalView openView(int viewID)
   {
     checkActive();
     if (viewID == TEMP_VIEW_ID)
@@ -251,7 +238,7 @@ public class Session extends Container<IView> implements InternalSession
       viewID = -lastTempViewID.incrementAndGet();
     }
 
-    InternalView view = new View(this, viewID, branchPoint);
+    InternalView view = new View(this, viewID);
     view.activate();
     addView(view);
     return view;
@@ -260,7 +247,7 @@ public class Session extends Container<IView> implements InternalSession
   /**
    * @since 2.0
    */
-  public InternalTransaction openTransaction(int viewID, CDOBranchPoint branchPoint)
+  public InternalTransaction openTransaction(int viewID)
   {
     checkActive();
     if (viewID == TEMP_VIEW_ID)
@@ -268,7 +255,7 @@ public class Session extends Container<IView> implements InternalSession
       viewID = -lastTempViewID.incrementAndGet();
     }
 
-    InternalTransaction transaction = new Transaction(this, viewID, branchPoint);
+    InternalTransaction transaction = new Transaction(this, viewID);
     transaction.activate();
     addView(transaction);
     return transaction;
@@ -300,8 +287,8 @@ public class Session extends Container<IView> implements InternalSession
    * 
    * @since 2.0
    */
-  public void collectContainedRevisions(InternalCDORevision revision, CDOBranchPoint branchPoint, int referenceChunk,
-      Set<CDOID> revisions, List<CDORevision> additionalRevisions)
+  public void collectContainedRevisions(InternalCDORevision revision, int referenceChunk,
+      Set<Long> revisions, List<CDORevision> additionalRevisions)
   {
     InternalCDORevisionManager revisionManager = getManager().getRepository().getRevisionManager();
     EClass eClass = revision.getEClass();
@@ -313,28 +300,21 @@ public class Session extends Container<IView> implements InternalSession
       if (feature instanceof EReference && !feature.isMany() && ((EReference)feature).isContainment())
       {
         Object value = revision.getValue(feature);
-        if (value instanceof CDOID)
-        {
-          CDOID id = (CDOID)value;
+          long id = (Long)value;
           if (!CDOIDUtil.isNull(id) && !revisions.contains(id))
           {
-            InternalCDORevision containedRevision = revisionManager.getRevision(id, branchPoint, referenceChunk,
+            InternalCDORevision containedRevision = revisionManager.getRevision(id, referenceChunk,
                 CDORevision.DEPTH_NONE, true);
             revisions.add(id);
             additionalRevisions.add(containedRevision);
 
             // Recurse
-            collectContainedRevisions(containedRevision, branchPoint, referenceChunk, revisions, additionalRevisions);
+            collectContainedRevisions(containedRevision, referenceChunk, revisions, additionalRevisions);
           }
-        }
       }
     }
   }
 
-  public CDOID provideCDOID(Object idObject)
-  {
-    return (CDOID)idObject;
-  }
 
   public void sendRepositoryTypeNotification(CDOCommonRepository.Type oldType, CDOCommonRepository.Type newType)
       throws Exception
@@ -351,14 +331,6 @@ public class Session extends Container<IView> implements InternalSession
     if (protocol != null)
     {
       protocol.sendRepositoryStateNotification(oldState, newState);
-    }
-  }
-
-  public void sendBranchNotification(InternalCDOBranch branch) throws Exception
-  {
-    if (protocol != null)
-    {
-      protocol.sendBranchNotification(branch);
     }
   }
 
@@ -390,24 +362,23 @@ public class Session extends Container<IView> implements InternalSession
       }
 
       @Override
-      public List<CDOIDAndVersion> getNewObjects()
+      public List<CDORevision> getNewObjects()
       {
-        final List<CDOIDAndVersion> newObjects = super.getNewObjects();
-        return new IndexedList<CDOIDAndVersion>()
+        final List<CDORevision> newObjects = super.getNewObjects();
+        return new IndexedList<CDORevision>()
         {
           @Override
-          public CDOIDAndVersion get(int index)
+          public CDORevision get(int index)
           {
             // The following will always be a CDORevision!
-            CDOIDAndVersion newObject = newObjects.get(index);
+            CDORevision newObject = newObjects.get(index);
             if (additions)
             {
               // Return full revisions if not in INVALIDATION mode
               return newObject;
             }
 
-            // Prevent sending whole revisions by copying the id and version
-            return CDOIDUtil.createIDAndVersion(newObject);
+            return newObject;
           }
 
           @Override
@@ -419,23 +390,17 @@ public class Session extends Container<IView> implements InternalSession
       }
 
       @Override
-      public List<CDORevisionKey> getChangedObjects()
+      public List<CDORevisionDelta> getChangedObjects()
       {
-        final List<CDORevisionKey> changedObjects = super.getChangedObjects();
-        return new IndexedList<CDORevisionKey>()
+        final List<CDORevisionDelta> changedObjects = super.getChangedObjects();
+        return new IndexedList<CDORevisionDelta>()
         {
           @Override
-          public CDORevisionKey get(int index)
+          public CDORevisionDelta get(int index)
           {
             // The following will always be a CDORevisionDelta!
-            CDORevisionKey changedObject = changedObjects.get(index);
-            if (changes || additions || hasSubscription(changedObject.getID(), views))
-            {
+            CDORevisionDelta changedObject = changedObjects.get(index);
               return changedObject;
-            }
-
-            // Prevent sending whole revisions by copying the id and version
-            return CDORevisionUtil.copyRevisionKey(changedObject);
           }
 
           @Override
@@ -447,13 +412,9 @@ public class Session extends Container<IView> implements InternalSession
       }
     });
 
-    synchronized (lastUpdateTimeLock)
-    {
-      lastUpdateTime = commitInfo.getTimeStamp();
-    }
   }
 
-  private boolean hasSubscription(CDOID id, InternalView[] views)
+  private boolean hasSubscription(long id, InternalView[] views)
   {
     for (InternalView view : views)
     {
@@ -523,4 +484,5 @@ public class Session extends Container<IView> implements InternalSession
     manager = null;
     super.doDeactivate();
   }
+
 }
