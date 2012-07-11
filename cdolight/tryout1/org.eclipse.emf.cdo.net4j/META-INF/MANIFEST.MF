@@ -1,0 +1,407 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.emf.cdo.net4j; singleton:=true
+Bundle-Activator: org.eclipse.emf.cdo.internal.net4j.bundle.OM$Activat
+ or
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ",org.eclipse.emf.cdo;bundle-version="[4.0.0,5.0.0)";visibility:=reex
+ port,org.eclipse.net4j;bundle-version="[4.0.0,5.0.0)";visibility:=ree
+ xport
+Export-Package: org.eclipse.emf.cdo.internal.net4j;version="4.0.0"; x-
+ friends:="org.eclipse.emf.cdo.tests,  org.eclipse.emf.cdo.defs,  org.
+ eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.examples",org.eclipse.emf.cd
+ o.internal.net4j.bundle;version="4.0.0";x-friends:="org.eclipse.emf.c
+ do.tests",org.eclipse.emf.cdo.internal.net4j.messages;version="4.0.0"
+ ;x-internal:=true,org.eclipse.emf.cdo.internal.net4j.protocol;version
+ ="4.0.0"; x-friends:="org.eclipse.emf.cdo.tests,  org.eclipse.emf.cdo
+ .defs,  org.eclipse.emf.cdo.ui,  org.eclipse.emf.cdo.examples",org.ec
+ lipse.emf.cdo.net4j;version="4.0.0"
+Bundle-Version: 4.0.0.v20110608-1440
+Ant-Version: Apache Ant 1.8.2
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/ObjectLockedRequest.
+ class
+SHA1-Digest: d/K/C5CE06KLsFQnJJn1uyTIH74=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionImpl$Afte
+ rRecoveryRunnable.class
+SHA1-Digest: PMq8KQEtZ2u5jKy4PZktlS9tHmY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitXATransactionR
+ equest.class
+SHA1-Digest: pswASeU15iUYK6ktuop78jDNKE8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequestWith
+ Monitoring$2.class
+SHA1-Digest: RXeoyVAGHubjWoJ8CBTJZXT8QUc=
+
+Name: org/eclipse/emf/cdo/internal/net4j/messages/Messages.class
+SHA1-Digest: igYK4+04FrBZQH8a0nD6oNiJ8jw=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/BranchNotificationIn
+ dication.class
+SHA1-Digest: +N0h3GtK6i3fRwnsmOiCBNSyxgE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RepositoryTypeNotifi
+ cationIndication.class
+SHA1-Digest: 9JvpCVjhI4+zRTttybW8dwmOHdA=
+
+Name: org/eclipse/emf/cdo/internal/net4j/ReconnectingCDOSessionImpl.cl
+ ass
+SHA1-Digest: vs2KPASNjMaoKZ/WRnPCHLCNzSQ=
+
+Name: org/eclipse/emf/cdo/net4j/CDOSessionRecoveryEvent$Type.class
+SHA1-Digest: pUBgDYzYJCnHvcDoZZ5uHPD9VB0=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitDelegationRequ
+ est.class
+SHA1-Digest: j945RLv4HUcOjxEDaeMwV6hzGYE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequest.cla
+ ss
+SHA1-Digest: v8vK7z0VfHBmzb5mkAuls+PcE24=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitXATransactionP
+ hase2Request.class
+SHA1-Digest: i5GAtgRfeOXDEg8RxxCswP+zBLY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LockAreaRequest.clas
+ s
+SHA1-Digest: V4c00AXQ7iQBPraNNTz4iSb/Dbo=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/ReplicateRepositoryR
+ equest.class
+SHA1-Digest: hfpGqChVUtDTOhQGyja2AXu2j7g=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RepositoryTimeReques
+ t.class
+SHA1-Digest: 0/dRRR5M5dxrjbXXZuNYPKW9SsY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitNotificationIn
+ dication.class
+SHA1-Digest: CR3eMPDgMNVacHKjWfnkrR9n7m4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/OpenSessionRequest.c
+ lass
+SHA1-Digest: +n/VYXTQMyei/JPUVx/N/cCQEWM=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequest$2.c
+ lass
+SHA1-Digest: ulglyJ2/TU4ePHYQmgKYVR0DB9M=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/ChangeSubscriptionRe
+ quest.class
+SHA1-Digest: mZJImZrtwoPkaOUEdzAg4PjYKm8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/ReconnectingCDOSessionConfigu
+ rationImpl.class
+SHA1-Digest: vNafFYigeGfdNOyLzJLTJxu0Ivk=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RemoteMessageNotific
+ ationIndication.class
+SHA1-Digest: f30mlLwqCtpdk/dX99HUJL8MKVg=
+
+Name: org/eclipse/emf/cdo/net4j/CDONet4jViewProvider.class
+SHA1-Digest: Bop16dz21wu4K+4P5ZkZ9u/wMdM=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RepositoryStateNotif
+ icationIndication.class
+SHA1-Digest: 0fxEdVnpIH61A5+IwIFiIpTxLrU=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RemoteSessionNotific
+ ationIndication.class
+SHA1-Digest: Ejxm3+kjKtffuyMxLF2u2hhvj64=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/ReplicateRepositoryR
+ awRequest.class
+SHA1-Digest: hYnDZqPCWxCZ8tTqDjj40igTUZk=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/QueryRequest.class
+SHA1-Digest: 14gpK31/0vnLUXmOZLhRTVdjdcM=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitTransactionReq
+ uest.class
+SHA1-Digest: 1IaiXM6QUxolgrj/u0J76Es06EQ=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadChunkRequest.cla
+ ss
+SHA1-Digest: f91ok/c607t9FuAqeZ1NcljICxs=
+
+Name: org/eclipse/emf/cdo/internal/net4j/Net4jConnectorInjector.class
+SHA1-Digest: FiNCD6frq1MJuGNdqF1H60+VWbM=
+
+Name: org/eclipse/emf/cdo/net4j/CDONet4jViewProvider$JVM.class
+SHA1-Digest: +7UXaLGpH2xU5bufC2PdLIekRSs=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadCommitDataReques
+ t.class
+SHA1-Digest: N+0Jb7bcqj4koG8tJF4/kKJtqkc=
+
+Name: org/eclipse/emf/cdo/net4j/CDOSessionRecoveryEvent.class
+SHA1-Digest: wD+tUYJ54O9q3dh/5EFbiweBRs4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOTimeRequest.class
+SHA1-Digest: +EV89YnbN84HbDkld/z8Ho4KmlU=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientProtocol.cl
+ ass
+SHA1-Digest: XJDyhfc5PhkYyRs1rxd2yiJwvdA=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientIndication.
+ class
+SHA1-Digest: 6oujx47r8cyZyk++Xw/bmeEygrY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/UnsubscribeRemoteSes
+ sionsRequest.class
+SHA1-Digest: 4Di8nl/iJU52TsG2A1SewbOHGu4=
+
+Name: org/eclipse/emf/cdo/net4j/CDOSession.class
+SHA1-Digest: MZfRbJfnwUE89T/XFbzmq7FzM7Q=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadBranchesRequest.
+ class
+SHA1-Digest: qQIJKt/XCrv+JcSs4f3qhiBu6g0=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadPackagesRequest.
+ class
+SHA1-Digest: 8yhA61n6TcWh5OivxB4ZvotlBFs=
+
+Name: org/eclipse/emf/cdo/net4j/RecoveringCDOSessionConfiguration.clas
+ s
+SHA1-Digest: NzSPmAInKSO+V+ibk1N5ogSCGbI=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequestWith
+ Monitoring.class
+SHA1-Digest: YSHY0hCzc+U3yZsSEKTaKbMTqVU=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadSubBranchesReque
+ st.class
+SHA1-Digest: d0hupmHEWX20i0H9AR4WDIGC/Fc=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientIndication$
+ 1.class
+SHA1-Digest: 8Ap4EvYX4emgl2VT1p0OvUrN1eE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/QueryCancelRequest.c
+ lass
+SHA1-Digest: 8XofOGWi8+WNNnpofOWzjN3JDlg=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadRevisionByVersio
+ nRequest.class
+SHA1-Digest: SozOl4RmlqQT3uRsBcvP/uvCIq4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionImpl$Auto
+ Closer.class
+SHA1-Digest: jJSGVTZY4Rrb/zE0SZBargEoaCE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CloseViewRequest.cla
+ ss
+SHA1-Digest: lcC9OJwPULpqXIKtxClcm20Aj98=
+
+Name: org/eclipse/emf/cdo/internal/net4j/CDONet4jSessionImpl$OptionsIm
+ pl.class
+SHA1-Digest: rsonUpWddmCavcjU6Rfh6Ut4siY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CreateBranchRequest.
+ class
+SHA1-Digest: ERVQ4iBuAyBVJHIUsoMQmlVHZwQ=
+
+Name: org/eclipse/emf/cdo/net4j/CDONet4jViewProvider$SSL.class
+SHA1-Digest: 1/Bt9MgB36Iwy5Fp1PWkrO275es=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionConfigura
+ tionImpl.class
+SHA1-Digest: i0imDmTANZmAx7wqxNi2uJ1nuI0=
+
+Name: org/eclipse/emf/cdo/net4j/CDONet4jUtil.class
+SHA1-Digest: BK5hfUprvsgLpyroSIS5nOQQTqo=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitXATransactionP
+ hase1Request.class
+SHA1-Digest: uAXQeClJRwfo419TeSH9ddBjknI=
+
+Name: org/eclipse/emf/cdo/net4j/package.html
+SHA1-Digest: vrOWcZdfWtaG46sV8Ff12uqRolg=
+
+Name: org/eclipse/emf/cdo/net4j/CDOSessionConfiguration.class
+SHA1-Digest: mS9UMetZZAP9nzV54wMyjn/iwNE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionImpl$Reco
+ veringExceptionHandler.class
+SHA1-Digest: jOZCvxPsqKoRP6areg0WVBcWfeU=
+
+Name: org/eclipse/emf/cdo/net4j/CDONet4jViewProvider$TCP.class
+SHA1-Digest: mFXQj3FVs/YeEtAVVj3B8lfc0ZQ=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/QueryLobsRequest.cla
+ ss
+SHA1-Digest: N4M1kHcOMzLxcANO/NbMnFlSdUI=
+
+Name: org/eclipse/emf/cdo/net4j/ReconnectingCDOSessionConfiguration.cl
+ ass
+SHA1-Digest: 5OhK0NsCZ2S/a10QJ81qWMSigwE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitXATransactionC
+ ancelRequest.class
+SHA1-Digest: ypRyS6VZseH/m4McRb5UqlsNPBw=
+
+Name: .options
+SHA1-Digest: sV2a4IoTI5wsXY+pTJzWZPL3kvQ=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RefreshSessionReques
+ t.class
+SHA1-Digest: NgWRi07Ykn+Gw1Xro7+ESVJ1tEI=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientProtocolFac
+ tory.class
+SHA1-Digest: Inwdo6vnDmgidzKaFmSrKex2KRA=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadRevisionsRequest
+ .class
+SHA1-Digest: tJdStCEjgVlmwgbpsgARzqyYB8M=
+
+Name: org/eclipse/emf/cdo/internal/net4j/CDONet4jSessionConfigurationI
+ mpl$RepositoryInfo.class
+SHA1-Digest: lK3oHvPT0lKfsRxZbypBTzh7inQ=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionImpl.clas
+ s
+SHA1-Digest: 46juzUzkYZk8BqFA1bBX4nQ2o2Q=
+
+Name: org/eclipse/emf/cdo/internal/net4j/messages/messages.properties
+SHA1-Digest: eJSEaWGPsMkEucVaEgZtbADqrZQ=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/DisablePassiveUpdate
+ Request.class
+SHA1-Digest: NrRcXlwHPvDQzevhPJEK4u51CRM=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadChangeSetsReques
+ t.class
+SHA1-Digest: im7+IJIz4Mr0HMV6FWhsahmvm1U=
+
+Name: org/eclipse/emf/cdo/net4j/FailoverCDOSessionConfiguration.class
+SHA1-Digest: Br4ZeJhn/SqJspMYJw3K4oBlyMo=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/SwitchTargetRequest.
+ class
+SHA1-Digest: RwyS5j9PKUN8HD19/PAVCUOfEsw=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequestWith
+ Monitoring$1.class
+SHA1-Digest: X/vkHBiT0Hn0WN+85hBEpgSm+kM=
+
+Name: copyright.txt
+SHA1-Digest: cSsGaSTLSfayKkd0dFKnvLSGDh0=
+
+Name: org/eclipse/emf/cdo/internal/net4j/RecoveringCDOSessionImpl$Open
+ ViewRunnable.class
+SHA1-Digest: q81dXV0HKy41VgnGiUAGSL5M2HE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/bundle/OM.class
+SHA1-Digest: CdFLQoVbWOKS8Wlvvlc7yOj3G8w=
+
+Name: org/eclipse/emf/cdo/net4j/CDOSession$Options.class
+SHA1-Digest: dCTDnH5mMiYZEvwHkPpHRZucDoU=
+
+Name: plugin.properties
+SHA1-Digest: Yk4hhdjjAjXgWZVmIISkjRt7J1k=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/GetRemoteSessionsReq
+ uest.class
+SHA1-Digest: U3rXv3glG0im0NxbWBz3URyQZP8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadLobRequest.class
+SHA1-Digest: 8DLNqhcqivIO8P6/XiCRF39VK6g=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CommitXATransactionP
+ hase3Request.class
+SHA1-Digest: ci8fIvX5LFI/fvr4ejZgC+a4iwI=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/SetPassiveUpdateMode
+ Request.class
+SHA1-Digest: PPNc4cLv9AJyYxz3EyRgoVHPqG4=
+
+Name: plugin.xml
+SHA1-Digest: dluxJ8CF5NxEItSIrMR7YtLLeFY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/OpenViewRequest.clas
+ s
+SHA1-Digest: POM9XOQn3xa//xtHDNuoTyB78mY=
+
+Name: org/eclipse/emf/cdo/internal/net4j/bundle/OM$Activator.class
+SHA1-Digest: 7h9/en65GhYu1if8D3pZOU79aOg=
+
+Name: org/eclipse/emf/cdo/internal/net4j/FailoverCDOSessionConfigurati
+ onImpl.class
+SHA1-Digest: HDYS0PQzZ9PvgL14hiv6sCpcek4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LockObjectsRequest.c
+ lass
+SHA1-Digest: rA9gIPqno8db0JibHDpO+1uBK9k=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadCommitInfosReque
+ st.class
+SHA1-Digest: Zd57L8pBWUg3V+GHSCQqfGjKzOE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadBranchRequest.cl
+ ass
+SHA1-Digest: 9jANPYR2TIi0NOzmK14poh1wZn8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/RemoteMessageRequest
+ .class
+SHA1-Digest: wO9Sa6Lx/o6qYXZHTY3kcRBAFqE=
+
+Name: org/eclipse/emf/cdo/internal/net4j/Net4jSessionFactory.class
+SHA1-Digest: mTbJhHhgBf5PCsYgq4pDJrgB9u8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/LoadMergeDataRequest
+ .class
+SHA1-Digest: wg/8lWvNyZOvSEL1OefZNYLt9X0=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/AuthenticationIndica
+ tion.class
+SHA1-Digest: 1ew9xtpmxwyUJ7yk1O+sLfVZ+h0=
+
+Name: org/eclipse/emf/cdo/internal/net4j/FailoverCDOSessionImpl.class
+SHA1-Digest: GbRFKdMXDm8MFw5d//bEyVdo/64=
+
+Name: org/eclipse/emf/cdo/internal/net4j/CDONet4jSessionImpl.class
+SHA1-Digest: tOxBmcIvBkxSkL0UqXy9TGZvafQ=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/HandleRevisionsReque
+ st.class
+SHA1-Digest: AXq4IPWJnS73AZQ5gGNvEGtL4L8=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/UnlockObjectsRequest
+ .class
+SHA1-Digest: 2tnEqjcnROUG4xBm3bLY3aofimw=
+
+Name: org/eclipse/emf/cdo/internal/net4j/CDONet4jSessionConfigurationI
+ mpl.class
+SHA1-Digest: NMf3DE7L8KaIyL97LMi+85OmAo4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/FailoverCDOSessionImpl$1.clas
+ s
+SHA1-Digest: zFunGLfpziowMwiXZjHC78gmX2s=
+
+Name: org/eclipse/emf/cdo/internal/net4j/protocol/CDOClientRequest$1.c
+ lass
+SHA1-Digest: sjKE/bbOMnvTf3IDvZN8BAUnkx4=
+
+Name: org/eclipse/emf/cdo/internal/net4j/CDOSessionRecoveryEventImpl.c
+ lass
+SHA1-Digest: CmFnCxhOFCtgmmr15DLoLu6qcLU=
+
