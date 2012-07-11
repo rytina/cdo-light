@@ -10,25 +10,28 @@
  */
 package org.eclipse.emf.cdo.internal.server.embedded;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchHandler;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDOAuthenticator;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionHandler;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.common.util.CDOQueryQueue;
 import org.eclipse.emf.cdo.server.StoreThreadLocal;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSession;
@@ -49,12 +52,6 @@ import org.eclipse.emf.cdo.spi.server.InternalSession;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
 import org.eclipse.emf.cdo.spi.server.InternalView;
 import org.eclipse.emf.cdo.view.CDOView;
-
-import org.eclipse.net4j.util.collection.Pair;
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.lifecycle.Lifecycle;
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -63,12 +60,10 @@ import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
 import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
 import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.net4j.util.collection.Pair;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.lifecycle.Lifecycle;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * @author Eike Stepper
@@ -165,18 +160,18 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     throw new UnsupportedOperationException();
   }
 
-  public CDOCommitData loadCommitData(long timeStamp)
+  public CDOCommitData loadCommitData()
   {
     throw new UnsupportedOperationException();
   }
 
-  public InternalCDORevision loadRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk)
+  public InternalCDORevision loadRevision(long id, int referenceChunk)
   {
     try
     {
       InternalSession session = serverSessionProtocol.getSession();
       StoreThreadLocal.setSession(session);
-      return repository.getRevisionManager().getRevisionByVersion(id, branchVersion, referenceChunk, true);
+      return repository.getRevisionManager().getRevision(id, referenceChunk,CDORevision.DEPTH_INFINITE, true);
     }
     finally
     {
@@ -192,7 +187,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       InternalSession session = serverSessionProtocol.getSession();
       StoreThreadLocal.setSession(session);
 
-      List<CDOID> ids = new ArrayList<CDOID>(infos.size());
+      List<Long> ids = new ArrayList<Long>(infos.size());
       for (RevisionInfo info : infos)
       {
         ids.add(info.getID());
@@ -211,23 +206,22 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     }
   }
 
-  public RefreshSessionResult refresh(long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  public RefreshSessionResult refresh(Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates)
   {
     throw new UnsupportedOperationException();
   }
 
-  public void openView(int viewID, boolean readOnly, CDOBranchPoint branchPoint)
+  public void openView(int viewID, boolean readOnly)
   {
     InternalSession session = serverSessionProtocol.getSession();
     if (readOnly)
     {
-      session.openView(viewID, branchPoint);
+      session.openView(viewID);
     }
     else
     {
-      session.openTransaction(viewID, branchPoint);
+      session.openTransaction(viewID);
     }
   }
 
@@ -236,8 +230,8 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     throw new UnsupportedOperationException();
   }
 
-  public void switchTarget(int viewID, CDOBranchPoint branchPoint, List<InternalCDOObject> invalidObjects,
-      List<CDORevisionKey> allChangedObjects, List<CDOIDAndVersion> allDetachedObjects, OMMonitor monitor)
+  public void switchTarget(int viewID, List<InternalCDOObject> invalidObjects,
+      List<Long> allChangedObjects, List<Long> allDetachedObjects, OMMonitor monitor)
   {
     // TODO: implement EmbeddedClientSessionProtocol.changeView(viewID, branchPoint, invalidObjects, allChangedObjects,
     // allDetachedObjects, monitor)
@@ -253,7 +247,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     // InternalView view = serverSessionProtocol.getSession().getView(viewID);
     // if (view != null)
     // {
-    // List<CDOID> ids = new ArrayList<CDOID>(invalidObjects.size());
+    // List<Long> ids = new ArrayList<Long>(invalidObjects.size());
     // for (InternalCDOObject object : invalidObjects)
     // {
     // ids.add(object.cdoID());
@@ -282,7 +276,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     }
   }
 
-  public void changeSubscription(int viewID, List<CDOID> ids, boolean subscribeMode, boolean clear)
+  public void changeSubscription(int viewID, List<Long> ids, boolean subscribeMode, boolean clear)
   {
     throw new UnsupportedOperationException();
   }
@@ -365,8 +359,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     throw new UnsupportedOperationException();
   }
 
-  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks,
-      CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
     monitor.begin(2);
     boolean success = false;
@@ -384,7 +377,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       List<CDOPackageUnit> npu = commitData.getNewPackageUnits();
       serverCommitContext.setNewPackageUnits(npu.toArray(new InternalCDOPackageUnit[npu.size()]));
 
-      List<CDOIDAndVersion> no = commitData.getNewObjects();
+      List<CDORevision> no = commitData.getNewObjects();
       InternalCDORevision[] array = new InternalCDORevision[no.size()];
       int index = 0;
       for (CDOIDAndVersion object : no)
@@ -396,11 +389,11 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
 
       serverCommitContext.setNewObjects(array);
 
-      List<CDORevisionKey> rd = commitData.getChangedObjects();
+      List<CDORevisionDelta> rd = commitData.getChangedObjects();
       serverCommitContext.setDirtyObjectDeltas(rd.toArray(new InternalCDORevisionDelta[rd.size()]));
 
-      List<CDOIDAndVersion> detachedObjects = commitData.getDetachedObjects();
-      serverCommitContext.setDetachedObjects(detachedObjects.toArray(new CDOID[detachedObjects.size()]));
+      List<Long> detachedObjects = commitData.getDetachedObjects();
+      serverCommitContext.setDetachedObjects(detachedObjects.toArray(new Long[detachedObjects.size()]));
 
       serverCommitContext.write(monitor.fork());
       success = serverCommitContext.getRollbackMessage() == null;
@@ -414,7 +407,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       }
 
       // result = new CommitTransactionResult(commitData, serverCommitContext.getBranchPoint().getTimeStamp());
-      // for (Entry<CDOID, CDOID> entry : serverCommitContext.getIDMappings().entrySet())
+      // for (Entry<Long, Long> entry : serverCommitContext.getIDMappings().entrySet())
       // {
       // result.addIDMapping(entry.getKey(), entry.getValue());
       // }
@@ -433,7 +426,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
   }
 
   public CommitTransactionResult commitDelegation(CDOBranch branch, String userID, String comment,
-      CDOCommitData commitData, Map<CDOID, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+      CDOCommitData commitData, Map<Long, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
     throw new UnsupportedOperationException();
   }
@@ -483,12 +476,12 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     throw new UnsupportedOperationException();
   }
 
-  public CDOChangeSetData[] loadChangeSets(CDOBranchPointRange... ranges)
+  public CDOChangeSetData[] loadChangeSets()
   {
     throw new UnsupportedOperationException();
   }
 
-  public Set<CDOID> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
+  public Set<Long> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
       CDORevisionAvailabilityInfo targetBaseInfo, CDORevisionAvailabilityInfo sourceBaseInfo)
   {
     throw new UnsupportedOperationException();
@@ -538,4 +531,40 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     serverSessionProtocol = null;
     super.doDeactivate();
   }
+
+public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos,
+		int referenceChunk, int prefetchDepth) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public void loadCommitInfos(CDOCommitInfoHandler handler) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void switchTarget(int viewID, CDOBranchPoint branchPoint,
+		List<InternalCDOObject> invalidObjects,
+		List<CDORevisionDelta> allChangedObjects,
+		List<Long> allDetachedObjects, OMMonitor monitor) {
+	// TODO Auto-generated method stub
+	
+}
+
+public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions,
+		int viewID, LockType lockType, long timeout)
+		throws InterruptedException {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public CommitTransactionResult commitDelegation(String userID, String comment,
+		CDOCommitData commitData, Map<Long, EClass> detachedObjectTypes,
+		Collection<CDOLob<?>> lobs, OMMonitor monitor) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+
+
 }

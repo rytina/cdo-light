@@ -97,53 +97,19 @@ public abstract class AbstractCDORevision implements InternalCDORevision
     return this;
   }
 
-  /**
-   * @since 3.0
-   */
-  public boolean isHistorical()
-  {
-    return getRevised() != UNSPECIFIED_DATE;
-  }
 
-  public boolean isValid(long timeStamp)
-  {
-    long startTime = getTimeStamp();
-    long endTime = getRevised();
-    return CDOCommonUtil.isValidTimeStamp(timeStamp, startTime, endTime);
-  }
-
-  /**
-   * @since 4.0
-   */
-  public boolean isValid(CDOBranchPoint branchPoint)
-  {
-    return getBranch() == branchPoint.getBranch() && isValid(branchPoint.getTimeStamp());
-  }
 
   /**
    * @since 3.0
    */
-  public void adjustForCommit(CDOBranch branch, long timeStamp)
+  public void adjustForCommit()
   {
-    if (ObjectUtil.equals(branch, getBranch()))
-    {
-      // Same branch, increase version
-      setVersion(getVersion() + 1);
-    }
-    else
-    {
-      // Different branch, start with v1
-      setVersion(FIRST_VERSION);
-    }
-
-    setBranchPoint(branch.getPoint(timeStamp));
-    setRevised(UNSPECIFIED_DATE);
   }
 
   @Override
   public int hashCode()
   {
-    return getID().hashCode() ^ getBranch().hashCode() ^ getVersion();
+    return ((int) getID() % Integer.MAX_VALUE);
   }
 
   @Override
@@ -156,8 +122,7 @@ public abstract class AbstractCDORevision implements InternalCDORevision
 
     if (obj instanceof CDORevision)
     {
-      CDORevision that = (CDORevision)obj;
-      return getID().equals(that.getID()) && getBranch().equals(that.getBranch()) && getVersion() == that.getVersion();
+      return getID() == ((CDORevision)obj).getID();
     }
 
     return false;
@@ -169,13 +134,7 @@ public abstract class AbstractCDORevision implements InternalCDORevision
     EClass eClass = getEClass();
     String name = eClass == null ? "Revision" : eClass.getName();
 
-    CDOBranch branch = getBranch();
-    if (branch == null)
-    {
-      return name + "@" + getID() + "v" + getVersion();
-    }
-
-    return name + "@" + getID() + ":" + branch.getID() + "v" + getVersion();
+    return name + "@" + getID();
   }
 
   /**

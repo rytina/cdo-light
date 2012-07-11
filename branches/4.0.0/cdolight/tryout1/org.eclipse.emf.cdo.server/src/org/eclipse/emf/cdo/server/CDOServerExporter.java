@@ -15,7 +15,6 @@ import org.eclipse.emf.cdo.common.branch.CDOBranchHandler;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.lob.CDOBlob;
 import org.eclipse.emf.cdo.common.lob.CDOClob;
@@ -41,6 +40,7 @@ import org.eclipse.net4j.util.io.XMLOutput;
 import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
@@ -150,24 +150,6 @@ public abstract class CDOServerExporter<OUT>
   {
     InternalCDOBranchManager branchManager = repository.getBranchManager();
     exportBranch(out, branchManager.getMainBranch());
-
-    if (repository.isSupportingBranches())
-    {
-      branchManager.getBranches(0, 0, new CDOBranchHandler()
-      {
-        public void handleBranch(CDOBranch branch)
-        {
-          try
-          {
-            exportBranch(out, branch);
-          }
-          catch (Exception ex)
-          {
-            throw WrappedException.wrap(ex);
-          }
-        }
-      });
-    }
   }
 
   protected void exportBranch(OUT out, CDOBranch branch) throws Exception
@@ -177,7 +159,7 @@ public abstract class CDOServerExporter<OUT>
 
   protected void exportRevisions(final OUT out, CDOBranch branch) throws Exception
   {
-    repository.handleRevisions(null, branch, true, CDOBranchPoint.INVALID_DATE, false, new CDORevisionHandler()
+    repository.handleRevisions(null,  new CDORevisionHandler()
     {
       public boolean handleRevision(CDORevision revision)
       {
@@ -233,7 +215,7 @@ public abstract class CDOServerExporter<OUT>
   protected void exportCommits(final OUT out) throws Exception
   {
     InternalCDOCommitInfoManager commitInfoManager = repository.getCommitInfoManager();
-    commitInfoManager.getCommitInfos(null, 0L, 0L, new CDOCommitInfoHandler()
+    commitInfoManager.getCommitInfos( new CDOCommitInfoHandler()
     {
       public void handleCommitInfo(CDOCommitInfo commitInfo)
       {
@@ -301,12 +283,6 @@ public abstract class CDOServerExporter<OUT>
     public static final String REVISION_ID = "id";
 
     public static final String REVISION_CLASS = "class";
-
-    public static final String REVISION_VERSION = "version";
-
-    public static final String REVISION_TIME = "time";
-
-    public static final String REVISION_REVISED = "revised";
 
     public static final String REVISION_RESOURCE = "resource";
 
@@ -383,9 +359,8 @@ public abstract class CDOServerExporter<OUT>
       out.element(REPOSITORY);
       out.attribute(REPOSITORY_NAME, getRepository().getName());
       out.attribute(REPOSITORY_UUID, getRepository().getUUID());
-      out.attribute(REPOSITORY_ROOT, str(getRepository().getRootResourceID()));
+      out.attribute(REPOSITORY_ROOT, getRepository().getRootResourceID());
       out.attribute(REPOSITORY_CREATED, getRepository().getStore().getCreationTime());
-      out.attribute(REPOSITORY_COMMITTED, getRepository().getLastCommitTimeStamp());
 
       out.push();
       super.exportAll(out);
@@ -443,11 +418,6 @@ public abstract class CDOServerExporter<OUT>
       out.element(BRANCH);
       out.attribute(BRANCH_ID, branch.getID());
       out.attribute(BRANCH_NAME, branch.getName());
-      out.attribute(BRANCH_TIME, branch.getBase().getTimeStamp());
-      if (!branch.isMainBranch())
-      {
-        out.attribute(BRANCH_PARENT, branch.getBase().getBranch().getID());
-      }
 
       out.push();
       super.exportBranch(out, branch);
@@ -461,27 +431,20 @@ public abstract class CDOServerExporter<OUT>
       InternalCDORevision rev = (InternalCDORevision)revision;
 
       out.element(REVISION);
-      out.attribute(REVISION_ID, str(rev.getID()));
+      out.attribute(REVISION_ID, rev.getID());
       out.attribute(REVISION_CLASS, new CDOClassifierRef(rev.getEClass()).getURI());
-      out.attribute(REVISION_VERSION, rev.getVersion());
-      out.attribute(REVISION_TIME, rev.getTimeStamp());
 
-      long revised = rev.getRevised();
-      if (revised != CDOBranchPoint.UNSPECIFIED_DATE)
-      {
-        out.attribute(REVISION_REVISED, revised);
-      }
 
-      CDOID resourceID = rev.getResourceID();
+      long resourceID = rev.getResourceID();
       if (!CDOIDUtil.isNull(resourceID))
       {
-        out.attribute(REVISION_RESOURCE, str(resourceID));
+        out.attribute(REVISION_RESOURCE, resourceID);
       }
 
-      CDOID containerID = (CDOID)rev.getContainerID();
+      long containerID = rev.getContainerID();
       if (!CDOIDUtil.isNull(containerID))
       {
-        out.attribute(REVISION_CONTAINER, str(containerID));
+        out.attribute(REVISION_CONTAINER, containerID);
       }
 
       int containingFeatureID = rev.getContainingFeatureID();
@@ -529,10 +492,10 @@ public abstract class CDOServerExporter<OUT>
     protected void exportFeature(XMLOutput out, EStructuralFeature feature, String featureType, Object value)
         throws SAXException
     {
-      if (value instanceof CDOID)
+      if (feature instanceof EReference)
       {
         out.attribute(featureType, Object.class.getSimpleName());
-        out.attribute(FEATURE_VALUE, str((CDOID)value));
+        out.attribute(FEATURE_VALUE, value);
       }
       else if (value instanceof CDOBlob)
       {
@@ -617,29 +580,11 @@ public abstract class CDOServerExporter<OUT>
     protected void exportCommit(XMLOutput out, CDOCommitInfo commitInfo) throws Exception
     {
       out.element(COMMIT);
-      out.attribute(COMMIT_TIME, commitInfo.getTimeStamp());
-      long previous = commitInfo.getPreviousTimeStamp();
-      if (previous != CDOBranchPoint.UNSPECIFIED_DATE)
-      {
-        out.attribute(COMMIT_PREVIOUS, previous);
-      }
-
-      int branch = commitInfo.getBranch().getID();
-      if (branch != CDOBranch.MAIN_BRANCH_ID)
-      {
-        out.attribute(COMMIT_BRANCH, branch);
-      }
 
       out.attribute(COMMIT_USER, commitInfo.getUserID());
       out.attribute(COMMIT_COMMENT, commitInfo.getComment());
     }
 
-    protected final String str(CDOID id)
-    {
-      StringBuilder builder = new StringBuilder();
-      CDOIDUtil.write(builder, id);
-      return builder.toString();
-    }
 
     protected String type(Object value)
     {

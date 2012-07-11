@@ -14,9 +14,10 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchManager;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
@@ -26,16 +27,12 @@ import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataInputImpl;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataOutputImpl;
 import org.eclipse.emf.cdo.internal.common.revision.CDOListWithElementProxiesImpl;
-
+import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.net4j.signal.RequestWithMonitoring;
 import org.eclipse.net4j.util.io.ExtendedDataInputStream;
 import org.eclipse.net4j.util.io.ExtendedDataOutputStream;
 import org.eclipse.net4j.util.io.StringIO;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
-import org.eclipse.emf.spi.cdo.InternalCDOSession;
-
-import java.io.IOException;
 
 /**
  * @author Eike Stepper
@@ -72,10 +69,6 @@ public abstract class CDOClientRequestWithMonitoring<RESULT> extends RequestWith
     return (InternalCDOSession)getProtocol().getSession();
   }
 
-  protected CDOIDProvider getIDProvider()
-  {
-    return null;
-  }
 
   @Override
   protected int getMonitorProgressSeconds()
@@ -94,12 +87,6 @@ public abstract class CDOClientRequestWithMonitoring<RESULT> extends RequestWith
       public CDOPackageRegistry getPackageRegistry()
       {
         return getSession().getPackageRegistry();
-      }
-
-      @Override
-      public CDOIDProvider getIDProvider()
-      {
-        return CDOClientRequestWithMonitoring.this.getIDProvider();
       }
 
       @Override

@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.common.commit;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
 
 /**
  * The {@link CDOChangeSetData change set data} between two {@link CDOBranchPointRange branch points} with a common
@@ -22,7 +21,7 @@ import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface CDOChangeSet extends CDOBranchPointRange, CDOChangeSetData
+public interface CDOChangeSet extends CDOChangeSetData
 {
   public CDOBranchPoint getAncestorPoint();
 }

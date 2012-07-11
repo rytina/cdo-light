@@ -11,9 +11,14 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -21,14 +26,7 @@ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.server.InternalRepository;
 import org.eclipse.emf.cdo.spi.server.InternalSession;
 import org.eclipse.emf.cdo.spi.server.InternalView;
-
 import org.eclipse.net4j.util.lifecycle.Lifecycle;
-
-import java.text.MessageFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -39,24 +37,21 @@ public class View extends Lifecycle implements InternalView
 
   private int viewID;
 
-  private CDOBranchPoint branchPoint;
-
   private String durableLockingID;
 
   private InternalRepository repository;
 
-  private Set<CDOID> changeSubscriptionIDs = new HashSet<CDOID>();
+  private Set<Long> changeSubscriptionIDs = new HashSet<Long>();
 
   /**
    * @since 2.0
    */
-  public View(InternalSession session, int viewID, CDOBranchPoint branchPoint)
+  public View(InternalSession session, int viewID)
   {
     this.session = session;
     this.viewID = viewID;
 
     repository = session.getManager().getRepository();
-    setBranchPoint(branchPoint);
   }
 
   public InternalSession getSession()
@@ -67,16 +62,6 @@ public class View extends Lifecycle implements InternalView
   public int getViewID()
   {
     return viewID;
-  }
-
-  public CDOBranch getBranch()
-  {
-    return branchPoint.getBranch();
-  }
-
-  public long getTimeStamp()
-  {
-    return branchPoint.getTimeStamp();
   }
 
   public boolean isReadOnly()
@@ -98,18 +83,17 @@ public class View extends Lifecycle implements InternalView
     return repository;
   }
 
-  public InternalCDORevision getRevision(CDOID id)
+  public InternalCDORevision getRevision(long id)
   {
     CDORevisionManager revisionManager = repository.getRevisionManager();
-    return (InternalCDORevision)revisionManager.getRevision(id, this, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE,
+    return (InternalCDORevision)revisionManager.getRevision(id, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE,
         true);
   }
 
-  public void changeTarget(CDOBranchPoint branchPoint, List<CDOID> invalidObjects,
-      List<CDORevisionDelta> allChangedObjects, List<CDOID> allDetachedObjects)
+  public void changeTarget(List<Long> invalidObjects,
+      List<CDORevisionDelta> allChangedObjects, List<Long> allDetachedObjects)
   {
     List<CDORevision> oldRevisions = getRevisions(invalidObjects);
-    setBranchPoint(branchPoint);
     List<CDORevision> newRevisions = getRevisions(invalidObjects);
 
     Iterator<CDORevision> it = newRevisions.iterator();
@@ -128,28 +112,12 @@ public class View extends Lifecycle implements InternalView
     }
   }
 
-  private List<CDORevision> getRevisions(List<CDOID> ids)
+  private List<CDORevision> getRevisions(List<Long> ids)
   {
-    return repository.getRevisionManager().getRevisions(ids, branchPoint, CDORevision.UNCHUNKED,
+    return repository.getRevisionManager().getRevisions(ids, CDORevision.UNCHUNKED,
         CDORevision.DEPTH_NONE, true);
   }
 
-  public void setBranchPoint(CDOBranchPoint branchPoint)
-  {
-    checkOpen();
-    long timeStamp = branchPoint.getTimeStamp();
-    branchPoint = branchPoint.getBranch().getPoint(timeStamp);
-    validateTimeStamp(timeStamp);
-    this.branchPoint = branchPoint;
-  }
-
-  protected void validateTimeStamp(long timeStamp) throws IllegalArgumentException
-  {
-    if (timeStamp != UNSPECIFIED_DATE)
-    {
-      repository.validateTimeStamp(timeStamp);
-    }
-  }
 
   public void setDurableLockingID(String durableLockingID)
   {
@@ -159,7 +127,7 @@ public class View extends Lifecycle implements InternalView
   /**
    * @since 2.0
    */
-  public synchronized void subscribe(CDOID id)
+  public synchronized void subscribe(long id)
   {
     checkOpen();
     changeSubscriptionIDs.add(id);
@@ -168,7 +136,7 @@ public class View extends Lifecycle implements InternalView
   /**
    * @since 2.0
    */
-  public synchronized void unsubscribe(CDOID id)
+  public synchronized void unsubscribe(long id)
   {
     checkOpen();
     changeSubscriptionIDs.remove(id);
@@ -177,7 +145,7 @@ public class View extends Lifecycle implements InternalView
   /**
    * @since 2.0
    */
-  public synchronized boolean hasSubscription(CDOID id)
+  public synchronized boolean hasSubscription(long id)
   {
     checkOpen();
     return changeSubscriptionIDs.contains(id);

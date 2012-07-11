@@ -11,8 +11,6 @@
  */
 package org.eclipse.emf.cdo.session;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.revision.CDOElementProxy;
 import org.eclipse.emf.cdo.common.revision.CDOListResolver;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 

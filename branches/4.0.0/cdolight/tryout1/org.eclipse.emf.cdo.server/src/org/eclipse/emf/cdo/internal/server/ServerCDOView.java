@@ -10,20 +10,21 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDOAuthenticator;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.CDORevisionProvider;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.session.CDORepositoryInfo;
 import org.eclipse.emf.cdo.spi.common.branch.InternalCDOBranch;
@@ -44,23 +45,14 @@ import org.eclipse.emf.cdo.view.CDOInvalidationPolicy;
 import org.eclipse.emf.cdo.view.CDORevisionPrefetchingPolicy;
 import org.eclipse.emf.cdo.view.CDOStaleReferencePolicy;
 import org.eclipse.emf.cdo.view.CDOView;
-
-import org.eclipse.emf.internal.cdo.session.SessionUtil;
-import org.eclipse.emf.internal.cdo.view.AbstractCDOView;
-
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.event.IListener;
-import org.eclipse.net4j.util.lifecycle.LifecycleException;
-import org.eclipse.net4j.util.lifecycle.LifecycleState;
-import org.eclipse.net4j.util.ref.ReferenceType;
-import org.eclipse.net4j.util.ref.ReferenceValueMap;
-
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.internal.cdo.session.SessionUtil;
+import org.eclipse.emf.internal.cdo.view.AbstractCDOView;
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RefreshSessionResult;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
@@ -68,11 +60,12 @@ import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
 import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
 import org.eclipse.emf.spi.cdo.InternalCDOView;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.event.IListener;
+import org.eclipse.net4j.util.lifecycle.LifecycleException;
+import org.eclipse.net4j.util.lifecycle.LifecycleState;
+import org.eclipse.net4j.util.ref.ReferenceType;
+import org.eclipse.net4j.util.ref.ReferenceValueMap;
 
 /**
  * @author Eike Stepper
@@ -88,15 +81,15 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
 
   private CDORevisionProvider revisionProvider;
 
-  public ServerCDOView(InternalSession session, CDOBranchPoint branchPoint, boolean legacyModeEnabled,
+  public ServerCDOView(InternalSession session, boolean legacyModeEnabled,
       CDORevisionProvider revisionProvider)
   {
-    super(branchPoint, legacyModeEnabled);
+    super(legacyModeEnabled);
     this.session = new ServerCDOSession(session);
     this.revisionProvider = revisionProvider;
 
     setViewSet(SessionUtil.prepareResourceSet(new ResourceSetImpl()));
-    setObjects(new ReferenceValueMap.Weak<CDOID, InternalCDOObject>());
+    setObjects(new ReferenceValueMap.Weak<Long, InternalCDOObject>());
     activate();
   }
 
@@ -110,11 +103,6 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     return session;
   }
 
-  public long getLastUpdateTime()
-  {
-    return getTimeStamp();
-  }
-
   public void setLastUpdateTime(long lastUpdateTime)
   {
     throw new UnsupportedOperationException();
@@ -125,16 +113,11 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     return this;
   }
 
-  public synchronized InternalCDORevision getRevision(CDOID id, boolean loadOnDemand)
+  public synchronized InternalCDORevision getRevision(long id, boolean loadOnDemand)
   {
     return (InternalCDORevision)revisionProvider.getRevision(id);
   }
 
-  @Override
-  protected synchronized void excludeTempIDs(CDOID id)
-  {
-    // Do nothing
-  }
 
   public boolean isInvalidationRunnerActive()
   {
@@ -202,13 +185,13 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     throw new UnsupportedOperationException();
   }
 
-  public void invalidate(CDOBranch branch, long lastUpdateTime, List<CDORevisionKey> allChangedObjects,
-      List<CDOIDAndVersion> allDetachedObjects, Map<CDOID, InternalCDORevision> oldRevisions, boolean async)
+  public void invalidate(List<CDORevisionDelta> allChangedObjects,
+      List<Long> allDetachedObjects, Map<Long, InternalCDORevision> oldRevisions, boolean async)
   {
     throw new UnsupportedOperationException();
   }
 
-  public void prefetchRevisions(CDOID id, int depth)
+  public void prefetchRevisions(long id, int depth)
   {
     throw new UnsupportedOperationException();
   }
@@ -238,7 +221,7 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     throw new UnsupportedOperationException();
   }
 
-  public boolean hasSubscription(CDOID id)
+  public boolean hasSubscription(long id)
   {
     return false;
   }
@@ -474,39 +457,15 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
       return repository.getCreationTime();
     }
 
-    public long getTimeStamp()
-    {
-      return repository.getTimeStamp();
-    }
-
-    public long getTimeStamp(boolean forceRefresh)
-    {
-      return getTimeStamp();
-    }
-
     public String getStoreType()
     {
       return repository.getStoreType();
     }
 
-    public Set<ObjectType> getObjectIDTypes()
-    {
-      return repository.getObjectIDTypes();
-    }
 
-    public CDOID getRootResourceID()
+    public long getRootResourceID()
     {
       return repository.getRootResourceID();
-    }
-
-    public boolean isSupportingAudits()
-    {
-      return repository.isSupportingAudits();
-    }
-
-    public boolean isSupportingBranches()
-    {
-      return repository.isSupportingBranches();
     }
 
     public boolean isSupportingEcore()
@@ -562,11 +521,6 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
       throw new UnsupportedOperationException();
     }
 
-    public long getLastUpdateTime()
-    {
-      return getBranchPoint().getTimeStamp();
-    }
-
     public String getUserID()
     {
       return null;
@@ -577,7 +531,7 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
       return internalSession.getSessionID();
     }
 
-    public long refresh()
+    public void refresh()
     {
       throw new UnsupportedOperationException();
     }
@@ -741,9 +695,10 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     {
       throw new UnsupportedOperationException();
     }
+    
 
-    public void processRefreshSessionResult(RefreshSessionResult result, CDOBranch branch,
-        List<InternalCDOView> branchViews, Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions)
+    public void processRefreshSessionResult(RefreshSessionResult result,
+    		List<InternalCDOView> branchViews, Map<Long, InternalCDORevision> viewedRevisions)
     {
       throw new UnsupportedOperationException();
     }
@@ -803,12 +758,12 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
       return false;
     }
 
-    public CDOBranchPoint getCommittedSinceLastRefresh(CDOID id)
+    public CDOBranchPoint getCommittedSinceLastRefresh(long id)
     {
       throw new UnsupportedOperationException();
     }
 
-    public void setCommittedSinceLastRefresh(CDOID id, CDOBranchPoint branchPoint)
+    public void setCommittedSinceLastRefresh(long id, CDOBranchPoint branchPoint)
     {
       throw new UnsupportedOperationException();
     }
@@ -832,5 +787,7 @@ public class ServerCDOView extends AbstractCDOView implements org.eclipse.emf.cd
     {
       throw new UnsupportedOperationException();
     }
+
   }
+
 }

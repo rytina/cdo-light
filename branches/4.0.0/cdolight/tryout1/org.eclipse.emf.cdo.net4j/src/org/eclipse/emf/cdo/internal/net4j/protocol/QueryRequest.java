@@ -11,7 +11,8 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -20,15 +21,9 @@ import org.eclipse.emf.cdo.common.util.CDOQueryQueue;
 import org.eclipse.emf.cdo.internal.common.CDOQueryInfoImpl;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.view.CDOView;
-
 import org.eclipse.emf.internal.cdo.object.CDOObjectReferenceImpl;
-
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.spi.cdo.AbstractQueryIterator;
-import org.eclipse.emf.spi.cdo.InternalCDOView;
-
-import java.io.IOException;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * @author Simon McDuff
@@ -46,12 +41,6 @@ public class QueryRequest extends CDOClientRequest<Boolean>
     super(protocol, CDOProtocolConstants.SIGNAL_QUERY);
     this.view = view;
     this.queryResult = queryResult;
-  }
-
-  @Override
-  protected CDOIDProvider getIDProvider()
-  {
-    return (InternalCDOView)view;
   }
 
   @Override

@@ -11,43 +11,6 @@
  */
 package org.eclipse.emf.internal.cdo.transaction;
 
-import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.transaction.CDOSavepoint;
-import org.eclipse.emf.cdo.transaction.CDOTransaction;
-import org.eclipse.emf.cdo.transaction.CDOXATransaction;
-import org.eclipse.emf.cdo.util.CDOUtil;
-import org.eclipse.emf.cdo.util.CommitException;
-import org.eclipse.emf.cdo.view.CDOView;
-import org.eclipse.emf.cdo.view.CDOViewSet;
-
-import org.eclipse.emf.internal.cdo.bundle.OM;
-import org.eclipse.emf.internal.cdo.messages.Messages;
-
-import org.eclipse.net4j.util.CheckUtil;
-import org.eclipse.net4j.util.WrappedException;
-import org.eclipse.net4j.util.om.monitor.EclipseMonitor;
-import org.eclipse.net4j.util.om.monitor.EclipseMonitor.SynchronizedSubProgressMonitor;
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
-import org.eclipse.emf.spi.cdo.CDOTransactionStrategy;
-import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
-import org.eclipse.emf.spi.cdo.InternalCDOTransaction.InternalCDOCommitContext;
-import org.eclipse.emf.spi.cdo.InternalCDOUserSavepoint;
-import org.eclipse.emf.spi.cdo.InternalCDOXASavepoint;
-import org.eclipse.emf.spi.cdo.InternalCDOXATransaction;
-import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext.CDOXAState;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +28,38 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
+import org.eclipse.emf.cdo.transaction.CDOSavepoint;
+import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.cdo.transaction.CDOXATransaction;
+import org.eclipse.emf.cdo.util.CDOUtil;
+import org.eclipse.emf.cdo.util.CommitException;
+import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.cdo.view.CDOViewSet;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.internal.cdo.bundle.OM;
+import org.eclipse.emf.internal.cdo.messages.Messages;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
+import org.eclipse.emf.spi.cdo.CDOTransactionStrategy;
+import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
+import org.eclipse.emf.spi.cdo.InternalCDOTransaction.InternalCDOCommitContext;
+import org.eclipse.emf.spi.cdo.InternalCDOUserSavepoint;
+import org.eclipse.emf.spi.cdo.InternalCDOXASavepoint;
+import org.eclipse.emf.spi.cdo.InternalCDOXATransaction;
+import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext.CDOXAState;
+import org.eclipse.net4j.util.CheckUtil;
+import org.eclipse.net4j.util.WrappedException;
+import org.eclipse.net4j.util.om.monitor.EclipseMonitor;
+import org.eclipse.net4j.util.om.monitor.EclipseMonitor.SynchronizedSubProgressMonitor;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * Three-phase commit.
@@ -114,7 +109,7 @@ public class CDOXATransactionImpl implements InternalCDOXATransaction
 
   private Map<InternalCDOTransaction, InternalCDOXACommitContext> activeContexts = new HashMap<InternalCDOTransaction, InternalCDOXACommitContext>();
 
-  private Map<InternalCDOTransaction, Set<CDOID>> requestedCDOIDs = new HashMap<InternalCDOTransaction, Set<CDOID>>();
+  private Map<InternalCDOTransaction, Set<Long>> requestedCDOIDs = new HashMap<InternalCDOTransaction, Set<Long>>();
 
   private InternalCDOXASavepoint lastSavepoint = createSavepoint(null);
 
@@ -183,14 +178,14 @@ public class CDOXATransactionImpl implements InternalCDOXATransaction
     viewSet.eAdapters().remove(internalAdapter);
   }
 
-  public void add(InternalCDOTransaction transaction, CDOID object)
+  public void add(InternalCDOTransaction transaction, long object)
   {
     synchronized (requestedCDOIDs)
     {
-      Set<CDOID> ids = requestedCDOIDs.get(transaction);
+      Set<Long> ids = requestedCDOIDs.get(transaction);
       if (ids == null)
       {
-        ids = new HashSet<CDOID>();
+        ids = new HashSet<Long>();
         requestedCDOIDs.put(transaction, ids);
       }
 
@@ -198,10 +193,10 @@ public class CDOXATransactionImpl implements InternalCDOXATransaction
     }
   }
 
-  public CDOID[] get(InternalCDOTransaction transaction)
+  public Long[] get(InternalCDOTransaction transaction)
   {
-    Set<CDOID> ids = requestedCDOIDs.get(transaction);
-    return ids.toArray(new CDOID[ids.size()]);
+    Set<Long> ids = requestedCDOIDs.get(transaction);
+    return ids.toArray(new Long[ids.size()]);
   }
 
   public InternalCDOXACommitContext getCommitContext(CDOTransaction transaction)

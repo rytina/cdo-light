@@ -77,8 +77,7 @@ public class UnlockObjectsRequest extends CDOClientRequest<Boolean>
           TRACER.format("Unlocking requested for objects {0}", object.cdoID()); //$NON-NLS-1$
         }
 
-        CDOIDAndBranch idAndBranch = CDOIDUtil.createIDAndBranch(object.cdoID(), view.getBranch());
-        out.writeCDOIDAndBranch(idAndBranch);
+        out.writeCDOID(object.cdoID());
       }
     }
   }

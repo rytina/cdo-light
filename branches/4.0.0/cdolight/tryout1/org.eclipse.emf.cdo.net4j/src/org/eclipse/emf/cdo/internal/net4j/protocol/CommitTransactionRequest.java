@@ -14,14 +14,16 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOObjectReference;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.lob.CDOBlob;
 import org.eclipse.emf.cdo.common.lob.CDOClob;
@@ -36,22 +38,13 @@ import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
-
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.object.CDOObjectReferenceImpl;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
 import org.eclipse.net4j.util.io.ExtendedDataOutputStream;
 import org.eclipse.net4j.util.io.IOUtil;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -59,8 +52,6 @@ import java.util.List;
 public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<CommitTransactionResult>
 {
   private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_PROTOCOL, CommitTransactionRequest.class);
-
-  private CDOIDProvider idProvider; // CDOTransaction
 
   private String comment;
 
@@ -72,22 +63,20 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
 
   private CDOTransaction transaction;
 
-  public CommitTransactionRequest(CDOClientProtocol protocol, int transactionID, String comment, boolean releaseLocks,
-      CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs)
+  public CommitTransactionRequest(CDOClientProtocol protocol, int transactionID, String comment, boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs)
   {
-    this(protocol, CDOProtocolConstants.SIGNAL_COMMIT_TRANSACTION, transactionID, comment, releaseLocks, idProvider,
+    this(protocol, CDOProtocolConstants.SIGNAL_COMMIT_TRANSACTION, transactionID, comment, releaseLocks,
         commitData, lobs);
   }
 
   public CommitTransactionRequest(CDOClientProtocol protocol, short signalID, int transactionID, String comment,
-      boolean releaseLocks, CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs)
+      boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs)
   {
     super(protocol, signalID);
 
     transaction = (CDOTransaction)getSession().getView(transactionID);
     this.comment = comment;
     this.releaseLocks = releaseLocks;
-    this.idProvider = idProvider;
     this.commitData = commitData;
     this.lobs = lobs;
   }
@@ -99,11 +88,6 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
     return session.options().getCommitTimeout();
   }
 
-  @Override
-  protected CDOIDProvider getIDProvider()
-  {
-    return idProvider;
-  }
 
   @Override
   protected void requesting(CDODataOutput out, OMMonitor monitor) throws IOException
@@ -120,9 +104,9 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
   protected void requestingCommit(CDODataOutput out) throws IOException
   {
     List<CDOPackageUnit> newPackageUnits = commitData.getNewPackageUnits();
-    List<CDOIDAndVersion> newObjects = commitData.getNewObjects();
-    List<CDORevisionKey> changedObjects = commitData.getChangedObjects();
-    List<CDOIDAndVersion> detachedObjects = commitData.getDetachedObjects();
+    List<CDORevision> newObjects = commitData.getNewObjects();
+    List<CDORevisionDelta> changedObjects = commitData.getChangedObjects();
+    List<Long> detachedObjects = commitData.getDetachedObjects();
 
     out.writeBoolean(releaseLocks);
     out.writeString(comment);
@@ -167,9 +151,9 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
     }
 
     boolean ensuringReferentialIntegrity = getSession().getRepositoryInfo().isEnsuringReferentialIntegrity();
-    for (CDOIDAndVersion detachedObject : detachedObjects)
+    for (Long detachedObject : detachedObjects)
     {
-      CDOID id = detachedObject.getID();
+      long id = detachedObject;
       out.writeCDOID(id);
       if (ensuringReferentialIntegrity)
       {
@@ -204,7 +188,7 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
     }
   }
 
-  protected EClass getObjectType(CDOID id)
+  protected EClass getObjectType(long id)
   {
     CDOObject object = transaction.getObject(id);
     return object.eClass();
@@ -232,7 +216,6 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
       String rollbackMessage = in.readString();
       OM.LOG.error(rollbackMessage);
 
-      CDOBranchPoint branchPoint = in.readCDOBranchPoint();
       long previousTimeStamp = in.readLong();
 
       List<CDOObjectReference> xRefs = null;
@@ -247,7 +230,7 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
         }
       }
 
-      return new CommitTransactionResult(idProvider, rollbackMessage, branchPoint, previousTimeStamp, xRefs);
+      return new CommitTransactionResult(rollbackMessage, xRefs);
     }
 
     return null;
@@ -255,31 +238,30 @@ public class CommitTransactionRequest extends CDOClientRequestWithMonitoring<Com
 
   protected CommitTransactionResult confirmingResult(CDODataInput in) throws IOException
   {
-    CDOBranchPoint branchPoint = in.readCDOBranchPoint();
     long previousTimeStamp = in.readLong();
-    return new CommitTransactionResult(idProvider, branchPoint, previousTimeStamp);
+    return new CommitTransactionResult();
   }
 
   protected void confirmingMappingNewObjects(CDODataInput in, CommitTransactionResult result) throws IOException
   {
     for (;;)
     {
-      CDOID id = in.readCDOID();
+      long id = in.readCDOID();
       if (CDOIDUtil.isNull(id))
       {
         break;
       }
 
-      if (id instanceof CDOIDTemp)
-      {
-        CDOIDTemp oldID = (CDOIDTemp)id;
-        CDOID newID = in.readCDOID();
-        result.addIDMapping(oldID, newID);
-      }
-      else
-      {
-        throw new ClassCastException("Not a temporary ID: " + id);
-      }
+//      if (id instanceof CDOIDTemp)
+//      {
+//        long oldID = (Long)id;
+//        long newID = in.readCDOID();
+//        result.addIDMapping(oldID, newID);
+//      }
+//      else
+//      {
+//        throw new ClassCastException("Not a temporary ID: " + id);
+//      }
     }
   }
 }

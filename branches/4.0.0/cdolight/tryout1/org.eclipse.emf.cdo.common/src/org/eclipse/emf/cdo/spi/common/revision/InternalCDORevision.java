@@ -13,8 +13,6 @@ package org.eclipse.emf.cdo.spi.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.model.CDOClassInfo;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -30,34 +28,25 @@ import java.io.IOException;
  * @author Eike Stepper
  * @since 2.0
  */
-public interface InternalCDORevision extends CDORevision, CDORevisionData, CDOReferenceAdjustable
+public interface InternalCDORevision extends CDORevision, CDORevisionData
 {
   /**
    * @since 3.0
    */
   public CDOClassInfo getClassInfo();
 
-  public void setID(CDOID id);
+  public void setID(long id);
 
-  public void setVersion(int version);
+  public void setResourceID(long resourceID);
 
-  /**
-   * @since 3.0
-   */
-  public void setBranchPoint(CDOBranchPoint branchPoint);
-
-  public void setRevised(long revised);
-
-  public void setResourceID(CDOID resourceID);
-
-  public void setContainerID(Object containerID);
+  public void setContainerID(long containerID);
 
   public void setContainingFeatureID(int containingFeatureID);
 
   /**
    * @since 3.0
    */
-  public void adjustForCommit(CDOBranch branch, long timeStamp);
+  public void adjustForCommit();
 
   public void add(EStructuralFeature feature, int index, Object value);
 
@@ -99,10 +88,6 @@ public interface InternalCDORevision extends CDORevision, CDORevisionData, CDORe
    */
   public void write(CDODataOutput out, int referenceChunk) throws IOException;
 
-  /**
-   * @since 3.0
-   */
-  public void convertEObjects(CDOIDProvider oidProvider);
 
   /**
    * @since 3.0

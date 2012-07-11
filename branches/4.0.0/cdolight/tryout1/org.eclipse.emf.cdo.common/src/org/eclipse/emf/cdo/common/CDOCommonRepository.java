@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.cdo.common;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOTimeProvider;
 
 import org.eclipse.net4j.util.event.IEvent;
@@ -57,25 +56,12 @@ public interface CDOCommonRepository extends CDOTimeProvider
    */
   public String getStoreType();
 
-  /**
-   * Returns the type of CDOIDs created by the store of this repository.
-   */
-  public Set<CDOID.ObjectType> getObjectIDTypes();
 
   /**
    * Returns the ID of the root resource of this repository.
    */
-  public CDOID getRootResourceID();
+  public long getRootResourceID();
 
-  /**
-   * Returns <code>true</code> if this repository supports auditing, <code>false</code> otherwise.
-   */
-  public boolean isSupportingAudits();
-
-  /**
-   * Returns <code>true</code> if this repository supports branching, <code>false</code> otherwise.
-   */
-  public boolean isSupportingBranches();
 
   /**
    * Returns <code>true</code> if this repository supports instances of Ecore, <code>false</code> otherwise.

@@ -11,18 +11,16 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOClearFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDeltaVisitor;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
 
 /**
  * @author Simon McDuff
@@ -59,11 +57,6 @@ public class CDOClearFeatureDeltaImpl extends CDOFeatureDeltaImpl implements CDO
     visitor.visit(this);
   }
 
-  @Override
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    return false;
-  }
 
   @Override
   protected String toStringAdditional()

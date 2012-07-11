@@ -19,7 +19,6 @@ import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDeltaVisitor;
 import org.eclipse.emf.cdo.common.revision.delta.CDOMoveFeatureDelta;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta.ListIndexAffecting;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta.WithIndex;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 
 import org.eclipse.emf.ecore.EClass;
@@ -174,11 +173,6 @@ public class CDOMoveFeatureDeltaImpl extends CDOFeatureDeltaImpl implements CDOM
     }
   }
 
-  @Override
-  public boolean adjustReferences(CDOReferenceAdjuster adjuster)
-  {
-    return false;
-  }
 
   @Override
   public boolean isStructurallyEqual(Object obj)

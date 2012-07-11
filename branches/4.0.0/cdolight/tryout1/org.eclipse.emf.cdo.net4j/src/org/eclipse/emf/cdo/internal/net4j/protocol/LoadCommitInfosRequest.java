@@ -26,7 +26,6 @@ import java.io.IOException;
  */
 public class LoadCommitInfosRequest extends CDOClientRequest<Boolean>
 {
-  private CDOBranch branch;
 
   private long startTime;
 
@@ -34,11 +33,9 @@ public class LoadCommitInfosRequest extends CDOClientRequest<Boolean>
 
   private CDOCommitInfoHandler handler;
 
-  public LoadCommitInfosRequest(CDOClientProtocol protocol, CDOBranch branch, long startTime, long endTime,
-      CDOCommitInfoHandler handler)
+  public LoadCommitInfosRequest(CDOClientProtocol protocol, CDOCommitInfoHandler handler)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOAD_COMMIT_INFOS);
-    this.branch = branch;
     this.startTime = startTime;
     this.endTime = endTime;
     this.handler = handler;
@@ -47,16 +44,6 @@ public class LoadCommitInfosRequest extends CDOClientRequest<Boolean>
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    if (branch == null)
-    {
-      out.writeBoolean(false);
-    }
-    else
-    {
-      out.writeBoolean(true);
-      out.writeCDOBranch(branch);
-    }
-
     out.writeLong(startTime);
     out.writeLong(endTime);
   }
@@ -67,15 +54,12 @@ public class LoadCommitInfosRequest extends CDOClientRequest<Boolean>
     InternalCDOCommitInfoManager manager = getSession().getCommitInfoManager();
     while (in.readBoolean())
     {
-      long id = in.readLong();
-      CDOBranch branch = this.branch == null ? in.readCDOBranch() : this.branch;
-      long timeStamp = in.readLong();
       String userID = in.readString();
       String comment = in.readString();
 
       try
       {
-        CDOCommitInfo commitInfo = manager.createCommitInfo(branch, timeStamp, id, userID, comment, null);
+        CDOCommitInfo commitInfo = manager.createCommitInfo( userID, comment, null);
         handler.handleCommitInfo(commitInfo);
       }
       catch (Exception ex)

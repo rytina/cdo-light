@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.internal.cdo.analyzer;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 import org.eclipse.emf.cdo.view.CDOFetchRuleManager;
 
@@ -27,12 +26,12 @@ public abstract class NOOPFetchRuleManager implements CDOFetchRuleManager
   {
   }
 
-  public CDOID getContext()
+  public long getContext()
   {
-    return CDOID.NULL;
+    return 0;
   }
 
-  public List<CDOFetchRule> getFetchRules(Collection<CDOID> ids)
+  public List<CDOFetchRule> getFetchRules(Collection<Long> ids)
   {
     return null;
   }

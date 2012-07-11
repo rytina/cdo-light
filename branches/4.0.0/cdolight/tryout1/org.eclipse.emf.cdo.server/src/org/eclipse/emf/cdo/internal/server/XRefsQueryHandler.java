@@ -11,9 +11,15 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
@@ -34,21 +40,12 @@ import org.eclipse.emf.cdo.server.StoreThreadLocal;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry;
 import org.eclipse.emf.cdo.spi.server.InternalRepository;
 import org.eclipse.emf.cdo.spi.server.QueryHandlerFactory;
-
-import org.eclipse.net4j.util.factory.ProductCreationException;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import org.eclipse.net4j.util.factory.ProductCreationException;
 
 /**
  * @author Eike Stepper
@@ -65,16 +62,7 @@ public class XRefsQueryHandler implements IQueryHandler
     QueryContext xrefsContext = new QueryContext(info, context);
     accessor.queryXRefs(xrefsContext);
 
-    CDOBranchPoint branchPoint = context;
-    CDOBranch branch = branchPoint.getBranch();
-    while (!branch.isMainBranch() && context.getResultCount() < info.getMaxResults())
-    {
-      branchPoint = branch.getBase();
-      branch = branchPoint.getBranch();
-
-      xrefsContext.setBranchPoint(branchPoint);
       accessor.queryXRefs(xrefsContext);
-    }
   }
 
   public static void collectSourceCandidates(IView view, Collection<EClass> concreteTypes,
@@ -198,7 +186,7 @@ public class XRefsQueryHandler implements IQueryHandler
 
     private CDOBranchPoint branchPoint;
 
-    private Map<CDOID, EClass> targetObjects;
+    private Map<Long, EClass> targetObjects;
 
     private Map<EClass, List<EReference>> sourceCandidates;
 
@@ -216,17 +204,8 @@ public class XRefsQueryHandler implements IQueryHandler
       this.branchPoint = branchPoint;
     }
 
-    public CDOBranch getBranch()
-    {
-      return branchPoint.getBranch();
-    }
 
-    public long getTimeStamp()
-    {
-      return branchPoint.getTimeStamp();
-    }
-
-    public Map<CDOID, EClass> getTargetObjects()
+    public Map<Long, EClass> getTargetObjects()
     {
       if (targetObjects == null)
       {
@@ -234,23 +213,24 @@ public class XRefsQueryHandler implements IQueryHandler
         IStore store = repository.getStore();
         CDOPackageRegistry packageRegistry = repository.getPackageRegistry();
 
-        targetObjects = new HashMap<CDOID, EClass>();
+        targetObjects = new HashMap<Long, EClass>();
         StringTokenizer tokenizer = new StringTokenizer(info.getQueryString(), "|");
         while (tokenizer.hasMoreTokens())
         {
           String val = tokenizer.nextToken();
-          CDOID id = store.createObjectID(val);
+          long id = store.createObjectID(val);
 
           CDOClassifierRef classifierRef;
-          if (id instanceof CDOClassifierRef.Provider)
-          {
-            classifierRef = ((CDOClassifierRef.Provider)id).getClassifierRef();
-          }
-          else
-          {
+          //TODO rytina: verify if CDOClassifierRef.Provider is needed
+//          if (id instanceof CDOClassifierRef.Provider)
+//          {
+//            classifierRef = ((CDOClassifierRef.Provider)id).getClassifierRef();
+//          }
+//          else
+//          {
             val = tokenizer.nextToken();
             classifierRef = new CDOClassifierRef(val);
-          }
+//          }
 
           EClass eClass = (EClass)classifierRef.resolve(packageRegistry);
           targetObjects.put(id, eClass);
@@ -327,7 +307,7 @@ public class XRefsQueryHandler implements IQueryHandler
       return info.getMaxResults();
     }
 
-    public boolean addXRef(CDOID targetID, CDOID sourceID, EReference sourceReference, int sourceIndex)
+    public boolean addXRef(long targetID, long sourceID, EReference sourceReference, int sourceIndex)
     {
       if (CDOIDUtil.isNull(targetID))
       {

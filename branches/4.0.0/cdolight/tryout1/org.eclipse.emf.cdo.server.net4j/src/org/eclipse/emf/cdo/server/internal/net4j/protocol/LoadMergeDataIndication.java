@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -79,8 +78,7 @@ public class LoadMergeDataIndication extends CDOServerReadIndicationWithMonitori
   private CDORevisionAvailabilityInfo readRevisionAvailabilityInfo(CDODataInput in, OMMonitor monitor)
       throws IOException
   {
-    CDOBranchPoint branchPoint = in.readCDOBranchPoint();
-    CDORevisionAvailabilityInfo info = new CDORevisionAvailabilityInfo(branchPoint);
+    CDORevisionAvailabilityInfo info = new CDORevisionAvailabilityInfo();
 
     int size = in.readInt();
     monitor.begin(size);
@@ -89,7 +87,7 @@ public class LoadMergeDataIndication extends CDOServerReadIndicationWithMonitori
     {
       for (int i = 0; i < size; i++)
       {
-        CDOID id = in.readCDOID();
+        long id = in.readCDOID();
         info.getAvailableRevisions().put(id, null);
         monitor.worked();
       }
@@ -110,10 +108,10 @@ public class LoadMergeDataIndication extends CDOServerReadIndicationWithMonitori
     try
     {
       InternalRepository repository = getRepository();
-      Set<CDOID> ids = repository.getMergeData(targetInfo, sourceInfo, targetBaseInfo, sourceBaseInfo, monitor.fork());
+      Set<Long> ids = repository.getMergeData(targetInfo, sourceInfo, targetBaseInfo, sourceBaseInfo, monitor.fork());
 
       out.writeInt(ids.size());
-      for (CDOID id : ids)
+      for (long id : ids)
       {
         out.writeCDOID(id);
       }
@@ -161,8 +159,7 @@ public class LoadMergeDataIndication extends CDOServerReadIndicationWithMonitori
     {
       for (CDORevisionKey revision : revisions)
       {
-        CDORevisionKey key = CDORevisionUtil.copyRevisionKey(revision);
-        if (writtenRevisions.add(key))
+        if (writtenRevisions.add(revision))
         {
           out.writeBoolean(true);
           out.writeCDORevision((CDORevision)revision, CDORevision.UNCHUNKED);
@@ -170,7 +167,6 @@ public class LoadMergeDataIndication extends CDOServerReadIndicationWithMonitori
         else
         {
           out.writeBoolean(false);
-          out.writeCDORevisionKey(key);
         }
 
         monitor.worked();

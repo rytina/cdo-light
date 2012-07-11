@@ -10,27 +10,22 @@
  */
 package org.eclipse.emf.cdo.common.util;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchManager;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDOListFactory;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataInputImpl;
 import org.eclipse.emf.cdo.internal.common.protocol.CDODataOutputImpl;
-
 import org.eclipse.net4j.util.io.ExtendedDataInputStream;
 import org.eclipse.net4j.util.io.ExtendedDataOutput;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Eike Stepper
@@ -99,7 +94,7 @@ public final class CDOCommonUtil
    * @since 4.0
    */
   public static CDODataOutput createCDODataOutput(ExtendedDataOutput extendedDataOutputStream,
-      final CDOPackageRegistry packageRegistry, final CDOIDProvider idProvider)
+      final CDOPackageRegistry packageRegistry)
   {
     return new CDODataOutputImpl(extendedDataOutputStream)
     {
@@ -109,64 +104,8 @@ public final class CDOCommonUtil
         return packageRegistry;
       }
 
-      @Override
-      public CDOIDProvider getIDProvider()
-      {
-        return idProvider;
-      }
     };
   }
 
-  public static boolean isValidTimeStamp(long timeStamp, long startTime, long endTime)
-  {
-    if (timeStamp == CDOBranchPoint.UNSPECIFIED_DATE)
-    {
-      return endTime == CDOBranchPoint.UNSPECIFIED_DATE;
-    }
 
-    return (endTime == CDOBranchPoint.UNSPECIFIED_DATE || endTime >= timeStamp) && timeStamp >= startTime;
-  }
-
-  public static int compareTimeStamps(long t1, long t2)
-  {
-    if (t1 == CDORevision.UNSPECIFIED_DATE)
-    {
-      t1 = Long.MAX_VALUE;
-    }
-
-    if (t2 == CDORevision.UNSPECIFIED_DATE)
-    {
-      t2 = Long.MAX_VALUE;
-    }
-
-    return t1 < t2 ? -1 : t1 == t2 ? 0 : 1;
-  }
-
-  public static String formatTimeStamp()
-  {
-    return formatTimeStamp(System.currentTimeMillis());
-  }
-
-  public static String formatTimeStamp(long timeStamp)
-  {
-    if (timeStamp == CDORevision.UNSPECIFIED_DATE)
-    {
-      return "*";
-    }
-
-    return DATE_FORMAT.format(new Date(timeStamp));
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static long parseTimeStamp(String timeStamp) throws ParseException
-  {
-    if ("*".equals(timeStamp))
-    {
-      return CDORevision.UNSPECIFIED_DATE;
-    }
-
-    return DATE_FORMAT.parse(timeStamp).getTime();
-  }
 }

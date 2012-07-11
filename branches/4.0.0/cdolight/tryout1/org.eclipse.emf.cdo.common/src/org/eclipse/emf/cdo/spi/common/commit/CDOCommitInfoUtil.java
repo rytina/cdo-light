@@ -10,8 +10,11 @@
  */
 package org.eclipse.emf.cdo.spi.common.commit;
 
+import java.io.PrintStream;
+import java.text.MessageFormat;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
@@ -19,12 +22,7 @@ import org.eclipse.emf.cdo.common.revision.delta.CDOListFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.common.commit.CDOCommitInfoManagerImpl;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.PrintStream;
-import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -65,15 +63,13 @@ public final class CDOCommitInfoUtil
       CDORevisionDelta delta = (CDORevisionDelta)key;
 
       String name = delta.getEClass().getName();
-      CDOID id = delta.getID();
-      int branch = delta.getBranch().getID();
-      int version = delta.getVersion();
+      long id = delta.getID();
 
-      out.println(MessageFormat.format("  * {0}@{1}:{2}v{3}", name, id, branch, version));
+      out.println(MessageFormat.format("  * {0}@{1}:{2}v{3}", name, id));
       dumpFeatureDeltas(out, delta.getFeatureDeltas());
     }
 
-    for (CDOIDAndVersion key : changeSetData.getDetachedObjects())
+    for (Long key : changeSetData.getDetachedObjects())
     {
       out.println("  - " + key);
     }

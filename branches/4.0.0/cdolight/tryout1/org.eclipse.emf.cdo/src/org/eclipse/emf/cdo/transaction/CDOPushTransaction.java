@@ -17,7 +17,6 @@ import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -195,7 +194,7 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
             return Type.COMMITTED;
           }
 
-          public Map<CDOID, CDOID> getIDMappings()
+          public Map<Long, Long> getIDMappings()
           {
             return Collections.emptyMap();
           }
@@ -257,10 +256,6 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.importChanges(in, reconstructSavepoints);
   }
 
-  public long getLastCommitTime()
-  {
-    return delegate.getLastCommitTime();
-  }
 
   @Override
   public void addListener(IListener listener)
@@ -354,21 +349,6 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.isLegacyModeEnabled();
   }
 
-  public long getLastUpdateTime()
-  {
-    return delegate.getLastUpdateTime();
-  }
-
-  public void waitForUpdate(long updateTime)
-  {
-    delegate.waitForUpdate(updateTime);
-  }
-
-  public boolean waitForUpdate(long updateTime, long timeoutMillis)
-  {
-    return delegate.waitForUpdate(updateTime, timeoutMillis);
-  }
-
   public Set<CDOObject> getConflicts()
   {
     return delegate.getConflicts();
@@ -382,12 +362,12 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.getChangeSetData();
   }
 
-  public Map<CDOID, CDOObject> getDetachedObjects()
+  public Map<Long, CDOObject> getDetachedObjects()
   {
     return delegate.getDetachedObjects();
   }
 
-  public Map<CDOID, CDOObject> getDirtyObjects()
+  public Map<Long, CDOObject> getDirtyObjects()
   {
     return delegate.getDirtyObjects();
   }
@@ -395,7 +375,7 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
   /**
    * @since 4.0
    */
-  public CDORevision getRevision(CDOID id)
+  public CDORevision getRevision(long id)
   {
     return delegate.getRevision(id);
   }
@@ -413,17 +393,17 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.isInvalidationRunnerActive();
   }
 
-  public Map<CDOID, CDOObject> getNewObjects()
+  public Map<Long, CDOObject> getNewObjects()
   {
     return delegate.getNewObjects();
   }
 
-  public CDOObject getObject(CDOID id, boolean loadOnDemand)
+  public CDOObject getObject(long id, boolean loadOnDemand)
   {
     return delegate.getObject(id, loadOnDemand);
   }
 
-  public CDOObject getObject(CDOID id)
+  public CDOObject getObject(long id)
   {
     return delegate.getObject(id);
   }
@@ -471,7 +451,7 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.getResourceSet();
   }
 
-  public Map<CDOID, CDORevisionDelta> getRevisionDeltas()
+  public Map<Long, CDORevisionDelta> getRevisionDeltas()
   {
     return delegate.getRevisionDeltas();
   }
@@ -484,11 +464,6 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
   public CDOSession getSession()
   {
     return delegate.getSession();
-  }
-
-  public long getTimeStamp()
-  {
-    return delegate.getTimeStamp();
   }
 
   /**
@@ -545,7 +520,7 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.isClosed();
   }
 
-  public boolean isObjectRegistered(CDOID id)
+  public boolean isObjectRegistered(long id)
   {
     return delegate.isObjectRegistered(id);
   }
@@ -622,13 +597,6 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     return delegate.merge(source, sourceBase, merger);
   }
 
-  /**
-   * @since 4.0
-   */
-  public CDOChangeSetData compareRevisions(CDOBranchPoint source)
-  {
-    return delegate.compareRevisions(source);
-  }
 
   public CDOSavepoint setSavepoint()
   {
@@ -656,31 +624,6 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
   public boolean isReadOnly()
   {
     return delegate.isReadOnly();
-  }
-
-  public CDOBranch getBranch()
-  {
-    return delegate.getBranch();
-  }
-
-  public boolean setBranchPoint(CDOBranch branch, long timeStamp)
-  {
-    return delegate.setBranchPoint(branch, timeStamp);
-  }
-
-  public boolean setBranchPoint(CDOBranchPoint branchPoint)
-  {
-    return delegate.setBranchPoint(branchPoint);
-  }
-
-  public boolean setBranch(CDOBranch branch)
-  {
-    return delegate.setBranch(branch);
-  }
-
-  public boolean setTimeStamp(long timeStamp)
-  {
-    return delegate.setTimeStamp(timeStamp);
   }
 
   public URIHandler getURIHandler()
@@ -719,4 +662,5 @@ public class CDOPushTransaction extends Notifier implements CDOTransaction
     String prefix = "cdo_tx_" + transaction.getSession().getSessionID() + "_" + transaction.getViewID() + "__";
     return File.createTempFile(prefix, null);
   }
+
 }

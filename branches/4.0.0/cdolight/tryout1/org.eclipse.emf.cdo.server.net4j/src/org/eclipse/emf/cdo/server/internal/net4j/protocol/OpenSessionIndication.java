@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -129,19 +128,8 @@ public class OpenSessionIndication extends CDOServerIndicationWithMonitoring
       out.writeEnum(repository.getState());
       out.writeString(repository.getStoreType());
 
-      Set<CDOID.ObjectType> objectIDTypes = repository.getObjectIDTypes();
-      int types = objectIDTypes.size();
-      out.writeInt(types);
-      for (CDOID.ObjectType objectIDType : objectIDTypes)
-      {
-        out.writeEnum(objectIDType);
-      }
-
       out.writeLong(repository.getCreationTime());
-      out.writeLong(repository.getLastCommitTimeStamp());
       out.writeCDOID(repository.getRootResourceID());
-      out.writeBoolean(repository.isSupportingAudits());
-      out.writeBoolean(repository.isSupportingBranches());
       out.writeBoolean(repository.isSupportingEcore());
       out.writeBoolean(repository.isEnsuringReferentialIntegrity());
 

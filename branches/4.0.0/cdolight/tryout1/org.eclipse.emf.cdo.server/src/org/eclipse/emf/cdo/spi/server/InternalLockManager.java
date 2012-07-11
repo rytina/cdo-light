@@ -10,17 +10,15 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lock.IDurableLockingManager;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
 import org.eclipse.emf.cdo.server.ISession;
 import org.eclipse.emf.cdo.server.IView;
-
 import org.eclipse.net4j.util.concurrent.IRWLockManager;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * The type of the to-be-locked objects is either {@link CDOIDAndBranch} or {@link CDOID}, depending on whether
@@ -45,17 +43,17 @@ public interface InternalLockManager extends IRWLockManager<Object, IView>, IDur
   /**
    * @since 4.0
    */
-  public Object getLockKey(CDOID id, CDOBranch branch);
+  public Object getLockKey(long id);
 
   /**
    * @since 4.0
    */
-  public CDOID getLockKeyID(Object key);
+  public long getLockKeyID(Object key);
 
   /**
    * @since 4.0
    */
-  public Map<CDOID, LockGrade> getLocks(IView view);
+  public Map<Long, LockGrade> getLocks(IView view);
 
   /**
    * @since 4.0

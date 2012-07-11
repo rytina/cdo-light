@@ -10,20 +10,17 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDOList;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
 
 /**
  * @author Eike Stepper
@@ -41,7 +38,7 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public void setID(CDOID id)
+  public void setID(long id)
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
@@ -61,12 +58,12 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public void setResourceID(CDOID resourceID)
+  public void setResourceID(long resourceID)
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public void setContainerID(Object containerID)
+  public void setContainerID(long containerID)
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
@@ -141,20 +138,11 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public void convertEObjects(CDOIDProvider oidProvider)
+  public void convertEObjects()
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public int getVersion()
-  {
-    throw new UnsupportedOperationException(getExceptionMessage());
-  }
-
-  public long getRevised()
-  {
-    throw new UnsupportedOperationException(getExceptionMessage());
-  }
 
   public InternalCDORevisionDelta compare(CDORevision origin)
   {
@@ -171,7 +159,7 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public CDOID getID()
+  public long getID()
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
@@ -181,17 +169,13 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public long getTimeStamp()
+
+  public long getResourceID()
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  public CDOID getResourceID()
-  {
-    throw new UnsupportedOperationException(getExceptionMessage());
-  }
-
-  public Object getContainerID()
+  public long getContainerID()
   {
     throw new UnsupportedOperationException(getExceptionMessage());
   }
@@ -246,13 +230,7 @@ public class StubCDORevision extends AbstractCDORevision
     throw new UnsupportedOperationException(getExceptionMessage());
   }
 
-  /**
-   * @since 4.0
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    throw new UnsupportedOperationException(getExceptionMessage());
-  }
+ 
 
   /**
    * @since 4.0

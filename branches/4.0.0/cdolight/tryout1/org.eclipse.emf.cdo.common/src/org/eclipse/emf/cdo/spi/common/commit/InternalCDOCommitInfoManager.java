@@ -33,16 +33,15 @@ public interface InternalCDOCommitInfoManager extends CDOCommitInfoManager, ILif
   /**
    * @since 4.0
    */
-  public CDOCommitInfo createCommitInfo(CDOBranch branch, long timeStamp, long previousTimeStamp, String userID,
-      String comment, CDOCommitData commitData);
+  public CDOCommitInfo createCommitInfo(String userID, String comment, CDOCommitData commitData);
 
   /**
    * @author Eike Stepper
    */
   public interface CommitInfoLoader
   {
-    public void loadCommitInfos(CDOBranch branch, long startTime, long endTime, CDOCommitInfoHandler handler);
+    public void loadCommitInfos(CDOCommitInfoHandler handler);
 
-    public CDOCommitData loadCommitData(long timeStamp);
+    public CDOCommitData loadCommitData();
   }
 }

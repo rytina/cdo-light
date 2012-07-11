@@ -14,7 +14,6 @@ import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSet;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -72,19 +71,19 @@ public class CDOMergingConflictResolver extends AbstractChangeSetsConflictResolv
 
     InternalCDOTransaction transaction = (InternalCDOTransaction)getTransaction();
     InternalCDORevisionManager revisionManager = transaction.getSession().getRevisionManager();
-    Map<CDOID, CDORevisionDelta> localDeltas = transaction.getLastSavepoint().getRevisionDeltas();
+    Map<Long, CDORevisionDelta> localDeltas = transaction.getLastSavepoint().getRevisionDeltas();
 
     for (CDORevisionKey key : result.getChangedObjects())
     {
       InternalCDORevisionDelta delta = (InternalCDORevisionDelta)key;
-      CDOID id = delta.getID();
+      long id = delta.getID();
       InternalCDOObject object = (InternalCDOObject)transaction.getObject(id, false);
       if (object != null)
       {
         CDOState state = object.cdoState();
         if (state == CDOState.CLEAN || state == CDOState.PROXY)
         {
-          InternalCDORevision revision = revisionManager.getRevision(id, transaction, CDORevision.UNCHUNKED,
+          InternalCDORevision revision = revisionManager.getRevision(id,  CDORevision.UNCHUNKED,
               CDORevision.DEPTH_NONE, false);
           CheckUtil.checkState(revision, "revision");
 
@@ -93,17 +92,13 @@ public class CDOMergingConflictResolver extends AbstractChangeSetsConflictResolv
         }
         else if (state == CDOState.CONFLICT)
         {
-          int newVersion = delta.getVersion() + 1;
-
           InternalCDORevision revision = transaction.getCleanRevisions().get(object).copy();
-          revision.setVersion(newVersion);
           delta.apply(revision);
 
           object.cdoInternalSetRevision(revision);
           object.cdoInternalSetState(CDOState.DIRTY);
 
           InternalCDORevisionDelta localDelta = (InternalCDORevisionDelta)localDeltas.get(id);
-          localDelta.setVersion(newVersion);
         }
         else
         {

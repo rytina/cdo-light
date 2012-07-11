@@ -11,15 +11,13 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+import java.text.MessageFormat;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDOFeatureDelta.WithIndex;
-
-import org.eclipse.net4j.util.ObjectUtil;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
@@ -27,9 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
-
-import java.io.IOException;
-import java.text.MessageFormat;
+import org.eclipse.net4j.util.ObjectUtil;
 
 /**
  * @author Simon McDuff
@@ -83,7 +79,7 @@ public abstract class CDOSingleValueFeatureDeltaImpl extends CDOFeatureDeltaImpl
 
     if (valueToWrite != null && feature instanceof EReference)
     {
-      valueToWrite = out.getIDProvider().provideCDOID(value);
+      valueToWrite = value;
     }
 
     out.writeCDOFeatureValue(feature, valueToWrite);
@@ -125,7 +121,7 @@ public abstract class CDOSingleValueFeatureDeltaImpl extends CDOFeatureDeltaImpl
 
   public void clear()
   {
-    setValue(CDOID.NULL);
+    setValue(0);
   }
 
   public void adjustAfterAddition(int index)
@@ -144,21 +140,6 @@ public abstract class CDOSingleValueFeatureDeltaImpl extends CDOFeatureDeltaImpl
     }
   }
 
-  @Override
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    if (value != UNKNOWN_VALUE)
-    {
-      Object adjustedValue = referenceAdjuster.adjustReference(value, getFeature(), NO_INDEX);
-      if (adjustedValue != value)
-      {
-        value = adjustedValue;
-        return true;
-      }
-    }
-
-    return false;
-  }
 
   @Override
   public boolean isStructurallyEqual(Object obj)

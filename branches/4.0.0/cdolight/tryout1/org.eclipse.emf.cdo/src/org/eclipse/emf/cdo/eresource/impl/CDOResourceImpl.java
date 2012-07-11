@@ -13,7 +13,6 @@ package org.eclipse.emf.cdo.eresource.impl;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.eresource.EresourcePackage;
@@ -287,7 +286,7 @@ public class CDOResourceImpl extends CDOResourceNodeImpl implements CDOResource,
   @Override
   public URI getURI()
   {
-    if (cdoID() == null && initialURI != null)
+    if (cdoID() == 0 && initialURI != null)
     {
       return initialURI;
     }
@@ -627,17 +626,14 @@ public class CDOResourceImpl extends CDOResourceNodeImpl implements CDOResource,
 
     try
     {
-      CDOID id = CDOIDUtil.read(uriFragment);
-      if (CDOIDUtil.isNull(id) || id.isTemporary() && !cdoView().isObjectRegistered(id))
+      long id = CDOIDUtil.read(uriFragment);
+      if (CDOIDUtil.isNull(id))
       {
         return null;
       }
 
-      if (id.isObject())
-      {
         CDOObject object = cdoView().getObject(id, true);
         return CDOUtil.getEObject(object);
-      }
     }
     catch (Exception ex)
     {
@@ -820,8 +816,8 @@ public class CDOResourceImpl extends CDOResourceNodeImpl implements CDOResource,
       InternalCDOView view = cdoView();
       if (!FSMUtil.isTransient(this))
       {
-        CDOID id = cdoID();
-        if (id == null)
+        long id = cdoID();
+        if (id == 0)
         {
           registerProxy(view);
         }

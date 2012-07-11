@@ -11,14 +11,16 @@
  */
 package org.eclipse.emf.internal.cdo.view;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.emf.cdo.CDOState;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.model.EMFUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageInfo;
@@ -27,15 +29,6 @@ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.view.CDOInvalidationPolicy;
 import org.eclipse.emf.cdo.view.CDOView;
-
-import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.eclipse.emf.internal.cdo.bundle.OM;
-
-import org.eclipse.net4j.util.collection.Pair;
-import org.eclipse.net4j.util.fsm.FiniteStateMachine;
-import org.eclipse.net4j.util.fsm.ITransition;
-import org.eclipse.net4j.util.om.trace.ContextTracer;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -43,18 +36,18 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EStoreEObjectImpl;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
+import org.eclipse.emf.internal.cdo.bundle.OM;
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
 import org.eclipse.emf.spi.cdo.FSMUtil;
 import org.eclipse.emf.spi.cdo.InternalCDOObject;
 import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.emf.spi.cdo.InternalCDOTransaction;
 import org.eclipse.emf.spi.cdo.InternalCDOView;
-
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.eclipse.net4j.util.collection.Pair;
+import org.eclipse.net4j.util.fsm.FiniteStateMachine;
+import org.eclipse.net4j.util.fsm.ITransition;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 /**
  * @author Eike Stepper
@@ -284,7 +277,7 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
         content.cdoInternalSetState(CDOState.TRANSIENT);
 
         content.cdoInternalSetView(null);
-        content.cdoInternalSetID(null);
+        content.cdoInternalSetID(0);
         content.cdoInternalSetRevision(null);
       }
     }
@@ -526,7 +519,7 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
       if (!reattaching)
       {
         // Prepare object
-        CDOID id = transaction.getNextTemporaryID();
+        long id = transaction.getNextTemporaryID();
         object.cdoInternalSetID(id);
         object.cdoInternalSetView(transaction);
         changeState(object, CDOState.PREPARED);
@@ -539,7 +532,6 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
         CDORevisionFactory factory = session.getRevisionManager().getFactory();
         InternalCDORevision revision = (InternalCDORevision)factory.createRevision(eClass);
         revision.setID(id);
-        revision.setBranchPoint(transaction.getBranch().getHead());
 
         object.cdoInternalSetRevision(revision);
 
@@ -659,7 +651,7 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
       InternalCDORevisionManager revisionManager = transaction.getSession().getRevisionManager();
       CDORevision cleanRevision = transaction.getCleanRevisions().get(object);
 
-      CDOID id = cleanRevision.getID();
+      long id = cleanRevision.getID();
       object.cdoInternalSetID(id);
       object.cdoInternalSetView(transaction);
 
@@ -667,8 +659,6 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
       CDORevisionFactory factory = revisionManager.getFactory();
       InternalCDORevision revision = (InternalCDORevision)factory.createRevision(object.eClass());
       revision.setID(id);
-      revision.setBranchPoint(cleanRevision.getBranch().getHead());
-      revision.setVersion(cleanRevision.getVersion());
 
       // Populate the revision based on the values in the CDOObject
       object.cdoInternalSetRevision(revision);
@@ -736,21 +726,9 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
     {
       InternalCDOTransaction transaction = object.cdoView().toTransaction();
       InternalCDORevision revision = object.cdoRevision();
-      Map<CDOID, CDOID> idMappings = data.getIDMappings();
-
-      // Adjust object
-      CDOID oldID = object.cdoID();
-      CDOID newID = idMappings.get(oldID);
-      if (newID != null)
-      {
-        object.cdoInternalSetID(newID);
-        transaction.remapObject(oldID);
-        revision.setID(newID);
-      }
 
       // Adjust revision
-      revision.adjustForCommit(transaction.getBranch(), data.getTimeStamp());
-      revision.adjustReferences(data.getReferenceAdjuster());
+      revision.adjustForCommit();
       revision.freeze();
 
       InternalCDORevisionManager revisionManager = transaction.getSession().getRevisionManager();
@@ -843,14 +821,9 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
     {
       CDORevisionKey key = keyAndTime.getElement1();
       InternalCDORevision oldRevision = object.cdoRevision();
-      if (key == null || key.getVersion() >= oldRevision.getVersion())
-      {
         InternalCDOView view = object.cdoView();
 
-        CDORevisionKey newKey = key == null ? null : CDORevisionUtil.createRevisionKey(key.getID(), key.getBranch(),
-            key.getVersion() + 1);
-        InternalCDORevision newRevision = newKey == null ? null : view.getSession().getRevisionManager()
-            .getRevisionByVersion(newKey.getID(), newKey, 0, false);
+        InternalCDORevision newRevision =  (InternalCDORevision) view.getSession().getRevisionManager().getRevision(key.getID(), CDORevision.UNCHUNKED, 0, false);
         if (newRevision != null)
         {
           object.cdoInternalSetRevision(newRevision);
@@ -865,7 +838,6 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
           policy.handleInvalidation(object, key);
           object.cdoInternalPostInvalidate();
         }
-      }
     }
   }
 
@@ -880,12 +852,9 @@ public final class CDOStateMachine extends FiniteStateMachine<CDOState, CDOEvent
     {
       CDORevisionKey key = keyAndTime.getElement1();
       InternalCDORevision oldRevision = object.cdoRevision();
-      if (key == null || key.getVersion() >= oldRevision.getVersion() - 1)
-      {
         changeState(object, CDOState.CONFLICT);
         InternalCDOTransaction transaction = object.cdoView().toTransaction();
         transaction.setConflict(object);
-      }
     }
   }
 

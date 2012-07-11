@@ -10,10 +10,8 @@
  */
 package org.eclipse.emf.spi.cdo;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSet;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -51,11 +49,11 @@ public class DefaultCDOMerger implements CDOMerger
 {
   private CDOChangeSetData result;
 
-  private Map<CDOID, Conflict> conflicts;
+  private Map<Long, Conflict> conflicts;
 
-  private Map<CDOID, Object> targetMap;
+  private Map<Long, Object> targetMap;
 
-  private Map<CDOID, Object> sourceMap;
+  private Map<Long, Object> sourceMap;
 
   public DefaultCDOMerger()
   {
@@ -66,7 +64,7 @@ public class DefaultCDOMerger implements CDOMerger
     return result;
   }
 
-  public Map<CDOID, Conflict> getConflicts()
+  public Map<Long, Conflict> getConflicts()
   {
     return conflicts;
   }
@@ -74,15 +72,15 @@ public class DefaultCDOMerger implements CDOMerger
   public synchronized CDOChangeSetData merge(CDOChangeSet target, CDOChangeSet source) throws ConflictException
   {
     result = new CDOChangeSetDataImpl();
-    conflicts = new HashMap<CDOID, Conflict>();
+    conflicts = new HashMap<Long, Conflict>();
 
     targetMap = createMap(target);
     sourceMap = createMap(source);
 
-    Set<CDOID> taken = new HashSet<CDOID>();
-    for (Entry<CDOID, Object> entry : targetMap.entrySet())
+    Set<Long> taken = new HashSet<Long>();
+    for (Entry<Long, Object> entry : targetMap.entrySet())
     {
-      CDOID id = entry.getKey();
+      long id = entry.getKey();
       Object targetData = entry.getValue();
       Object sourceData = sourceMap.get(id);
 
@@ -92,9 +90,9 @@ public class DefaultCDOMerger implements CDOMerger
       }
     }
 
-    for (Entry<CDOID, Object> entry : sourceMap.entrySet())
+    for (Entry<Long, Object> entry : sourceMap.entrySet())
     {
-      CDOID id = entry.getKey();
+      long id = entry.getKey();
       if (taken.add(id))
       {
         Object sourceData = entry.getValue();
@@ -124,9 +122,9 @@ public class DefaultCDOMerger implements CDOMerger
       {
         data = changedInTarget((CDORevisionDelta)targetData);
       }
-      else if (targetData instanceof CDOID)
+      else if (targetData instanceof Long)
       {
-        data = detachedInTarget((CDOID)targetData);
+        data = detachedInTarget((Long)targetData);
       }
     }
     else if (targetData == null)
@@ -139,14 +137,14 @@ public class DefaultCDOMerger implements CDOMerger
       {
         data = changedInSource((CDORevisionDelta)sourceData);
       }
-      else if (sourceData instanceof CDOID)
+      else if (sourceData instanceof Long)
       {
-        data = detachedInSource((CDOID)sourceData);
+        data = detachedInSource((Long)sourceData);
       }
     }
-    else if (sourceData instanceof CDOID && targetData instanceof CDOID)
+    else if (sourceData instanceof Long && targetData instanceof Long)
     {
-      data = detachedInSourceAndTarget((CDOID)sourceData);
+      data = detachedInSourceAndTarget((Long)sourceData);
     }
     else if (sourceData instanceof CDORevisionDelta && targetData instanceof CDORevisionDelta)
     {
@@ -156,11 +154,11 @@ public class DefaultCDOMerger implements CDOMerger
     {
       data = addedInSourceAndTarget((CDORevision)targetData, (CDORevision)sourceData);
     }
-    else if (sourceData instanceof CDORevisionDelta && targetData instanceof CDOID)
+    else if (sourceData instanceof CDORevisionDelta && targetData instanceof Long)
     {
       data = changedInSourceAndDetachedInTarget((CDORevisionDelta)sourceData);
     }
-    else if (targetData instanceof CDORevisionDelta && sourceData instanceof CDOID)
+    else if (targetData instanceof CDORevisionDelta && sourceData instanceof Long)
     {
       data = changedInTargetAndDetachedInSource((CDORevisionDelta)targetData);
     }
@@ -188,7 +186,7 @@ public class DefaultCDOMerger implements CDOMerger
     return delta;
   }
 
-  protected Object detachedInTarget(CDOID id)
+  protected long detachedInTarget(long id)
   {
     return id;
   }
@@ -198,12 +196,12 @@ public class DefaultCDOMerger implements CDOMerger
     return delta;
   }
 
-  protected Object detachedInSource(CDOID id)
+  protected Object detachedInSource(long id)
   {
     return id;
   }
 
-  protected Object detachedInSourceAndTarget(CDOID id)
+  protected Object detachedInSourceAndTarget(long id)
   {
     return id;
   }
@@ -223,32 +221,32 @@ public class DefaultCDOMerger implements CDOMerger
     return new ChangedInTargetAndDetachedInSourceConflict(targetDelta);
   }
 
-  protected Map<CDOID, Object> getTargetMap()
+  protected Map<Long, Object> getTargetMap()
   {
     return targetMap;
   }
 
-  protected Map<CDOID, Object> getSourceMap()
+  protected Map<Long, Object> getSourceMap()
   {
     return sourceMap;
   }
 
-  private Map<CDOID, Object> createMap(CDOChangeSetData changeSetData)
+  private Map<Long, Object> createMap(CDOChangeSetData changeSetData)
   {
-    Map<CDOID, Object> map = new HashMap<CDOID, Object>();
-    for (CDOIDAndVersion data : changeSetData.getNewObjects())
+    Map<Long, Object> map = new HashMap<Long, Object>();
+    for (CDORevision data : changeSetData.getNewObjects())
     {
       map.put(data.getID(), data);
     }
 
-    for (CDORevisionKey data : changeSetData.getChangedObjects())
+    for (CDORevisionDelta data : changeSetData.getChangedObjects())
     {
       map.put(data.getID(), data);
     }
 
-    for (CDOIDAndVersion data : changeSetData.getDetachedObjects())
+    for (Long id : changeSetData.getDetachedObjects())
     {
-      map.put(data.getID(), data.getID());
+      map.put(id, id);
     }
 
     return map;
@@ -277,9 +275,9 @@ public class DefaultCDOMerger implements CDOMerger
     {
       result.getChangedObjects().add((CDORevisionDelta)data);
     }
-    else if (data instanceof CDOID)
+    else if (data instanceof Long)
     {
-      result.getDetachedObjects().add(CDOIDUtil.createIDAndVersion((CDOID)data, CDOBranchVersion.UNSPECIFIED_VERSION));
+      result.getDetachedObjects().add((Long)data);
     }
     else if (data instanceof Conflict)
     {
@@ -304,7 +302,7 @@ public class DefaultCDOMerger implements CDOMerger
    */
   public static abstract class Conflict
   {
-    public abstract CDOID getID();
+    public abstract long getID();
   }
 
   /**
@@ -323,7 +321,7 @@ public class DefaultCDOMerger implements CDOMerger
     }
 
     @Override
-    public CDOID getID()
+    public long getID()
     {
       return targetDelta.getID();
     }
@@ -358,7 +356,7 @@ public class DefaultCDOMerger implements CDOMerger
     }
 
     @Override
-    public CDOID getID()
+    public long getID()
     {
       return sourceDelta.getID();
     }
@@ -388,7 +386,7 @@ public class DefaultCDOMerger implements CDOMerger
     }
 
     @Override
-    public CDOID getID()
+    public long getID()
     {
       return targetDelta.getID();
     }

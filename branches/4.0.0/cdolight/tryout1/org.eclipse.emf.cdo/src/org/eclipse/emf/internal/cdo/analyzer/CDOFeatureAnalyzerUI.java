@@ -12,7 +12,6 @@
 package org.eclipse.emf.internal.cdo.analyzer;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 
 import org.eclipse.emf.ecore.EClass;
@@ -48,11 +47,11 @@ public class CDOFeatureAnalyzerUI extends CDOAbstractFeatureRuleAnalyzer
     this.maxTimeBetweenOperation = maxTimeBetweenOperation;
   }
 
-  public CDOID getContext()
+  public long getContext()
   {
     if (lastTraverseFeature.isMany())
     {
-      return CDOID.NULL;
+      return 0;
     }
 
     return lastTraverseCDOObject.cdoID();
@@ -71,7 +70,7 @@ public class CDOFeatureAnalyzerUI extends CDOAbstractFeatureRuleAnalyzer
     return featureRule;
   }
 
-  public List<CDOFetchRule> getFetchRules(Collection<CDOID> ids)
+  public List<CDOFetchRule> getFetchRules(Collection<Long> ids)
   {
     boolean addRootFeature = true;
     fetchData();

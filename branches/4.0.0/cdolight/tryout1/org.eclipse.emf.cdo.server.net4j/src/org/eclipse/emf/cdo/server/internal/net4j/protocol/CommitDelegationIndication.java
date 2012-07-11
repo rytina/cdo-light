@@ -38,8 +38,7 @@ public class CommitDelegationIndication extends CommitTransactionIndication
   @Override
   protected void initializeCommitContext(CDODataInput in) throws Exception
   {
-    CDOBranch branch = in.readCDOBranch();
-    transaction = getSession().openTransaction(InternalSession.TEMP_VIEW_ID, branch.getHead());
+    transaction = getSession().openTransaction(InternalSession.TEMP_VIEW_ID);
 
     final String userID = in.readString();
     commitContext = new TransactionCommitContext(transaction)

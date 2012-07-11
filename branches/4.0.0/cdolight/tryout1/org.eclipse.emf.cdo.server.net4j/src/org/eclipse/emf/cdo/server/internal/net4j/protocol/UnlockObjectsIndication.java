@@ -12,7 +12,6 @@
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -54,15 +53,12 @@ public class UnlockObjectsIndication extends CDOServerWriteIndication
     }
     else
     {
-      boolean supportingBranches = repository.isSupportingBranches();
-      CDOBranch branch = view.getBranch();
 
       List<Object> keys = new ArrayList<Object>(size);
       for (int i = 0; i < size; i++)
       {
-        CDOID id = in.readCDOID();
-        Object key = supportingBranches ? CDOIDUtil.createIDAndBranch(id, branch) : id;
-        keys.add(key);
+        long id = in.readCDOID();
+        keys.add(id);
       }
 
       lockManager.unlock(true, lockType, view, keys);

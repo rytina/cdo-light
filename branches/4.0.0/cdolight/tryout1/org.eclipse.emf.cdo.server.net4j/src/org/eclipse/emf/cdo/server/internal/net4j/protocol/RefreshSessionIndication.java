@@ -13,7 +13,6 @@ package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -40,7 +39,7 @@ import java.util.Map.Entry;
  */
 public class RefreshSessionIndication extends CDOServerReadIndication
 {
-  private Map<CDOBranch, List<CDORevisionKey>> viewedRevisions = new HashMap<CDOBranch, List<CDORevisionKey>>();
+  private List<Long> viewedRevisions = new ArrayList<Long>();
 
   private long lastUpdateTime;
 
@@ -58,7 +57,7 @@ public class RefreshSessionIndication extends CDOServerReadIndication
     super(protocol, signalID);
   }
 
-  public Map<CDOBranch, List<CDORevisionKey>> getViewedRevisions()
+  public List<Long> getViewedRevisions()
   {
     return viewedRevisions;
   }
@@ -70,28 +69,19 @@ public class RefreshSessionIndication extends CDOServerReadIndication
     initialChunkSize = in.readInt();
     enablePassiveUpdates = in.readBoolean();
 
-    int branches = in.readInt();
-    for (int i = 0; i < branches; i++)
-    {
-      CDOBranch branch = in.readCDOBranch();
-      List<CDORevisionKey> revisions = new ArrayList<CDORevisionKey>();
-      viewedRevisions.put(branch, revisions);
+      List<Long> revisions = new ArrayList<Long>();
       int size = in.readInt();
       for (int j = 0; j < size; j++)
       {
-        CDORevisionKey revision = in.readCDORevisionKey();
+        long revision = in.readLong();
         revisions.add(revision);
       }
-    }
   }
 
   @Override
   protected void responding(CDODataOutput out) throws IOException
   {
-    long lastCommitTimeStamp = getRepository().getLastCommitTimeStamp();
-    out.writeLong(lastCommitTimeStamp);
-
-    writePackageUnits(out, lastCommitTimeStamp);
+    writePackageUnits(out);
     writeRevisions(out);
 
     respondingDone();
@@ -115,16 +105,16 @@ public class RefreshSessionIndication extends CDOServerReadIndication
     out.writeCDORevision(revision, initialChunkSize);
   }
 
-  protected void writeDetachedObject(CDODataOutput out, CDORevisionKey key) throws IOException
+  protected void writeDetachedObject(CDODataOutput out, long key) throws IOException
   {
     out.writeByte(CDOProtocolConstants.REFRESH_DETACHED_OBJECT);
-    out.writeCDORevisionKey(key);
+    out.writeLong(key);
   }
 
-  private void writePackageUnits(CDODataOutput out, long lastCommitTimeStamp) throws IOException
+  private void writePackageUnits(CDODataOutput out) throws IOException
   {
     InternalCDOPackageRegistry packageRegistry = getRepository().getPackageRegistry();
-    InternalCDOPackageUnit[] packageUnits = packageRegistry.getPackageUnits(lastUpdateTime + 1L, lastCommitTimeStamp);
+    InternalCDOPackageUnit[] packageUnits = packageRegistry.getPackageUnits();
     for (InternalCDOPackageUnit packageUnit : packageUnits)
     {
       writPackageUnit(out, packageUnit);
@@ -134,36 +124,20 @@ public class RefreshSessionIndication extends CDOServerReadIndication
   private void writeRevisions(CDODataOutput out) throws IOException
   {
     InternalCDORevisionManager revisionManager = getRepository().getRevisionManager();
-    SyntheticCDORevision[] synthetics = new SyntheticCDORevision[1];
 
-    for (Entry<CDOBranch, List<CDORevisionKey>> entry : viewedRevisions.entrySet())
-    {
-      CDOBranch branch = entry.getKey();
-      CDOBranchPoint head = branch.getHead();
 
-      for (CDORevisionKey key : entry.getValue())
+      for (Long key : viewedRevisions)
       {
-        CDOID id = key.getID();
-        synthetics[0] = null;
-        InternalCDORevision revision = revisionManager.getRevision(id, head, CDORevision.UNCHUNKED,
-            CDORevision.DEPTH_NONE, true, synthetics);
+        InternalCDORevision revision = revisionManager.getRevision(key, CDORevision.UNCHUNKED,
+            CDORevision.DEPTH_NONE, true);
 
         if (revision == null)
         {
-          writeDetachedObject(out, synthetics[0]);
-        }
-        else if (hasChanged(key, revision))
-        {
-          writeChangedObject(out, revision);
+          writeDetachedObject(out, key);
         }
       }
-    }
 
     out.writeByte(CDOProtocolConstants.REFRESH_FINISHED);
   }
 
-  private static boolean hasChanged(CDORevisionKey oldKey, CDORevisionKey newKey)
-  {
-    return !ObjectUtil.equals(oldKey.getBranch(), newKey.getBranch()) || oldKey.getVersion() != newKey.getVersion();
-  }
 }

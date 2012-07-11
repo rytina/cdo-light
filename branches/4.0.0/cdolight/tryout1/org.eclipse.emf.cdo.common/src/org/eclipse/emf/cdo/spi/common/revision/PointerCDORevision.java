@@ -11,8 +11,6 @@
 package org.eclipse.emf.cdo.spi.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 import org.eclipse.emf.ecore.EClass;
 
@@ -27,42 +25,17 @@ import org.eclipse.emf.ecore.EClass;
  */
 public class PointerCDORevision extends SyntheticCDORevision
 {
-  private long revised = UNSPECIFIED_DATE;
 
-  private CDOBranchVersion target;
+  private long target;
 
-  public PointerCDORevision(EClass eClass, CDOID id, CDOBranch branch, long revised, CDOBranchVersion target)
+  public PointerCDORevision(EClass eClass, long id, long target)
   {
-    super(eClass, id, branch);
-    this.revised = revised;
+    super(eClass, id);
     this.target = target;
   }
 
-  @Override
-  public final int getVersion()
-  {
-    return UNSPECIFIED_VERSION;
-  }
 
-  @Override
-  public long getTimeStamp()
-  {
-    return getBranch().getBase().getTimeStamp();
-  }
-
-  @Override
-  public long getRevised()
-  {
-    return revised;
-  }
-
-  @Override
-  public void setRevised(long revised)
-  {
-    this.revised = revised;
-  }
-
-  public CDOBranchVersion getTarget()
+  public long getTarget()
   {
     return target;
   }

@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -61,7 +60,7 @@ public class ChangeSubscriptionIndication extends CDOServerReadIndication
 
     for (int i = 0; i < size; i++)
     {
-      CDOID id = in.readCDOID();
+      long id = in.readCDOID();
       if (subscribeMode)
       {
         view.subscribe(id);

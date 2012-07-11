@@ -11,11 +11,8 @@
 package org.eclipse.emf.cdo.spi.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**
@@ -39,28 +36,21 @@ import org.eclipse.emf.ecore.EClass;
  */
 public abstract class SyntheticCDORevision extends StubCDORevision
 {
-  private CDOID id;
+  private long id;
 
-  private CDOBranch branch;
 
-  public SyntheticCDORevision(EClass eClass, CDOID id, CDOBranch branch)
+  public SyntheticCDORevision(EClass eClass, long id)
   {
     super(eClass);
     this.id = id;
-    this.branch = branch;
   }
 
   @Override
-  public CDOID getID()
+  public long getID()
   {
     return id;
   }
 
-  @Override
-  public CDOBranch getBranch()
-  {
-    return branch;
-  }
 
   @Override
   public void freeze()

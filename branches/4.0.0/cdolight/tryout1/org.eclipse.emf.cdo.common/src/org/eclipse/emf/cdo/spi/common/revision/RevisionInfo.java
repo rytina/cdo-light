@@ -10,22 +10,14 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-
-import org.eclipse.net4j.util.CheckUtil;
-import org.eclipse.net4j.util.ObjectUtil;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -41,39 +33,30 @@ public abstract class RevisionInfo
 
   private static final int NORMAL_RESULT = 3;
 
-  private CDOID id;
+  private long id;
 
-  private CDOBranchPoint requestedBranchPoint;
 
   private InternalCDORevision result;
 
   private SyntheticCDORevision synthetic;
 
-  protected RevisionInfo(CDOID id, CDOBranchPoint requestedBranchPoint)
+  protected RevisionInfo(long id)
   {
-    CheckUtil.checkArg(requestedBranchPoint, "requestedBranchPoint");
     this.id = id;
-    this.requestedBranchPoint = requestedBranchPoint;
   }
 
-  protected RevisionInfo(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+  protected RevisionInfo(CDODataInput in) throws IOException
   {
-    CheckUtil.checkArg(requestedBranchPoint, "requestedBranchPoint");
     id = in.readCDOID();
-    this.requestedBranchPoint = requestedBranchPoint;
   }
 
   public abstract Type getType();
 
-  public final CDOID getID()
+  public final long getID()
   {
     return id;
   }
 
-  public final CDOBranchPoint getRequestedBranchPoint()
-  {
-    return requestedBranchPoint;
-  }
 
   public InternalCDORevision getResult()
   {
@@ -103,23 +86,23 @@ public abstract class RevisionInfo
     out.writeCDOID(getID());
   }
 
-  public static RevisionInfo read(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+  public static RevisionInfo read(CDODataInput in) throws IOException
   {
     byte ordinal = in.readByte();
     Type type = Type.values()[ordinal];
     switch (type)
     {
     case AVAILABLE_NORMAL:
-      return new Available.Normal(in, requestedBranchPoint);
+      return new Available.Normal(in);
 
     case AVAILABLE_POINTER:
-      return new Available.Pointer(in, requestedBranchPoint);
+      return new Available.Pointer(in);
 
     case AVAILABLE_DETACHED:
-      return new Available.Detached(in, requestedBranchPoint);
+      return new Available.Detached(in);
 
     case MISSING:
-      return new Missing(in, requestedBranchPoint);
+      return new Missing(in);
 
     default:
       throw new IOException("Invalid revision info type: " + type);
@@ -129,7 +112,7 @@ public abstract class RevisionInfo
   public void execute(InternalCDORevisionManager revisionManager, int referenceChunk)
   {
     SyntheticCDORevision[] synthetics = new SyntheticCDORevision[1];
-    result = revisionManager.getRevision(getID(), requestedBranchPoint, referenceChunk, CDORevision.DEPTH_NONE, true,
+    result = revisionManager.getRevision(getID(), referenceChunk, CDORevision.DEPTH_NONE, true,
         synthetics);
     synthetic = synthetics[0];
   }
@@ -143,7 +126,7 @@ public abstract class RevisionInfo
   public void readResult(CDODataInput in) throws IOException
   {
     readRevision(in);
-    synthetic = (SyntheticCDORevision)readResult(in, getID(), requestedBranchPoint.getBranch());
+    synthetic = (SyntheticCDORevision)readResult(in, getID());
   }
 
   public void processResult(InternalCDORevisionManager revisionManager, List<CDORevision> results,
@@ -169,11 +152,7 @@ public abstract class RevisionInfo
       if (synthetic instanceof PointerCDORevision)
       {
         PointerCDORevision pointer = (PointerCDORevision)synthetic;
-        CDOBranchVersion target = pointer.getTarget();
-        if (target != result && target instanceof InternalCDORevision)
-        {
-          revisionManager.addRevision((CDORevision)target);
-        }
+        long target = pointer.getTarget();
       }
 
       if (synthetics != null)
@@ -208,26 +187,15 @@ public abstract class RevisionInfo
       PointerCDORevision pointer = (PointerCDORevision)revision;
       out.writeByte(POINTER_RESULT);
       out.writeCDOClassifierRef(pointer.getEClass());
-      out.writeLong(pointer.getRevised());
 
-      CDOBranchVersion target = pointer.getTarget();
-      if (target instanceof InternalCDORevision)
-      {
-        writeResult(out, (InternalCDORevision)target, referenceChunk);
-      }
-      else
-      {
-        out.writeByte(NO_RESULT);
-      }
+       long target = pointer.getTarget();
+        out.writeCDOID(target);
     }
     else if (revision instanceof DetachedCDORevision)
     {
       DetachedCDORevision detached = (DetachedCDORevision)revision;
       out.writeByte(DETACHED_RESULT);
       out.writeCDOClassifierRef(detached.getEClass());
-      out.writeLong(detached.getTimeStamp());
-      out.writeLong(detached.getRevised());
-      out.writeInt(detached.getVersion());
     }
     else
     {
@@ -239,7 +207,7 @@ public abstract class RevisionInfo
   /**
    * @since 4.0
    */
-  public static InternalCDORevision readResult(CDODataInput in, CDOID id, CDOBranch branch) throws IOException
+  public static InternalCDORevision readResult(CDODataInput in, long id) throws IOException
   {
     byte type = in.readByte();
     switch (type)
@@ -251,8 +219,8 @@ public abstract class RevisionInfo
     {
       EClassifier classifier = in.readCDOClassifierRefAndResolve();
       long revised = in.readLong();
-      InternalCDORevision target = readResult(in, id, branch);
-      return new PointerCDORevision((EClass)classifier, id, branch, revised, target);
+      InternalCDORevision target = readResult(in, id);
+      return new PointerCDORevision((EClass)classifier, id, target.getID());
     }
 
     case DETACHED_RESULT:
@@ -261,7 +229,7 @@ public abstract class RevisionInfo
       long timeStamp = in.readLong();
       long revised = in.readLong();
       int version = in.readInt();
-      return new DetachedCDORevision((EClass)classifier, id, branch, version, timeStamp, revised);
+      return new DetachedCDORevision((EClass)classifier, id);
     }
 
     case NORMAL_RESULT:
@@ -279,7 +247,7 @@ public abstract class RevisionInfo
 
   protected InternalCDORevision doReadResult(CDODataInput in) throws IOException
   {
-    return readResult(in, id, requestedBranchPoint.getBranch());
+    return readResult(in, id);
   }
 
   /**
@@ -297,48 +265,35 @@ public abstract class RevisionInfo
    */
   public static abstract class Available extends RevisionInfo
   {
-    private CDOBranchVersion availableBranchVersion;
 
-    protected Available(CDOID id, CDOBranchPoint requestedBranchPoint, CDOBranchVersion availableBranchVersion)
+    protected Available(long id)
     {
-      super(id, requestedBranchPoint);
-      this.availableBranchVersion = availableBranchVersion;
+      super(id);
     }
 
-    protected Available(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+    protected Available(CDODataInput in) throws IOException
     {
-      super(in, requestedBranchPoint);
-      availableBranchVersion = in.readCDOBranchVersion();
+      super(in);
     }
 
-    public CDOBranchVersion getAvailableBranchVersion()
-    {
-      return availableBranchVersion;
-    }
-
-    public boolean isDirect()
-    {
-      return ObjectUtil.equals(availableBranchVersion.getBranch(), getRequestedBranchPoint().getBranch());
-    }
 
     @Override
     public boolean isLoadNeeded()
     {
-      return !isDirect();
+      return false;
     }
 
     @Override
     public void write(CDODataOutput out) throws IOException
     {
       super.write(out);
-      out.writeCDOBranchVersion(availableBranchVersion);
     }
 
     @Override
     protected void writeRevision(CDODataOutput out, int referenceChunk) throws IOException
     {
       InternalCDORevision result = getResult();
-      if (result != null && ObjectUtil.equals(result.getBranch(), availableBranchVersion.getBranch()))
+      if (result != null)
       {
         // Use available
         out.writeBoolean(true);
@@ -356,7 +311,6 @@ public abstract class RevisionInfo
       boolean useAvailable = in.readBoolean();
       if (useAvailable)
       {
-        setResult((InternalCDORevision)availableBranchVersion);
       }
       else
       {
@@ -370,15 +324,17 @@ public abstract class RevisionInfo
      */
     public static class Normal extends Available
     {
-      public Normal(CDOID id, CDOBranchPoint requestedBranchPoint, CDOBranchVersion availableBranchVersion)
+      public Normal(long id)
       {
-        super(id, requestedBranchPoint, availableBranchVersion);
+        super(id);
       }
+      
+      public Normal(CDODataInput in) throws IOException
+      {
+        super(in);
+      }
+      
 
-      private Normal(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
-      {
-        super(in, requestedBranchPoint);
-      }
 
       @Override
       public Type getType()
@@ -389,14 +345,6 @@ public abstract class RevisionInfo
       @Override
       public InternalCDORevision getResult()
       {
-        if (isDirect())
-        {
-          CDOBranchVersion branchVersion = getAvailableBranchVersion();
-          if (branchVersion instanceof InternalCDORevision)
-          {
-            return (InternalCDORevision)branchVersion;
-          }
-        }
 
         return super.getResult();
       }
@@ -407,7 +355,6 @@ public abstract class RevisionInfo
       {
         if (!isLoadNeeded())
         {
-          setResult((InternalCDORevision)getAvailableBranchVersion());
         }
 
         super.processResult(revisionManager, results, synthetics, i);
@@ -420,31 +367,23 @@ public abstract class RevisionInfo
      */
     public static class Pointer extends Available
     {
-      private CDOBranchVersion targetBranchVersion;
 
       private boolean hasTarget;
+	private InternalCDORevision target;
 
-      public Pointer(CDOID id, CDOBranchPoint requestedBranchPoint, CDOBranchVersion availableBranchVersion,
-          CDOBranchVersion targetBranchVersion)
+      public Pointer(long id, InternalCDORevision target)
       {
-        super(id, requestedBranchPoint, availableBranchVersion);
-        this.targetBranchVersion = targetBranchVersion;
-        hasTarget = targetBranchVersion instanceof InternalCDORevision;
+        super(id);
+        this.target = target;
       }
 
-      private Pointer(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+      private Pointer(CDODataInput in) throws IOException
       {
-        super(in, requestedBranchPoint);
+        super(in);
         if (in.readBoolean())
         {
-          targetBranchVersion = in.readCDOBranchVersion();
           hasTarget = in.readBoolean();
         }
-      }
-
-      public CDOBranchVersion getTargetBranchVersion()
-      {
-        return targetBranchVersion;
       }
 
       @Override
@@ -461,22 +400,16 @@ public abstract class RevisionInfo
       @Override
       public boolean isLoadNeeded()
       {
-        if (getRequestedBranchPoint().getBranch().isMainBranch())
-        {
-          return false;
-        }
-
-        return !isDirect() || !hasTarget();
+    	  return false;
       }
 
       @Override
       public void write(CDODataOutput out) throws IOException
       {
         super.write(out);
-        if (targetBranchVersion != null)
+        if (false)
         {
           out.writeBoolean(true);
-          out.writeCDOBranchVersion(targetBranchVersion);
           out.writeBoolean(hasTarget);
         }
         else
@@ -491,13 +424,12 @@ public abstract class RevisionInfo
       {
         if (!isLoadNeeded())
         {
-          CDOBranchVersion target = getTargetBranchVersion();
           if (target instanceof InternalCDORevision)
           {
             setResult((InternalCDORevision)target);
           }
 
-          setSynthetic((PointerCDORevision)getAvailableBranchVersion());
+          setSynthetic((PointerCDORevision)null);
         }
 
         super.processResult(revisionManager, results, synthetics, i);
@@ -510,14 +442,14 @@ public abstract class RevisionInfo
      */
     public static class Detached extends Available
     {
-      public Detached(CDOID id, CDOBranchPoint requestedBranchPoint, CDOBranchVersion availableBranchVersion)
+      public Detached(long id)
       {
-        super(id, requestedBranchPoint, availableBranchVersion);
+        super(id);
       }
 
-      private Detached(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+      private Detached(CDODataInput in) throws IOException
       {
-        super(in, requestedBranchPoint);
+        super(in);
       }
 
       @Override
@@ -532,7 +464,7 @@ public abstract class RevisionInfo
       {
         if (!isLoadNeeded())
         {
-          setSynthetic((DetachedCDORevision)getAvailableBranchVersion());
+          setSynthetic((DetachedCDORevision)null);
         }
 
         super.processResult(revisionManager, results, synthetics, i);
@@ -546,14 +478,14 @@ public abstract class RevisionInfo
    */
   public static class Missing extends RevisionInfo
   {
-    public Missing(CDOID id, CDOBranchPoint requestedBranchPoint)
+    public Missing(long id)
     {
-      super(id, requestedBranchPoint);
+      super(id);
     }
 
-    private Missing(CDODataInput in, CDOBranchPoint requestedBranchPoint) throws IOException
+    private Missing(CDODataInput in) throws IOException
     {
-      super(in, requestedBranchPoint);
+      super(in);
     }
 
     @Override

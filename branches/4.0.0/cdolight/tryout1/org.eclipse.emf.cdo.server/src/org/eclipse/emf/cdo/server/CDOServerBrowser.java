@@ -10,45 +10,6 @@
  */
 package org.eclipse.emf.cdo.server;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.lob.CDOLobHandler;
-import org.eclipse.emf.cdo.common.revision.CDOAllRevisionsProvider;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
-import org.eclipse.emf.cdo.common.revision.CDORevisionUtil.AllRevisionsDumper;
-import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
-import org.eclipse.emf.cdo.internal.server.bundle.OM;
-import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageInfo;
-import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry;
-import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
-import org.eclipse.emf.cdo.spi.common.revision.DetachedCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.PointerCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.SyntheticCDORevision;
-import org.eclipse.emf.cdo.spi.server.InternalRepository;
-
-import org.eclipse.net4j.util.HexUtil;
-import org.eclipse.net4j.util.StringUtil;
-import org.eclipse.net4j.util.WrappedException;
-import org.eclipse.net4j.util.concurrent.Worker;
-import org.eclipse.net4j.util.container.ContainerEventAdapter;
-import org.eclipse.net4j.util.container.IContainer;
-import org.eclipse.net4j.util.container.IPluginContainer;
-import org.eclipse.net4j.util.event.IListener;
-import org.eclipse.net4j.util.factory.ProductCreationException;
-
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -68,6 +29,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
+import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
+import org.eclipse.emf.cdo.common.lob.CDOLobHandler;
+import org.eclipse.emf.cdo.common.revision.CDOAllRevisionsProvider;
+import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
+import org.eclipse.emf.cdo.internal.server.bundle.OM;
+import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageInfo;
+import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry;
+import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
+import org.eclipse.emf.cdo.spi.common.revision.DetachedCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.PointerCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.SyntheticCDORevision;
+import org.eclipse.emf.cdo.spi.server.InternalRepository;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.net4j.util.HexUtil;
+import org.eclipse.net4j.util.StringUtil;
+import org.eclipse.net4j.util.WrappedException;
+import org.eclipse.net4j.util.concurrent.Worker;
+import org.eclipse.net4j.util.container.ContainerEventAdapter;
+import org.eclipse.net4j.util.container.IContainer;
+import org.eclipse.net4j.util.container.IPluginContainer;
+import org.eclipse.net4j.util.event.IListener;
+import org.eclipse.net4j.util.factory.ProductCreationException;
 
 /**
  * @author Eike Stepper
@@ -614,8 +609,8 @@ public class CDOServerBrowser extends Worker
 
     public void display(final CDOServerBrowser browser, InternalRepository repository, PrintStream out)
     {
-      Map<CDOBranch, List<CDORevision>> allRevisions = getAllRevisions(repository);
-      Map<CDOID, List<CDORevision>> ids = getAllIDs(allRevisions);
+      List<CDORevision> allRevisions = getAllRevisions(repository);
+      Map<Long, List<CDORevision>> ids = getAllIDs(allRevisions);
 
       out.print("<table border=\"0\">\r\n");
       out.print("<tr>\r\n");
@@ -623,87 +618,87 @@ public class CDOServerBrowser extends Worker
       out.print("<td valign=\"top\">\r\n");
       out.print("<table border=\"1\" cellpadding=\"2\"><tr><td>\r\n");
       final String[] revision = { browser.getParam("revision") };
-      new AllRevisionsDumper.Stream.Html(allRevisions, out)
-      {
-        private StringBuilder versionsBuilder;
-
-        private CDORevision lastRevision;
-
-        @Override
-        protected void dumpEnd(List<CDOBranch> branches)
-        {
-          dumpLastRevision();
-          super.dumpEnd(branches);
-        }
-
-        @Override
-        protected void dumpBranch(CDOBranch branch)
-        {
-          dumpLastRevision();
-          super.dumpBranch(branch);
-        }
-
-        @Override
-        protected void dumpRevision(CDORevision rev)
-        {
-          CDOID id = rev.getID();
-          if (lastRevision != null && !id.equals(lastRevision.getID()))
-          {
-            dumpLastRevision();
-          }
-
-          if (versionsBuilder == null)
-          {
-            versionsBuilder = new StringBuilder();
-          }
-          else
-          {
-            versionsBuilder.append(" ");
-            if (versionsBuilder.length() > 64)
-            {
-              versionsBuilder.append("<br>");
-            }
-          }
-
-          String key = CDORevisionUtil.formatRevisionKey(rev);
-          if (revision[0] == null)
-          {
-            revision[0] = key;
-          }
-
-          String version = getVersionPrefix(rev) + rev.getVersion();
-          if (key.equals(revision[0]))
-          {
-            versionsBuilder.append("<b>" + version + "</b>");
-          }
-          else
-          {
-            versionsBuilder.append(browser.href(version, getName(), "revision", key));
-          }
-
-          lastRevision = rev;
-        }
-
-        protected void dumpLastRevision()
-        {
-          if (versionsBuilder != null)
-          {
-            PrintStream out = out();
-            out.println("<tr>");
-            out.println("<td valign=\"top\">&nbsp;&nbsp;&nbsp;&nbsp;");
-            out.println(getCDOIDLabel(lastRevision));
-            out.println("&nbsp;&nbsp;&nbsp;&nbsp;</td>");
-
-            out.println("<td>");
-            out.println(versionsBuilder.toString());
-            out.println("</td>");
-            out.println("</tr>");
-
-            lastRevision = null;
-            versionsBuilder = null;
-          }
-        }
-      }.dump();
+//      new AllRevisionsDumper.Stream.Html(allRevisions, out)
+//      {
+//        private StringBuilder versionsBuilder;
+//
+//        private CDORevision lastRevision;
+//
+//        @Override
+//        protected void dumpEnd(List<CDOBranch> branches)
+//        {
+//          dumpLastRevision();
+//          super.dumpEnd(branches);
+//        }
+//
+//        @Override
+//        protected void dumpBranch(CDOBranch branch)
+//        {
+//          dumpLastRevision();
+//          super.dumpBranch(branch);
+//        }
+//
+//        @Override
+//        protected void dumpRevision(CDORevision rev)
+//        {
+//          CDOID id = rev.getID();
+//          if (lastRevision != null && !id.equals(lastRevision.getID()))
+//          {
+//            dumpLastRevision();
+//          }
+//
+//          if (versionsBuilder == null)
+//          {
+//            versionsBuilder = new StringBuilder();
+//          }
+//          else
+//          {
+//            versionsBuilder.append(" ");
+//            if (versionsBuilder.length() > 64)
+//            {
+//              versionsBuilder.append("<br>");
+//            }
+//          }
+//
+//          String key = CDORevisionUtil.formatRevisionKey(rev);
+//          if (revision[0] == null)
+//          {
+//            revision[0] = key;
+//          }
+//
+//          String version = getVersionPrefix(rev) + rev.getVersion();
+//          if (key.equals(revision[0]))
+//          {
+//            versionsBuilder.append("<b>" + version + "</b>");
+//          }
+//          else
+//          {
+//            versionsBuilder.append(browser.href(version, getName(), "revision", key));
+//          }
+//
+//          lastRevision = rev;
+//        }
+//
+//        protected void dumpLastRevision()
+//        {
+//          if (versionsBuilder != null)
+//          {
+//            PrintStream out = out();
+//            out.println("<tr>");
+//            out.println("<td valign=\"top\">&nbsp;&nbsp;&nbsp;&nbsp;");
+//            out.println(getCDOIDLabel(lastRevision));
+//            out.println("&nbsp;&nbsp;&nbsp;&nbsp;</td>");
+//
+//            out.println("<td>");
+//            out.println(versionsBuilder.toString());
+//            out.println("</td>");
+//            out.println("</tr>");
+//
+//            lastRevision = null;
+//            versionsBuilder = null;
+//          }
+//        }
+//      }.dump();
 
       out.print("</td></tr></table></td>\r\n");
       out.print("<td>&nbsp;&nbsp;&nbsp;</td>\r\n");
@@ -723,13 +718,13 @@ public class CDOServerBrowser extends Worker
      * @since 4.0
      */
     protected void showRevision(PrintStream pout, CDOServerBrowser browser,
-        Map<CDOBranch, List<CDORevision>> allRevisions, Map<CDOID, List<CDORevision>> ids, String key,
+        List<CDORevision> allRevisions, Map<Long, List<CDORevision>> ids, String key,
         InternalRepository repository)
     {
-      CDORevisionKey revisionKey = CDORevisionUtil.parseRevisionKey(key, repository.getBranchManager());
-      for (CDORevision revision : allRevisions.get(revisionKey.getBranch()))
+      long revisionKey = CDORevisionUtil.parseRevisionKey(key, repository.getBranchManager());
+      for (CDORevision revision : allRevisions)
       {
-        if (revision.getVersion() == revisionKey.getVersion() && revision.getID().equals(revisionKey.getID()))
+        if (revision.getID() == revisionKey )
         {
           showRevision(pout, browser, ids, (InternalCDORevision)revision);
           return;
@@ -740,7 +735,7 @@ public class CDOServerBrowser extends Worker
     /**
      * @since 4.0
      */
-    protected void showRevision(PrintStream pout, CDOServerBrowser browser, Map<CDOID, List<CDORevision>> ids,
+    protected void showRevision(PrintStream pout, CDOServerBrowser browser, Map<Long, List<CDORevision>> ids,
         InternalCDORevision revision)
     {
       String className = revision.getEClass().toString();
@@ -748,17 +743,11 @@ public class CDOServerBrowser extends Worker
       className = StringUtil.replace(className, new String[] { "(", ")", "," }, new String[] { "<br>", "", "<br>" });
       className = className.substring("<br>".length() + 1);
 
-      String created = CDOCommonUtil.formatTimeStamp(revision.getTimeStamp());
-      String commitInfo = browser.href(created, HistoryPage.NAME, "time", String.valueOf(revision.getTimeStamp()));
 
       pout.print("<table border=\"1\" cellpadding=\"2\">\r\n");
       showKeyValue(pout, true, "type", "<b>" + revision.getClass().getSimpleName() + "</b>");
       showKeyValue(pout, true, "class", className);
       showKeyValue(pout, true, "id", getRevisionValue(revision.getID(), browser, ids, revision));
-      showKeyValue(pout, true, "branch", revision.getBranch().getName() + "[" + revision.getBranch().getID() + "]");
-      showKeyValue(pout, true, "version", revision.getVersion());
-      showKeyValue(pout, true, "created", commitInfo);
-      showKeyValue(pout, true, "revised", CDOCommonUtil.formatTimeStamp(revision.getRevised()));
       if (!(revision instanceof SyntheticCDORevision))
       {
         showKeyValue(pout, true, "resource", getRevisionValue(revision.getResourceID(), browser, ids, revision));
@@ -778,10 +767,10 @@ public class CDOServerBrowser extends Worker
     /**
      * @since 4.0
      */
-    protected Object getRevisionValue(Object value, CDOServerBrowser browser, Map<CDOID, List<CDORevision>> ids,
+    protected Object getRevisionValue(Object value, CDOServerBrowser browser, Map<Long, List<CDORevision>> ids,
         InternalCDORevision context)
     {
-      if (value instanceof CDOID)
+      if (value instanceof Long)
       {
         List<CDORevision> revisions = ids.get(value);
         if (revisions != null)
@@ -794,22 +783,7 @@ public class CDOServerBrowser extends Worker
             builder.append("&nbsp;&nbsp;");
             for (CDORevision revision : revisions)
             {
-              String label = getVersionPrefix(revision) + revision.getVersion();
-              String branchName = revision.getBranch().getName();
-              if (!CDOBranch.MAIN_BRANCH_NAME.equals(branchName))
-              {
-                label += "[" + branchName + "]";
-              }
-
-              builder.append(" ");
-              if (revision == context)
-              {
-                builder.append(label);
-              }
-              else
-              {
-                builder.append(browser.href(label, getName(), "revision", CDORevisionUtil.formatRevisionKey(revision)));
-              }
+                builder.append(browser.href("", getName(), "revision", CDORevisionUtil.formatRevisionKey(revision)));
             }
           }
 
@@ -861,16 +835,14 @@ public class CDOServerBrowser extends Worker
       pout.print("</tr>\r\n");
     }
 
-    protected abstract Map<CDOBranch, List<CDORevision>> getAllRevisions(InternalRepository repository);
+    protected abstract List<CDORevision> getAllRevisions(InternalRepository repository);
 
-    private Map<CDOID, List<CDORevision>> getAllIDs(Map<CDOBranch, List<CDORevision>> allRevisions)
+    private Map<Long, List<CDORevision>> getAllIDs(List<CDORevision> allRevisions)
     {
-      Map<CDOID, List<CDORevision>> ids = new HashMap<CDOID, List<CDORevision>>();
-      for (List<CDORevision> list : allRevisions.values())
-      {
-        for (CDORevision revision : list)
+      Map<Long, List<CDORevision>> ids = new HashMap<Long, List<CDORevision>>();
+        for (CDORevision revision : allRevisions)
         {
-          CDOID id = revision.getID();
+          long id = revision.getID();
           List<CDORevision> revisions = ids.get(id);
           if (revisions == null)
           {
@@ -880,7 +852,6 @@ public class CDOServerBrowser extends Worker
 
           revisions.add(revision);
         }
-      }
 
       return ids;
     }
@@ -909,7 +880,7 @@ public class CDOServerBrowser extends Worker
       }
 
       @Override
-      protected Map<CDOBranch, List<CDORevision>> getAllRevisions(InternalRepository repository)
+      protected List<CDORevision> getAllRevisions(InternalRepository repository)
       {
         return repository.getRevisionManager().getCache().getAllRevisions();
       }
@@ -933,7 +904,7 @@ public class CDOServerBrowser extends Worker
       }
 
       @Override
-      protected Map<CDOBranch, List<CDORevision>> getAllRevisions(InternalRepository repository)
+      protected List<CDORevision> getAllRevisions(InternalRepository repository)
       {
         return ((CDOAllRevisionsProvider)repository.getStore()).getAllRevisions();
       }
@@ -1107,12 +1078,11 @@ public class CDOServerBrowser extends Worker
 
       try
       {
-        final boolean auditing = repository.isSupportingAudits();
-        repository.getCommitInfoManager().getCommitInfos(null, 0L, 0L, new CDOCommitInfoHandler()
+        repository.getCommitInfoManager().getCommitInfos(new CDOCommitInfoHandler()
         {
           public void handleCommitInfo(CDOCommitInfo commitInfo)
           {
-            if (showCommitInfo(out, commitInfo, browser, param, auditing))
+            if (showCommitInfo(out, commitInfo, browser, param, false))
             {
               details[0] = commitInfo;
             }
@@ -1124,19 +1094,7 @@ public class CDOServerBrowser extends Worker
         out.print("<td>&nbsp;&nbsp;&nbsp;</td>\r\n");
         out.print("<td valign=\"top\">\r\n");
 
-        if (auditing)
-        {
-          CDOCommitInfo commitInfo = details[0];
-          if (commitInfo != null)
-          {
-            out.print("<h3>Commit Info " + commitInfo.getTimeStamp() + "</h3>\r\n");
-            showCommitData(out, commitInfo, browser);
-          }
-        }
-        else
-        {
           out.print("<h3>No audit data available in this repository.</h3>\r\n");
-        }
 
         out.print("</td>\r\n");
         out.print("</tr>\r\n");
@@ -1151,25 +1109,7 @@ public class CDOServerBrowser extends Worker
     protected boolean showCommitInfo(PrintStream out, CDOCommitInfo commitInfo, CDOServerBrowser browser, String param,
         boolean auditing)
     {
-      String timeStamp = String.valueOf(commitInfo.getTimeStamp());
-      boolean selected = timeStamp.equals(param);
 
-      String formatted = CDOCommonUtil.formatTimeStamp(commitInfo.getTimeStamp()).replaceAll(" ", "&nbsp;");
-      String label = formatted;
-      if (!selected && auditing)
-      {
-        label = browser.href(formatted, getName(), "time", timeStamp);
-      }
-
-      out.print("<tr>\r\n");
-      out.print("<td valign=\"top\">\r\n");
-      out.print(label);
-      out.print("</td>\r\n");
-
-      CDOBranch branch = commitInfo.getBranch();
-      out.print("<td valign=\"top\">\r\n");
-      out.print(branch.getName() + "[" + branch.getID() + "]");
-      out.print("</td>\r\n");
 
       String userID = commitInfo.getUserID();
       out.print("<td valign=\"top\">\r\n");
@@ -1182,7 +1122,7 @@ public class CDOServerBrowser extends Worker
       out.print("</td>\r\n");
 
       out.print("</tr>\r\n");
-      return selected;
+      return true;
     }
 
     protected void showCommitData(PrintStream out, CDOCommitInfo commitInfo, CDOServerBrowser browser)
@@ -1209,7 +1149,7 @@ public class CDOServerBrowser extends Worker
       out.print("</ul>\r\n");
       out.print("<h4>Detached Objects:</h4>\r\n");
       out.print("<ul>\r\n");
-      for (CDOIDAndVersion key : commitInfo.getDetachedObjects())
+      for (Long key : commitInfo.getDetachedObjects())
       {
         out.print("<li>" + key.toString() + "<br>\r\n");
       }

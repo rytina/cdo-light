@@ -28,8 +28,6 @@ public final class CDOURIData
 {
   public static final String BRANCH_PARAMETER = "branch";
 
-  public static final String TIME_PARAMETER = "time";
-
   public static final String TRANSACTIONAL_PARAMETER = "transactional";
 
   private String scheme;
@@ -45,8 +43,6 @@ public final class CDOURIData
   private IPath resourcePath;
 
   private IPath branchPath = new Path(CDOBranch.MAIN_BRANCH_NAME);
-
-  private long timeStamp = CDOBranchPoint.UNSPECIFIED_DATE;
 
   private boolean transactional;
 
@@ -95,15 +91,6 @@ public final class CDOURIData
           branchPath = new Path(branch).makeRelative();
         }
 
-        String time = parameters.get(TIME_PARAMETER);
-        if (time != null)
-        {
-          if (!"HEAD".equalsIgnoreCase(time))
-          {
-            timeStamp = Long.parseLong(time);
-          }
-        }
-
         String transactional = parameters.get(TRANSACTIONAL_PARAMETER);
         if (transactional != null)
         {
@@ -111,10 +98,6 @@ public final class CDOURIData
         }
       }
 
-      if (timeStamp != CDOBranchPoint.UNSPECIFIED_DATE && transactional)
-      {
-        throw new IllegalArgumentException("Only HEAD can be transactional");
-      }
     }
     catch (Throwable t)
     {
@@ -222,15 +205,6 @@ public final class CDOURIData
     this.branchPath = branchPath;
   }
 
-  public long getTimeStamp()
-  {
-    return timeStamp;
-  }
-
-  public void setTimeStamp(long timeStamp)
-  {
-    this.timeStamp = timeStamp;
-  }
 
   public boolean isTransactional()
   {
@@ -284,13 +258,6 @@ public final class CDOURIData
       builder.append(branchPath.toPortableString());
     }
 
-    if (timeStamp != CDOBranchPoint.UNSPECIFIED_DATE)
-    {
-      builder.append(params++ == 0 ? "?" : "&");
-      builder.append(TIME_PARAMETER);
-      builder.append("=");
-      builder.append(timeStamp);
-    }
 
     if (transactional)
     {

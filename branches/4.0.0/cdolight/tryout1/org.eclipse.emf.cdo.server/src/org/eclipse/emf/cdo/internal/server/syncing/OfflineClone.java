@@ -10,16 +10,15 @@
  */
 package org.eclipse.emf.cdo.internal.server.syncing;
 
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.server.TransactionCommitContext;
 import org.eclipse.emf.cdo.server.StoreThreadLocal;
 import org.eclipse.emf.cdo.spi.common.branch.InternalCDOBranch;
@@ -30,12 +29,9 @@ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
 import org.eclipse.emf.cdo.spi.server.InternalCommitContext;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
-
 import org.eclipse.net4j.util.collection.IndexedList;
 import org.eclipse.net4j.util.om.monitor.Monitor;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -62,41 +58,12 @@ public class OfflineClone extends SynchronizableRepository
   @Override
   public InternalCommitContext createCommitContext(InternalTransaction transaction)
   {
-    CDOBranch branch = transaction.getBranch();
-    if (branch.isLocal())
-    {
-      return createNormalCommitContext(transaction);
-    }
-
-    if (getState() != ONLINE)
-    {
-      return createBranchingCommitContext(transaction, branch);
-    }
-
     return createWriteThroughCommitContext(transaction);
   }
 
   protected InternalCommitContext createBranchingCommitContext(InternalTransaction transaction, CDOBranch branch)
   {
-    long[] times = createCommitTimeStamp(new Monitor());
-    CDOBranch offlineBranch = createOfflineBranch(branch, times[0] - 1L);
-    transaction.setBranchPoint(offlineBranch.getHead());
-    return new BranchingCommitContext(transaction, times);
-  }
-
-  protected CDOBranch createOfflineBranch(CDOBranch baseBranch, long baseTimeStamp)
-  {
-    try
-    {
-      StoreThreadLocal.setSession(getReplicatorSession());
-      InternalCDOBranchManager branchManager = getBranchManager();
-      return branchManager.createBranch(NEW_LOCAL_BRANCH,
-          "Offline-" + baseTimeStamp, (InternalCDOBranch)baseBranch, baseTimeStamp); //$NON-NLS-1$
-    }
-    finally
-    {
-      StoreThreadLocal.release();
-    }
+    return new BranchingCommitContext(transaction);
   }
 
   /**
@@ -147,13 +114,13 @@ public class OfflineClone extends SynchronizableRepository
       };
     }
 
-    public List<CDOIDAndVersion> getNewObjects()
+    public List<CDORevision> getNewObjects()
     {
       final InternalCDORevision[] newObjects = commitContext.getNewObjects();
-      return new IndexedList<CDOIDAndVersion>()
+      return new IndexedList<CDORevision>()
       {
         @Override
-        public CDOIDAndVersion get(int index)
+        public CDORevision get(int index)
         {
           return newObjects[index];
         }
@@ -166,13 +133,13 @@ public class OfflineClone extends SynchronizableRepository
       };
     }
 
-    public List<CDORevisionKey> getChangedObjects()
+    public List<CDORevisionDelta> getChangedObjects()
     {
       final InternalCDORevisionDelta[] changedObjects = commitContext.getDirtyObjectDeltas();
-      return new IndexedList<CDORevisionKey>()
+      return new IndexedList<CDORevisionDelta>()
       {
         @Override
-        public CDORevisionKey get(int index)
+        public CDORevisionDelta get(int index)
         {
           return changedObjects[index];
         }
@@ -185,15 +152,15 @@ public class OfflineClone extends SynchronizableRepository
       };
     }
 
-    public List<CDOIDAndVersion> getDetachedObjects()
+    public List<Long> getDetachedObjects()
     {
-      final CDOID[] detachedObjects = commitContext.getDetachedObjects();
-      return new IndexedList<CDOIDAndVersion>()
+      final Long[] detachedObjects = commitContext.getDetachedObjects();
+      return new IndexedList<Long>()
       {
         @Override
-        public CDOIDAndVersion get(int index)
+        public Long get(int index)
         {
-          return CDOIDUtil.createIDAndVersion(detachedObjects[index], CDOBranchVersion.UNSPECIFIED_VERSION);
+          return detachedObjects[index];
         }
 
         @Override
@@ -204,7 +171,7 @@ public class OfflineClone extends SynchronizableRepository
       };
     }
 
-    public synchronized CDOChangeKind getChangeKind(CDOID id)
+    public synchronized CDOChangeKind getChangeKind(long id)
     {
       if (changeKindCache == null)
       {
@@ -220,12 +187,10 @@ public class OfflineClone extends SynchronizableRepository
    */
   protected final class BranchingCommitContext extends TransactionCommitContext
   {
-    private long[] times;
 
-    public BranchingCommitContext(InternalTransaction transaction, long[] times)
+    public BranchingCommitContext(InternalTransaction transaction)
     {
       super(transaction);
-      this.times = times;
     }
 
     @Override
@@ -234,10 +199,5 @@ public class OfflineClone extends SynchronizableRepository
       // Do nothing
     }
 
-    @Override
-    protected long[] createTimeStamp(OMMonitor monitor)
-    {
-      return times;
-    }
   }
 }

@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 /**
  * An {@link CDOID ID} / {@link CDOBranch branch} pair.
@@ -23,7 +22,7 @@ import org.eclipse.emf.cdo.common.id.CDOID;
  */
 public interface CDOIDAndBranch
 {
-  public CDOID getID();
+  public long getID();
 
   public CDOBranch getBranch();
 }

@@ -15,9 +15,6 @@ package org.eclipse.emf.cdo.spi.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOClassInfo;
 import org.eclipse.emf.cdo.common.model.CDOClassifierRef;
@@ -72,20 +69,11 @@ public abstract class BaseCDORevision extends AbstractCDORevision
 
   private static final byte SET_NOT_NULL = 2;
 
-  private CDOID id;
+  private long id;
 
-  private CDOBranchPoint branchPoint;
+  private long resourceID;
 
-  private int version;
-
-  private long revised;
-
-  private CDOID resourceID;
-
-  /**
-   * On a client, between a local modification and the commit the value of this <i>ID</i> can be an EObject.
-   */
-  private Object containerID;
+  private long containerID;
 
   private int containingFeatureID;
 
@@ -97,10 +85,8 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     super(eClass);
     if (eClass != null)
     {
-      version = UNSPECIFIED_VERSION;
-      revised = UNSPECIFIED_DATE;
-      resourceID = CDOID.NULL;
-      containerID = CDOID.NULL;
+      resourceID = 0;
+      containerID = 0;
       containingFeatureID = 0;
       initValues(getAllPersistentFeatures());
     }
@@ -110,9 +96,6 @@ public abstract class BaseCDORevision extends AbstractCDORevision
   {
     super(source.getEClass());
     id = source.id;
-    branchPoint = source.branchPoint;
-    version = source.version;
-    revised = source.revised;
     resourceID = source.resourceID;
     containerID = source.containerID;
     containingFeatureID = source.containingFeatureID;
@@ -147,24 +130,10 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     setClassInfo(classInfo);
 
     id = in.readCDOID();
-    branchPoint = in.readCDOBranchPoint();
-    version = in.readInt();
-    if (!id.isTemporary())
-    {
-      revised = in.readLong();
-    }
-
     resourceID = in.readCDOID();
     containerID = in.readCDOID();
     containingFeatureID = in.readInt();
 
-    if (TRACER.isEnabled())
-    {
-      TRACER
-          .format(
-              "Reading revision: ID={0}, className={1}, version={2}, branchPoint={3}, revised={4}, resource={5}, container={6}, featureID={7}", //$NON-NLS-1$
-              id, getEClass().getName(), version, branchPoint, revised, resourceID, containerID, containingFeatureID);
-    }
   }
 
   /**
@@ -194,93 +163,21 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     EClass eClass = getEClass();
     CDOClassifierRef classRef = new CDOClassifierRef(eClass);
 
-    if (TRACER.isEnabled())
-    {
-      TRACER
-          .format(
-              "Writing revision: ID={0}, className={1}, version={2}, branchPoint={3}, revised={4}, resource={5}, container={6}, featureID={7}", //$NON-NLS-1$
-              id, eClass.getName(), getVersion(), branchPoint, revised, resourceID, containerID, containingFeatureID);
-    }
-
     out.writeCDOClassifierRef(classRef);
     out.writeCDOID(id);
-    out.writeCDOBranchPoint(branchPoint);
-    out.writeInt(getVersion());
-    if (!id.isTemporary())
-    {
-      out.writeLong(revised);
-    }
 
     out.writeCDOID(resourceID);
-    out.writeCDOID(out.getIDProvider().provideCDOID(containerID));
+    out.writeCDOID(containerID);
     out.writeInt(containingFeatureID);
   }
 
-  /**
-   * @see #write(CDODataOutput, int)
-   * @since 3.0
-   */
-  public void convertEObjects(CDOIDProvider idProvider)
-  {
-    if (!(containerID instanceof CDOID))
-    {
-      containerID = idProvider.provideCDOID(containerID);
-    }
 
-    EStructuralFeature[] features = getAllPersistentFeatures();
-    for (int i = 0; i < features.length; i++)
-    {
-      EStructuralFeature feature = features[i];
-      if (feature.isMany())
-      {
-        CDOList list = getValueAsList(i);
-        if (list != null)
-        {
-          boolean isFeatureMap = FeatureMapUtil.isFeatureMap(feature);
-          for (int j = 0; j < list.size(); j++)
-          {
-            Object value = list.get(j, false);
-            EStructuralFeature innerFeature = feature; // Prepare for possible feature map
-            if (isFeatureMap)
-            {
-              Entry entry = (FeatureMap.Entry)value;
-              innerFeature = entry.getEStructuralFeature();
-              value = entry.getValue();
-            }
-
-            if (value != null && innerFeature instanceof EReference)
-            {
-              CDOID newValue = idProvider.provideCDOID(value);
-              if (newValue != value)
-              {
-                list.set(j, newValue);
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        checkNoFeatureMap(feature);
-        Object value = getValue(i);
-        if (value != null && feature instanceof EReference)
-        {
-          CDOID newValue = idProvider.provideCDOID(value);
-          if (newValue != value)
-          {
-            setValue(i, newValue);
-          }
-        }
-      }
-    }
-  }
-
-  public CDOID getID()
+  public long getID()
   {
     return id;
   }
 
-  public void setID(CDOID id)
+  public void setID(long id)
   {
     if (CDOIDUtil.isNull(id))
     {
@@ -295,82 +192,7 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     this.id = id;
   }
 
-  /**
-   * @since 3.0
-   */
-  public CDOBranch getBranch()
-  {
-    if (branchPoint == null)
-    {
-      return null;
-    }
 
-    return branchPoint.getBranch();
-  }
-
-  /**
-   * @since 3.0
-   */
-  public long getTimeStamp()
-  {
-    if (branchPoint == null)
-    {
-      return UNSPECIFIED_DATE;
-    }
-
-    return branchPoint.getTimeStamp();
-  }
-
-  /**
-   * @since 3.0
-   */
-  public void setBranchPoint(CDOBranchPoint branchPoint)
-  {
-    branchPoint = CDOBranchUtil.copyBranchPoint(branchPoint);
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Setting branchPoint {0}: {1}", this, branchPoint);
-    }
-
-    this.branchPoint = branchPoint;
-  }
-
-  public int getVersion()
-  {
-    return version;
-  }
-
-  public void setVersion(int version)
-  {
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Setting version for {0}: v{1}", this, version);
-    }
-
-    this.version = version;
-  }
-
-  public long getRevised()
-  {
-    return revised;
-  }
-
-  public void setRevised(long revised)
-  {
-    long created = branchPoint.getTimeStamp();
-    if (revised != UNSPECIFIED_DATE && revised < Math.max(0, created))
-    {
-      throw new IllegalArgumentException("revision=" + this + ", created=" + CDOCommonUtil.formatTimeStamp(created)
-          + ", revised=" + CDOCommonUtil.formatTimeStamp(revised));
-    }
-
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Setting revised {0}: {1}", this, CDOCommonUtil.formatTimeStamp(revised));
-    }
-
-    this.revised = revised;
-  }
 
   public InternalCDORevisionDelta compare(CDORevision origin)
   {
@@ -383,12 +205,12 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     applier.merge(this, delta);
   }
 
-  public CDOID getResourceID()
+  public long getResourceID()
   {
     return resourceID;
   }
 
-  public void setResourceID(CDOID resourceID)
+  public void setResourceID(long resourceID)
   {
     if (TRACER.isEnabled())
     {
@@ -398,12 +220,12 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     this.resourceID = resourceID;
   }
 
-  public Object getContainerID()
+  public long getContainerID()
   {
     return containerID;
   }
 
-  public void setContainerID(Object containerID)
+  public void setContainerID(long containerID)
   {
     if (TRACER.isEnabled())
     {
@@ -523,64 +345,7 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     setValue(feature, null);
   }
 
-  /**
-   * @since 4.0
-   */
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Adjusting references for revision {0}", this);
-    }
 
-    boolean changed = false;
-
-    CDOID id1 = (CDOID)referenceAdjuster.adjustReference(resourceID, CDOContainerFeatureDelta.CONTAINER_FEATURE,
-        CDOFeatureDelta.NO_INDEX);
-    if (id1 != resourceID)
-    {
-      resourceID = id1;
-      changed = true;
-    }
-
-    Object id2 = referenceAdjuster.adjustReference(containerID, CDOContainerFeatureDelta.CONTAINER_FEATURE,
-        CDOFeatureDelta.NO_INDEX);
-    if (id2 != containerID)
-    {
-      containerID = id2;
-      changed = true;
-    }
-
-    EStructuralFeature[] features = getAllPersistentFeatures();
-    for (int i = 0; i < features.length; i++)
-    {
-      EStructuralFeature feature = features[i];
-      if (feature instanceof EReference || FeatureMapUtil.isFeatureMap(feature))
-      {
-        if (feature.isMany())
-        {
-          InternalCDOList list = (InternalCDOList)getValueAsList(i);
-          if (list != null)
-          {
-            changed |= list.adjustReferences(referenceAdjuster, feature);
-          }
-        }
-        else
-        {
-          CDOType type = CDOModelUtil.getType(feature);
-          Object oldValue = getValue(i);
-          Object newValue = type.adjustReferences(referenceAdjuster, oldValue, feature, CDOFeatureDelta.NO_INDEX);
-          if (oldValue != newValue) // Just an optimization for NOOP adjusters
-          {
-            setValue(i, newValue);
-            changed = true;
-          }
-        }
-      }
-    }
-
-    return changed;
-  }
 
   public Object getValue(EStructuralFeature feature)
   {
@@ -673,10 +438,6 @@ public abstract class BaseCDORevision extends AbstractCDORevision
       else
       {
         checkNoFeatureMap(feature);
-        if (feature instanceof EReference)
-        {
-          value = out.getIDProvider().provideCDOID(value);
-        }
 
         if (TRACER.isEnabled())
         {
@@ -733,31 +494,4 @@ public abstract class BaseCDORevision extends AbstractCDORevision
     }
   }
 
-  public static Object remapID(Object value, Map<CDOID, CDOID> idMappings, boolean allowUnmappedTempIDs)
-  {
-    if (value instanceof CDOID)
-    {
-      CDOID oldID = (CDOID)value;
-      if (!oldID.isNull())
-      {
-        CDOID newID = idMappings.get(oldID);
-        if (newID != null)
-        {
-          if (TRACER.isEnabled())
-          {
-            TRACER.format("Adjusting ID: {0} --> {1}", oldID, newID);
-          }
-
-          return newID;
-        }
-
-        if (oldID instanceof CDOIDTemp)
-        {
-          throw new IllegalStateException(MessageFormat.format(Messages.getString("AbstractCDORevision.2"), oldID));
-        }
-      }
-    }
-
-    return value;
-  }
 }

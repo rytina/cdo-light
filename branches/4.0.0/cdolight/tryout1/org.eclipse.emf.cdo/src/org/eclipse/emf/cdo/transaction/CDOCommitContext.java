@@ -12,7 +12,6 @@
 package org.eclipse.emf.cdo.transaction;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -44,22 +43,22 @@ public interface CDOCommitContext
   /**
    * Returns a map of the new {@link CDOObject objects} that are to be committed with this commit context.
    */
-  public Map<CDOID, CDOObject> getNewObjects();
+  public Map<Long, CDOObject> getNewObjects();
 
   /**
    * Returns a map of the dirty {@link CDOObject objects} that are to be committed with this commit context.
    */
-  public Map<CDOID, CDOObject> getDirtyObjects();
+  public Map<Long, CDOObject> getDirtyObjects();
 
   /**
    * Returns a map of the detached {@link CDOObject objects} that are to be committed with this commit context.
    */
-  public Map<CDOID, CDOObject> getDetachedObjects();
+  public Map<Long, CDOObject> getDetachedObjects();
 
   /**
    * Returns a map of the {@link CDORevisionDelta revision deltas} that are to be committed with this commit context.
    */
-  public Map<CDOID, CDORevisionDelta> getRevisionDeltas();
+  public Map<Long, CDORevisionDelta> getRevisionDeltas();
 
   /**
    * @since 4.0

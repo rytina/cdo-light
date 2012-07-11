@@ -23,5 +23,4 @@ import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
  */
 public interface CDOViewTargetChangedEvent extends CDOViewEvent
 {
-  public CDOBranchPoint getBranchPoint();
 }

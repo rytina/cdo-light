@@ -10,7 +10,6 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
@@ -23,35 +22,20 @@ import java.io.IOException;
  */
 public class LoadChangeSetsRequest extends CDOClientRequest<CDOChangeSetData[]>
 {
-  private CDOBranchPointRange[] ranges;
 
-  public LoadChangeSetsRequest(CDOClientProtocol protocol, CDOBranchPointRange... ranges)
+  public LoadChangeSetsRequest(CDOClientProtocol protocol)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOAD_CHANGE_SETS);
-    this.ranges = ranges;
   }
 
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    out.writeInt(ranges.length);
-    for (CDOBranchPointRange range : ranges)
-    {
-      out.writeCDOBranchPoint(range.getStartPoint());
-      out.writeCDOBranchPoint(range.getEndPoint());
-    }
   }
 
-  @Override
-  protected CDOChangeSetData[] confirming(CDODataInput in) throws IOException
-  {
-    CDOChangeSetData[] result = new CDOChangeSetData[ranges.length];
-    for (int i = 0; i < result.length; i++)
-    {
-      CDOChangeSetData changeSetData = in.readCDOChangeSetData();
-      result[i] = changeSetData;
-    }
+@Override
+protected CDOChangeSetData[] confirming(CDODataInput in) throws IOException {
+	return null;
+}
 
-    return result;
-  }
 }

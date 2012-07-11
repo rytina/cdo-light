@@ -10,14 +10,12 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.server.IView;
-
 import org.eclipse.net4j.util.lifecycle.ILifecycle;
-
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -31,8 +29,6 @@ public interface InternalView extends IView, ILifecycle
 
   public InternalRepository getRepository();
 
-  public void setBranchPoint(CDOBranchPoint branchPoint);
-
   /**
    * @since 4.0
    */
@@ -41,14 +37,14 @@ public interface InternalView extends IView, ILifecycle
   /**
    * @since 4.0
    */
-  public void changeTarget(CDOBranchPoint branchPoint, List<CDOID> invalidObjects,
-      List<CDORevisionDelta> allChangedObjects, List<CDOID> allDetachedObjects);
+  public void changeTarget(List<Long> invalidObjects,
+      List<CDORevisionDelta> allChangedObjects, List<Long> allDetachedObjects);
 
-  public void subscribe(CDOID id);
+  public void subscribe(long id);
 
-  public void unsubscribe(CDOID id);
+  public void unsubscribe(long id);
 
-  public boolean hasSubscription(CDOID id);
+  public boolean hasSubscription(long id);
 
   public void clearChangeSubscription();
 

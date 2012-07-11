@@ -12,48 +12,44 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionCache;
-
-import org.eclipse.net4j.util.CheckUtil;
-
-import org.eclipse.emf.ecore.EClass;
-
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionCache;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.net4j.util.CheckUtil;
 
 /**
  * @author Eike Stepper
  */
 public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
 {
-  private Map<CDOID, Reference<InternalCDORevision>> revisions = new HashMap<CDOID, Reference<InternalCDORevision>>();
+  private Map<Long, InternalCDORevision> revisions = new HashMap<Long, InternalCDORevision>();
+  
+  public static CDORevisionCacheNonAuditing INSTANCE = new CDORevisionCacheNonAuditing(); 
 
-  public CDORevisionCacheNonAuditing()
+  private CDORevisionCacheNonAuditing()
   {
   }
 
   public InternalCDORevisionCache instantiate(CDORevision revision)
   {
-    return new CDORevisionCacheNonAuditing();
+    return INSTANCE;
   }
 
-  public EClass getObjectType(CDOID id)
+  public EClass getObjectType(long id)
   {
     synchronized (revisions)
     {
-      Reference<InternalCDORevision> ref = revisions.get(id);
+      InternalCDORevision ref = revisions.get(id);
       if (ref != null)
       {
-        InternalCDORevision revision = ref.get();
+        InternalCDORevision revision = ref;
         if (revision != null)
         {
           return revision.getEClass();
@@ -64,15 +60,15 @@ public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
     }
   }
 
-  public InternalCDORevision getRevision(CDOID id, CDOBranchPoint branchPoint)
+  public InternalCDORevision getRevision(long id)
   {
     synchronized (revisions)
     {
-      Reference<InternalCDORevision> ref = revisions.get(id);
+      InternalCDORevision ref = revisions.get(id);
       if (ref != null)
       {
-        InternalCDORevision revision = ref.get();
-        if (revision != null && revision.isValid(branchPoint))
+        InternalCDORevision revision = ref;
+        if (revision != null )
         {
           return revision;
         }
@@ -82,33 +78,16 @@ public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
     }
   }
 
-  public InternalCDORevision getRevisionByVersion(CDOID id, CDOBranchVersion branchVersion)
-  {
-    synchronized (revisions)
-    {
-      Reference<InternalCDORevision> ref = revisions.get(id);
-      if (ref != null)
-      {
-        InternalCDORevision revision = ref.get();
-        if (revision != null && revision.getVersion() == branchVersion.getVersion())
-        {
-          return revision;
-        }
-      }
-
-      return null;
-    }
-  }
 
   public List<CDORevision> getCurrentRevisions()
   {
     List<CDORevision> currentRevisions = new ArrayList<CDORevision>();
     synchronized (revisions)
     {
-      for (Reference<InternalCDORevision> ref : revisions.values())
+      for (InternalCDORevision ref : revisions.values())
       {
-        InternalCDORevision revision = ref.get();
-        if (revision != null && !revision.isHistorical())
+        InternalCDORevision revision = ref;
+        if (revision != null )
         {
           currentRevisions.add(revision);
         }
@@ -118,24 +97,19 @@ public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
     return currentRevisions;
   }
 
-  public Map<CDOBranch, List<CDORevision>> getAllRevisions()
+  public List<CDORevision> getAllRevisions()
   {
-    Map<CDOBranch, List<CDORevision>> result = new HashMap<CDOBranch, List<CDORevision>>();
+    List<CDORevision> result = new ArrayList<CDORevision>();
     synchronized (revisions)
     {
       List<CDORevision> list = new ArrayList<CDORevision>();
-      for (Reference<InternalCDORevision> ref : revisions.values())
+      for (InternalCDORevision ref : revisions.values())
       {
-        InternalCDORevision revision = ref.get();
+        InternalCDORevision revision = ref;
         if (revision != null)
         {
           list.add(revision);
         }
-      }
-
-      if (!list.isEmpty())
-      {
-        result.put(list.get(0).getBranch(), list);
       }
     }
 
@@ -147,10 +121,10 @@ public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
     List<CDORevision> result = new ArrayList<CDORevision>();
     synchronized (revisions)
     {
-      for (Reference<InternalCDORevision> ref : revisions.values())
+      for (InternalCDORevision ref : revisions.values())
       {
-        InternalCDORevision revision = ref.get();
-        if (revision != null && revision.isValid(branchPoint))
+        InternalCDORevision revision = ref;
+        if (revision != null )
         {
           result.add(revision);
         }
@@ -163,30 +137,24 @@ public class CDORevisionCacheNonAuditing extends AbstractCDORevisionCache
   public void addRevision(CDORevision revision)
   {
     CheckUtil.checkArg(revision, "revision");
-    if (!revision.isHistorical())
-    {
       synchronized (revisions)
       {
-        revisions.put(revision.getID(), createReference(revision));
+        revisions.put(revision.getID(), (InternalCDORevision)revision);
       }
-    }
   }
 
-  public InternalCDORevision removeRevision(CDOID id, CDOBranchVersion branchVersion)
+  public InternalCDORevision removeRevision(long id)
   {
     synchronized (revisions)
     {
-      Reference<InternalCDORevision> ref = revisions.get(id);
+      InternalCDORevision ref = revisions.get(id);
       if (ref != null)
       {
-        InternalCDORevision revision = ref.get();
+        InternalCDORevision revision = ref;
         if (revision != null)
         {
-          if (revision.getVersion() == branchVersion.getVersion()) // No branch check needed in non-auditing
-          {
             revisions.remove(id);
             return revision;
-          }
         }
         else
         {

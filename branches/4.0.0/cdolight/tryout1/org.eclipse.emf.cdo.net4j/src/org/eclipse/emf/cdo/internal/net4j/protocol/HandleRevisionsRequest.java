@@ -34,8 +34,6 @@ public class HandleRevisionsRequest extends CDOClientRequest<Boolean>
 
   private EClass eClass;
 
-  private CDOBranch branch;
-
   private boolean exactBranch;
 
   private long timeStamp;
@@ -44,12 +42,11 @@ public class HandleRevisionsRequest extends CDOClientRequest<Boolean>
 
   private CDORevisionHandler handler;
 
-  public HandleRevisionsRequest(CDOClientProtocol protocol, EClass eClass, CDOBranch branch, boolean exactBranch,
+  public HandleRevisionsRequest(CDOClientProtocol protocol, EClass eClass, boolean exactBranch,
       long timeStamp, boolean exactTime, CDORevisionHandler handler)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_HANDLE_REVISIONS);
     this.eClass = eClass;
-    this.branch = branch;
     this.exactBranch = exactBranch;
     this.timeStamp = timeStamp;
     this.exactTime = exactTime;
@@ -74,29 +71,10 @@ public class HandleRevisionsRequest extends CDOClientRequest<Boolean>
       out.writeBoolean(false);
     }
 
-    if (branch != null)
-    {
-      out.writeBoolean(true);
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Writing branch: {0}", branch); //$NON-NLS-1$
-      }
-
-      out.writeCDOBranch(branch);
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Writing exactBranch: {0}", exactBranch); //$NON-NLS-1$
-      }
-
-      out.writeBoolean(exactBranch);
-    }
-    else
-    {
       out.writeBoolean(false);
-    }
     if (TRACER.isEnabled())
     {
-      TRACER.format("Writing timeStamp: {0}", CDOCommonUtil.formatTimeStamp(timeStamp)); //$NON-NLS-1$
+      TRACER.format("Writing timeStamp: {0}", timeStamp); //$NON-NLS-1$
     }
 
     out.writeLong(timeStamp);

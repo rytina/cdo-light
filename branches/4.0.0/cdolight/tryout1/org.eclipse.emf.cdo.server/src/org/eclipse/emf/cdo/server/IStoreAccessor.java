@@ -10,11 +10,18 @@
  */
 package org.eclipse.emf.cdo.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.lob.CDOBlob;
 import org.eclipse.emf.cdo.common.lob.CDOClob;
@@ -40,25 +47,14 @@ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
 import org.eclipse.emf.cdo.spi.server.InternalCommitContext;
 import org.eclipse.emf.cdo.spi.server.InternalSession;
-
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
-import org.eclipse.net4j.util.io.ExtendedDataInputStream;
-import org.eclipse.net4j.util.io.IOUtil;
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
+import org.eclipse.net4j.util.io.ExtendedDataInputStream;
+import org.eclipse.net4j.util.io.IOUtil;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * @author Eike Stepper
@@ -117,16 +113,9 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
    * 
    * @since 4.0
    */
-  public InternalCDORevision readRevision(CDOID id, CDOBranchPoint branchPoint, int listChunk,
+  public InternalCDORevision readRevision(long id, int listChunk,
       CDORevisionCacheAdder cache);
 
-  /**
-   * Reads a revision with the given version in the given branch from the back-end.
-   * 
-   * @since 4.0
-   */
-  public InternalCDORevision readRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int listChunk,
-      CDORevisionCacheAdder cache);
 
   /**
    * Passes all revisions of the store to the {@link CDORevisionHandler handler} if <b>all</b> of the following
@@ -146,8 +135,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
    * 
    * @since 4.0
    */
-  public void handleRevisions(EClass eClass, CDOBranch branch, long timeStamp, boolean exactTime,
-      CDORevisionHandler handler);
+  public void handleRevisions(EClass eClass, CDORevisionHandler handler);
 
   /**
    * Returns a set of CDOIDs that have at least one revision in any of the passed branches and time ranges.
@@ -155,7 +143,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
    * 
    * @since 4.0
    */
-  public Set<CDOID> readChangeSet(OMMonitor monitor, CDOChangeSetSegment... segments);
+  public Set<Long> readChangeSet(OMMonitor monitor, CDOChangeSetSegment... segments);
 
   /**
    * Returns the <code>CDOID</code> of the resource node with the given folderID and name if a resource with this
@@ -163,7 +151,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
    * 
    * @since 3.0
    */
-  public CDOID readResourceID(CDOID folderID, String name, CDOBranchPoint branchPoint);
+  public long readResourceID(long folderID, String name);
 
   /**
    * @since 2.0
@@ -277,17 +265,6 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      */
     public ITransaction getTransaction();
 
-    /**
-     * Returns the branch ID and timestamp of this commit operation.
-     * 
-     * @since 3.0
-     */
-    public CDOBranchPoint getBranchPoint();
-
-    /**
-     * @since 4.0
-     */
-    public long getPreviousTimeStamp();
 
     /**
      * @since 3.0
@@ -341,14 +318,14 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      * 
      * @since 2.0
      */
-    public CDOID[] getDetachedObjects();
+    public Long[] getDetachedObjects();
 
     /**
      * Returns a map with an {@link EClass} value per {@link CDOID} type.
      * 
      * @since 4.0
      */
-    public Map<CDOID, EClass> getDetachedObjectTypes();
+    public Map<Long, EClass> getDetachedObjectTypes();
 
     /**
      * Returns a stream that all {@link CDOLob lobs} can be read from. The format of the data delivered through the
@@ -374,10 +351,6 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      */
     public ExtendedDataInputStream getLobs();
 
-    /**
-     * Returns an unmodifiable map from all temporary IDs to their persistent counter parts.
-     */
-    public Map<CDOID, CDOID> getIDMappings();
 
     /**
      * @since 4.0
@@ -402,7 +375,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
    */
   public interface QueryResourcesContext extends CDOBranchPoint
   {
-    public CDOID getFolderID();
+    public long getFolderID();
 
     public String getName();
 
@@ -420,7 +393,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      * @return <code>true</code> to indicate that more results can be passed subsequently, <code>false</code> otherwise
      *         (i.e. maxResults has been reached or an asynchronous query has been canceled).
      */
-    public boolean addResource(CDOID resourceID);
+    public boolean addResource(long resourceID);
 
     /**
      * @author Eike Stepper
@@ -428,7 +401,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      */
     public interface ExactMatch extends QueryResourcesContext
     {
-      public CDOID getResourceID();
+      public long getResourceID();
     }
   }
 
@@ -442,7 +415,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
     /**
      * @since 4.0
      */
-    public Map<CDOID, EClass> getTargetObjects();
+    public Map<Long, EClass> getTargetObjects();
 
     public EReference[] getSourceReferences();
 
@@ -463,7 +436,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      * @return <code>true</code> to indicate that more results can be passed subsequently, <code>false</code> otherwise
      *         (i.e. maxResults has been reached or an asynchronous query has been canceled).
      */
-    public boolean addXRef(CDOID targetID, CDOID sourceID, EReference sourceReference, int sourceIndex);
+    public boolean addXRef(long targetID, long sourceID, EReference sourceReference, int sourceIndex);
   }
 
   /**
@@ -652,7 +625,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      *          represented by this {@link IStoreAccessor.Raw raw store accessor}.
      * @see #rawCommit(double, OMMonitor)
      */
-    public void rawStore(CDOBranch branch, long timeStamp, long previousTimeStamp, String userID, String comment,
+    public void rawStore(String userID, String comment,
         OMMonitor monitor);
 
     /**
@@ -666,7 +639,7 @@ public interface IStoreAccessor extends IQueryHandlerProvider, BranchLoader, Com
      * 
      * @see #rawCommit(double, OMMonitor)
      */
-    public void rawDelete(CDOID id, int version, CDOBranch branch, EClass eClass, OMMonitor monitor);
+    public void rawDelete(long id, int version, CDOBranch branch, EClass eClass, OMMonitor monitor);
 
     /**
      * Atomically commits the accumulated backend changes resulting from previous calls to the rawStore() methods.

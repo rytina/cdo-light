@@ -11,21 +11,15 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.session.CDORepositoryInfo;
-
 import org.eclipse.emf.internal.cdo.session.CDOSessionConfigurationImpl;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.OpenSessionResult;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RepositoryTimeResult;
+import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.net4j.connector.IConnector;
 import org.eclipse.net4j.signal.SignalProtocol;
 import org.eclipse.net4j.util.CheckUtil;
 import org.eclipse.net4j.util.io.IStreamWrapper;
-
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.OpenSessionResult;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.RepositoryTimeResult;
-import org.eclipse.emf.spi.cdo.InternalCDOSession;
-
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -135,13 +129,11 @@ public class CDONet4jSessionConfigurationImpl extends CDOSessionConfigurationImp
 
     private String storeType;
 
-    private Set<CDOID.ObjectType> objectIDTypes;
-
     private long creationTime;
 
     private RepositoryTimeResult timeResult;
 
-    private CDOID rootResourceID;
+    private long rootResourceID;
 
     private boolean supportingAudits;
 
@@ -160,7 +152,6 @@ public class CDONet4jSessionConfigurationImpl extends CDOSessionConfigurationImp
       type = result.getRepositoryType();
       state = result.getRepositoryState();
       storeType = result.getStoreType();
-      objectIDTypes = result.getObjectIDTypes();
       creationTime = result.getRepositoryCreationTime();
       timeResult = result.getRepositoryTimeResult();
       rootResourceID = result.getRootResourceID();
@@ -209,11 +200,6 @@ public class CDONet4jSessionConfigurationImpl extends CDOSessionConfigurationImp
       return storeType;
     }
 
-    public Set<CDOID.ObjectType> getObjectIDTypes()
-    {
-      return objectIDTypes;
-    }
-
     public long getCreationTime()
     {
       return creationTime;
@@ -234,7 +220,7 @@ public class CDONet4jSessionConfigurationImpl extends CDOSessionConfigurationImp
       return timeResult.getAproximateRepositoryTime();
     }
 
-    public CDOID getRootResourceID()
+    public long getRootResourceID()
     {
       return rootResourceID;
     }

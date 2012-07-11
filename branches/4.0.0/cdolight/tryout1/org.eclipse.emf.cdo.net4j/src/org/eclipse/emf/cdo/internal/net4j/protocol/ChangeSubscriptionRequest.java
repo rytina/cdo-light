@@ -12,16 +12,14 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
-
 import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Simon McDuff
@@ -32,7 +30,7 @@ public class ChangeSubscriptionRequest extends CDOClientRequest<Boolean>
 
   private int viewID;
 
-  private List<CDOID> ids;
+  private List<Long> ids;
 
   /**
    * true - it will subscribe id's. <br>
@@ -42,7 +40,7 @@ public class ChangeSubscriptionRequest extends CDOClientRequest<Boolean>
 
   private boolean clear;
 
-  public ChangeSubscriptionRequest(CDOClientProtocol protocol, int viewID, List<CDOID> ids, boolean subscribeMode,
+  public ChangeSubscriptionRequest(CDOClientProtocol protocol, int viewID, List<Long> ids, boolean subscribeMode,
       boolean clear)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_CHANGE_SUBSCRIPTION);
@@ -63,7 +61,7 @@ public class ChangeSubscriptionRequest extends CDOClientRequest<Boolean>
     out.writeInt(viewID);
     out.writeBoolean(clear);
     out.writeInt(subscribeMode ? ids.size() : -ids.size());
-    for (CDOID id : ids)
+    for (Long id : ids)
     {
       out.writeCDOID(id);
     }

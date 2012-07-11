@@ -54,11 +54,6 @@ public interface CDOBranch extends IContainer<CDOBranch>, Comparable<CDOBranch>
    */
   public static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
 
-  /**
-   * Returns <code>true</code> if this branch is the {@link CDOBranchManager#getMainBranch() main branch},
-   * <code>false</code> otherwise.
-   */
-  public boolean isMainBranch();
 
   /**
    * Returns <code>true</code> if this branch is a local branch, <code>false</code> otherwise.
@@ -98,46 +93,6 @@ public interface CDOBranch extends IContainer<CDOBranch>, Comparable<CDOBranch>
    */
   public CDOBranchPoint[] getBasePath();
 
-  /**
-   * Returns the immutable base branch point of this branch, the point in the parent branch that marks the creation of
-   * this branch.
-   * <p>
-   * The base of the {@link CDOBranchManager#getMainBranch() main branch} marks the creation of the
-   * {@link CDOCommonRepository repository}.
-   * 
-   * @see CDOBranch#getHead()
-   * @see #getPoint(long)
-   */
-  public CDOBranchPoint getBase();
-
-  /**
-   * Returns the floating <i>end point</i> of this branch, a pair of this branch and the fixed special time stamp <i>
-   * {@link CDOBranchPoint#UNSPECIFIED_DATE unspecified}</i>.
-   * 
-   * @see CDOBranch#getBase()
-   * @see #getPoint(long)
-   */
-  public CDOBranchPoint getHead();
-
-  /**
-   * Returns the branch point in this branch with the given time stamp.
-   * <p>
-   * This factory method never returns <code>null</code>.
-   * 
-   * @see CDOBranch#getBase()
-   * @see CDOBranch#getHead()
-   * @see #getVersion(int)
-   */
-  public CDOBranchPoint getPoint(long timeStamp);
-
-  /**
-   * Returns the branch version in this branch with the given version number.
-   * <p>
-   * This factory method never returns <code>null</code>.
-   * 
-   * @see #getPoint(long)
-   */
-  public CDOBranchVersion getVersion(int version);
 
   /**
    * Returns the branch manager that manages this branch, never <code>null</code>.
@@ -158,24 +113,4 @@ public interface CDOBranch extends IContainer<CDOBranch>, Comparable<CDOBranch>
    */
   public CDOBranch getBranch(String path);
 
-  /**
-   * Creates a sub branch of this branch with the given name, {@link #getBase() based} at the {@link CDOBranchPoint
-   * branch point} in this branch with the given time stamp.
-   * <p>
-   * 
-   * @name The name of the sub branch to be created. It must not contain the {@link #PATH_SEPARATOR path separator}
-   *       character (slash).
-   * @param timeStamp
-   *          The time stamp in this branch that the sub branch to be created is supposed to be {@link #getBase() based
-   *          at}. It must not be before the base time stamp of this branch and it must be different from the fixed
-   *          special time stamp <i> {@link CDOBranchPoint#UNSPECIFIED_DATE unspecified}</i>
-   * @see #createBranch(String)
-   */
-  public CDOBranch createBranch(String name, long timeStamp);
-
-  /**
-   * Creates a sub branch of this branch with the given name, {@link #getBase() based} at the {@link CDOTimeProvider
-   * current time}.
-   */
-  public CDOBranch createBranch(String name);
 }

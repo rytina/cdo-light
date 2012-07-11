@@ -23,5 +23,5 @@ import java.util.Map;
  */
 public interface CDOAllRevisionsProvider
 {
-  public Map<CDOBranch, List<CDORevision>> getAllRevisions();
+  public List<CDORevision> getAllRevisions();
 }

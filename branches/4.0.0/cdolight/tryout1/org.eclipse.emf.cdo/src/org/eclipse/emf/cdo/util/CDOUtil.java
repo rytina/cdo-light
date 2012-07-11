@@ -367,49 +367,6 @@ public final class CDOUtil
     return FSMUtil.adaptLegacy((InternalEObject)object);
   }
 
-  /**
-   * @since 2.0
-   */
-  public static CDORevision getRevisionByVersion(CDOObject object, int version)
-  {
-    if (FSMUtil.isTransient(object))
-    {
-      return null;
-    }
-
-    CDORevision revision = CDOStateMachine.INSTANCE.read((InternalCDOObject)object);
-    return getRevisionByVersion(object, revision.getBranch(), version, revision);
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDORevision getRevisionByVersion(CDOObject object, CDOBranch branch, int version)
-  {
-    if (FSMUtil.isTransient(object))
-    {
-      return null;
-    }
-
-    CDORevision revision = CDOStateMachine.INSTANCE.read((InternalCDOObject)object);
-    return getRevisionByVersion(object, branch, version, revision);
-  }
-
-  private static CDORevision getRevisionByVersion(CDOObject object, CDOBranch branch, int version, CDORevision revision)
-  {
-    if (revision.getVersion() != version)
-    {
-      CDOSession session = object.cdoView().getSession();
-      if (!session.getRepositoryInfo().isSupportingAudits())
-      {
-        throw new IllegalStateException(Messages.getString("CDOUtil.0")); //$NON-NLS-1$
-      }
-
-      revision = session.getRevisionManager().getRevisionByVersion(object.cdoID(), branch.getVersion(version), 0, true);
-    }
-
-    return revision;
-  }
 
   /**
    * @since 2.0
@@ -499,7 +456,6 @@ public final class CDOUtil
     data.setPassWord(null);
     data.setResourcePath(null);
     data.setBranchPath(null);
-    data.setTimeStamp(CDOBranchPoint.UNSPECIFIED_DATE);
     data.setTransactional(false);
 
     String resource = data.toString();

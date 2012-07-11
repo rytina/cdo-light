@@ -14,7 +14,6 @@ import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.protocol.CDOAuthenticator;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -136,10 +135,6 @@ public interface InternalCDOSession extends CDOSession, PackageProcessor, Packag
 
   public void setUserID(String userID);
 
-  /**
-   * @since 3.0
-   */
-  public void setLastUpdateTime(long lastUpdateTime);
 
   public void viewDetached(InternalCDOView view);
 
@@ -163,10 +158,6 @@ public interface InternalCDOSession extends CDOSession, PackageProcessor, Packag
    */
   public void handleRepositoryStateChanged(CDOCommonRepository.State oldState, CDOCommonRepository.State newState);
 
-  /**
-   * @since 3.0
-   */
-  public void handleBranchNotification(InternalCDOBranch branch);
 
   /**
    * @since 3.0
@@ -181,23 +172,18 @@ public interface InternalCDOSession extends CDOSession, PackageProcessor, Packag
   /**
    * @since 3.0
    */
-  public void processRefreshSessionResult(RefreshSessionResult result, CDOBranch branch,
-      List<InternalCDOView> branchViews, Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions);
+  public void processRefreshSessionResult(RefreshSessionResult result, List<InternalCDOView> branchViews, Map<Long, InternalCDORevision> viewedRevisions);
+
 
   /**
    * @since 4.0
    */
-  public boolean isSticky();
+  public CDOBranchPoint getCommittedSinceLastRefresh(long id);
 
   /**
    * @since 4.0
    */
-  public CDOBranchPoint getCommittedSinceLastRefresh(CDOID id);
-
-  /**
-   * @since 4.0
-   */
-  public void setCommittedSinceLastRefresh(CDOID id, CDOBranchPoint branchPoint);
+  public void setCommittedSinceLastRefresh(long id, CDOBranchPoint branchPoint);
 
   /**
    * @since 4.0

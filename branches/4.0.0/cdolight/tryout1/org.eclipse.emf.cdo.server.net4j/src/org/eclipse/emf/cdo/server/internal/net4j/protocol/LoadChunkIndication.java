@@ -11,13 +11,12 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOType;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
@@ -38,9 +37,7 @@ public class LoadChunkIndication extends CDOServerReadIndication
 {
   private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_PROTOCOL, LoadChunkIndication.class);
 
-  private CDOID id;
-
-  private CDOBranchVersion branchVersion;
+  private long id;
 
   private EStructuralFeature feature;
 
@@ -60,12 +57,6 @@ public class LoadChunkIndication extends CDOServerReadIndication
     if (TRACER.isEnabled())
     {
       TRACER.format("Read revision ID: {0}", id); //$NON-NLS-1$
-    }
-
-    branchVersion = in.readCDOBranchVersion();
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Read  branchVersion: {0}", branchVersion); //$NON-NLS-1$
     }
 
     EClass eClass = (EClass)in.readCDOClassifierRefAndResolve();
@@ -95,7 +86,7 @@ public class LoadChunkIndication extends CDOServerReadIndication
     InternalRepository repository = getRepository();
     InternalCDORevisionManager revisionManager = repository.getRevisionManager();
 
-    InternalCDORevision revision = revisionManager.getRevisionByVersion(id, branchVersion, 0, true);
+    InternalCDORevision revision = revisionManager.getRevision(id, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE, true);
     repository.ensureChunk(revision, feature, fromIndex, toIndex + 1);
 
     CDOType type = CDOModelUtil.getType(feature);

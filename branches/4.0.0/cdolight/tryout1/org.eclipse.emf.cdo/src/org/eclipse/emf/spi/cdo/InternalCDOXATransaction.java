@@ -10,21 +10,15 @@
  **************************************************************************/
 package org.eclipse.emf.spi.cdo;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
-import org.eclipse.emf.cdo.internal.common.id.CDOIDTempObjectExternalImpl;
-import org.eclipse.emf.cdo.transaction.CDOTransaction;
-import org.eclipse.emf.cdo.transaction.CDOXATransaction;
-
-import org.eclipse.net4j.util.transaction.TransactionException;
-
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
-import org.eclipse.emf.spi.cdo.InternalCDOTransaction.InternalCDOCommitContext;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.cdo.transaction.CDOXATransaction;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
+import org.eclipse.emf.spi.cdo.InternalCDOTransaction.InternalCDOCommitContext;
+import org.eclipse.net4j.util.transaction.TransactionException;
 
 /**
  * @author Eike Stepper
@@ -52,7 +46,7 @@ public interface InternalCDOXATransaction extends CDOXATransaction, InternalCDOU
   /**
    * @since 3.0
    */
-  public void add(InternalCDOTransaction transaction, CDOID object);
+  public void add(InternalCDOTransaction transaction, long object);
 
   /**
    * @since 3.0
@@ -70,11 +64,11 @@ public interface InternalCDOXATransaction extends CDOXATransaction, InternalCDOU
    * @author Eike Stepper
    * @since 2.0
    */
-  public interface InternalCDOXACommitContext extends Callable<Object>, CDOIDProvider, InternalCDOCommitContext
+  public interface InternalCDOXACommitContext extends Callable<Object>, InternalCDOCommitContext
   {
     public InternalCDOXATransaction getTransactionManager();
 
-    public Map<CDOIDTempObjectExternalImpl, InternalCDOTransaction> getRequestedIDs();
+    public Map<Long, InternalCDOTransaction> getRequestedIDs();
 
     public CommitTransactionResult getResult();
 

@@ -11,8 +11,6 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -49,13 +47,6 @@ public class CommitXATransactionPhase2Indication extends CommitTransactionIndica
     if (PROTOCOL.isEnabled())
     {
       PROTOCOL.format("Receiving {0} mapping informations", size); //$NON-NLS-1$
-    }
-
-    for (int i = 0; i < size; i++)
-    {
-      CDOIDTemp oldID = (CDOIDTemp)in.readCDOID();
-      CDOID newID = in.readCDOID();
-      xaContextContext.addIDMapping(oldID, newID);
     }
 
     // Mapping information from others CDOTransactions was added. Notify the commit process to continue.

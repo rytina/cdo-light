@@ -10,9 +10,6 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
-
 import org.eclipse.emf.ecore.EClass;
 
 /**
@@ -21,49 +18,15 @@ import org.eclipse.emf.ecore.EClass;
  */
 public class DetachedCDORevision extends SyntheticCDORevision
 {
-  private int version;
-
-  private long timeStamp;
-
-  private long revised;
-
-  public DetachedCDORevision(EClass eClass, CDOID id, CDOBranch branch, int version, long timeStamp)
-  {
-    this(eClass, id, branch, version, timeStamp, UNSPECIFIED_DATE);
-  }
 
   /**
    * @since 4.0
    */
-  public DetachedCDORevision(EClass eClass, CDOID id, CDOBranch branch, int version, long timeStamp, long revised)
+  public DetachedCDORevision(EClass eClass, long id)
   {
-    super(eClass, id, branch);
-    this.version = version;
-    this.timeStamp = timeStamp;
-    this.revised = revised;
+    super(eClass, id);
   }
 
-  @Override
-  public final int getVersion()
-  {
-    return version;
-  }
 
-  @Override
-  public long getTimeStamp()
-  {
-    return timeStamp;
-  }
 
-  @Override
-  public long getRevised()
-  {
-    return revised;
-  }
-
-  @Override
-  public void setRevised(long revised)
-  {
-    this.revised = revised;
-  }
 }

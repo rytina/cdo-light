@@ -10,8 +10,7 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-
+import org.eclipse.emf.cdo.common.id1.CDOID;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**

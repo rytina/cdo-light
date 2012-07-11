@@ -10,13 +10,10 @@
  */
 package org.eclipse.emf.cdo.common.commit;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-
 import java.util.List;
+
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
 /**
  * A {@link CDOChangeKindProvider change kind provider} with detailed information about {@link #getNewObjects() new},
@@ -53,19 +50,19 @@ public interface CDOChangeSetData extends CDOChangeKindProvider
    * Depending on various conditions like change subscriptions particular elements can also be full {@link CDORevision
    * revisions}.
    */
-  public List<CDOIDAndVersion> getNewObjects();
+  public List<CDORevision> getNewObjects();
 
   /**
    * Returns a collection of revision keys denoting which (original) revisions have been changed in the context of a
    * commit operation. Depending on various conditions like change subscriptions particular elements can also be full
    * {@link CDORevisionDelta revision deltas}.
    */
-  public List<CDORevisionKey> getChangedObjects();
+  public List<CDORevisionDelta> getChangedObjects();
 
   /**
    * Returns a collection of keys denoting which revisions have been revised (corresponds to detached objects) in the
    * context of a commit operation. Depending on various conditions the version part of particular elements can be
    * {@link CDOBranchVersion#UNSPECIFIED_VERSION unspecified}.
    */
-  public List<CDOIDAndVersion> getDetachedObjects();
+  public List<Long> getDetachedObjects();
 }

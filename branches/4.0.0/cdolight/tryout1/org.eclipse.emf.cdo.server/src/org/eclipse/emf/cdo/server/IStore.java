@@ -10,14 +10,12 @@
  */
 package org.eclipse.emf.cdo.server;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.id.CDOID;
-
-import org.eclipse.net4j.util.om.monitor.ProgressDistributor;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.net4j.util.om.monitor.ProgressDistributor;
 
 /**
  * @author Eike Stepper
@@ -34,15 +32,11 @@ public interface IStore
    */
   public String getType();
 
-  /**
-   * @since 3.0
-   */
-  public Set<CDOID.ObjectType> getObjectIDTypes();
 
   /**
    * @since 4.0
    */
-  public CDOID createObjectID(String val);
+  public long createObjectID(String val);
 
   /**
    * @since 2.0
@@ -180,7 +174,7 @@ public interface IStore
    */
   public enum RevisionTemporality
   {
-    NONE, AUDITING
+    NONE
   }
 
   /**
@@ -189,6 +183,6 @@ public interface IStore
    */
   public enum RevisionParallelism
   {
-    NONE, BRANCHING
+    NONE
   }
 }

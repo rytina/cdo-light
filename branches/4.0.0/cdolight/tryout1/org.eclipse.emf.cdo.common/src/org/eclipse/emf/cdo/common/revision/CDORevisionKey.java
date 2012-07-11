@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 
 /**
  * Uniquely identifies a {@link CDORevision revision} by version in a {@link CDOBranch branch}.
@@ -21,6 +20,6 @@ import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface CDORevisionKey extends CDOBranchVersion, CDOIDAndVersion
+public interface CDORevisionKey extends  CDOIDAndVersion
 {
 }

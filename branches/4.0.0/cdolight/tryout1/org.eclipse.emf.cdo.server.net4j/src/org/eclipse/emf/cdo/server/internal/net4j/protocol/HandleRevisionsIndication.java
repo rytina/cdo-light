@@ -61,11 +61,6 @@ public class HandleRevisionsIndication extends CDOServerReadIndication
 
     if (in.readBoolean())
     {
-      branch = in.readCDOBranch();
-      if (TRACER.isEnabled())
-      {
-        TRACER.format("Read branch: {0}", branch); //$NON-NLS-1$
-      }
 
       exactBranch = in.readBoolean();
       if (TRACER.isEnabled())
@@ -75,10 +70,6 @@ public class HandleRevisionsIndication extends CDOServerReadIndication
     }
 
     timeStamp = in.readLong();
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Read timeStamp: {0}", CDOCommonUtil.formatTimeStamp(timeStamp)); //$NON-NLS-1$
-    }
 
     exactTime = in.readBoolean();
     if (TRACER.isEnabled())
@@ -93,7 +84,7 @@ public class HandleRevisionsIndication extends CDOServerReadIndication
     final IOException[] ioException = { null };
     final RuntimeException[] runtimeException = { null };
 
-    getRepository().handleRevisions(eClass, branch, exactBranch, timeStamp, exactTime, new CDORevisionHandler()
+    getRepository().handleRevisions(eClass, new CDORevisionHandler()
     {
       public boolean handleRevision(CDORevision revision)
       {

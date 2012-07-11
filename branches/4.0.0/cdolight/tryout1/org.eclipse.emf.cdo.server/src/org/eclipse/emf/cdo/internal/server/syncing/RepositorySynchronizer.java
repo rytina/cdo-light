@@ -10,12 +10,18 @@
  */
 package org.eclipse.emf.cdo.internal.server.syncing;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchCreatedEvent;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.internal.common.revision.NOOPRevisionCache;
 import org.eclipse.emf.cdo.internal.server.bundle.OM;
 import org.eclipse.emf.cdo.session.CDOSessionConfiguration;
@@ -24,7 +30,8 @@ import org.eclipse.emf.cdo.session.CDOSessionInvalidationEvent;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionCache;
 import org.eclipse.emf.cdo.spi.server.InternalRepositorySynchronizer;
 import org.eclipse.emf.cdo.spi.server.InternalSynchronizableRepository;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
+import org.eclipse.emf.spi.cdo.InternalCDOSession;
 import org.eclipse.net4j.util.concurrent.ConcurrencyUtil;
 import org.eclipse.net4j.util.concurrent.QueueRunner;
 import org.eclipse.net4j.util.event.IEvent;
@@ -33,16 +40,6 @@ import org.eclipse.net4j.util.lifecycle.ILifecycleEvent;
 import org.eclipse.net4j.util.om.monitor.NotifyingMonitor;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
-import org.eclipse.emf.spi.cdo.InternalCDOSession;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * @author Eike Stepper
@@ -77,8 +74,6 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
   private RemoteSessionListener remoteSessionListener = new RemoteSessionListener();
 
   private CDOSessionConfigurationFactory remoteSessionConfigurationFactory;
-
-  private boolean rawReplication;
 
   private int maxRecommits = DEFAULT_MAX_RECOMMITS;
 
@@ -126,17 +121,6 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
   public InternalCDOSession getRemoteSession()
   {
     return remoteSession;
-  }
-
-  public boolean isRawReplication()
-  {
-    return rawReplication;
-  }
-
-  public void setRawReplication(boolean rawReplication)
-  {
-    checkInactive();
-    this.rawReplication = rawReplication;
   }
 
   public int getMaxRecommits()
@@ -209,7 +193,7 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
   private void disconnect()
   {
     OM.LOG.info("Disconnected from master.");
-    if (localRepository.getRootResourceID() == null)
+    if (localRepository.getRootResourceID() == 0)
     {
       localRepository.setState(CDOCommonRepository.State.INITIAL);
     }
@@ -382,7 +366,7 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
     {
       if (localRepository.getState() == CDOCommonRepository.State.INITIAL)
       {
-        CDOID rootResourceID = remoteSession.getRepositoryInfo().getRootResourceID();
+        long rootResourceID = remoteSession.getRepositoryInfo().getRootResourceID();
         localRepository.setRootResourceID(rootResourceID);
         localRepository.setState(CDOCommonRepository.State.OFFLINE);
       }
@@ -420,18 +404,6 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
         }
 
         localRepository.setState(CDOCommonRepository.State.SYNCING);
-
-        CDOSessionProtocol sessionProtocol = remoteSession.getSessionProtocol();
-        OMMonitor monitor = new NotifyingMonitor("Synchronizing", getListeners());
-
-        if (isRawReplication())
-        {
-          sessionProtocol.replicateRepositoryRaw(localRepository, monitor);
-        }
-        else
-        {
-          sessionProtocol.replicateRepository(localRepository, monitor);
-        }
 
         localRepository.setState(CDOCommonRepository.State.ONLINE);
         OM.LOG.info("Synchronized with master.");
@@ -557,13 +529,6 @@ public class RepositorySynchronizer extends QueueRunner implements InternalRepos
     public int compareTo(QueueRunnable o)
     {
       int result = super.compareTo(o);
-      if (result == 0)
-      {
-        Long timeStamp = commitInfo.getTimeStamp();
-        Long timeStamp2 = ((CommitRunnable)o).commitInfo.getTimeStamp();
-        result = timeStamp < timeStamp2 ? -1 : timeStamp == timeStamp2 ? 0 : 1;
-      }
-
       return result;
     }
 

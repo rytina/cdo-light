@@ -25,9 +25,9 @@ import org.eclipse.net4j.util.om.monitor.OMMonitor;
  */
 public class Transaction extends View implements InternalTransaction
 {
-  public Transaction(InternalSession session, int viewID, CDOBranchPoint branchPoint)
+  public Transaction(InternalSession session, int viewID)
   {
-    super(session, viewID, branchPoint);
+    super(session, viewID);
   }
 
   @Override
@@ -61,22 +61,9 @@ public class Transaction extends View implements InternalTransaction
     checkOpen();
     return new TransactionCommitContext(this)
     {
-      @Override
-      protected long[] createTimeStamp(OMMonitor monitor)
-      {
-        return new long[] { timeStamp, CDOBranchPoint.UNSPECIFIED_DATE };
-      }
     };
   }
 
-  @Override
-  protected void validateTimeStamp(long timeStamp) throws IllegalArgumentException
-  {
-    if (timeStamp != UNSPECIFIED_DATE)
-    {
-      throw new IllegalArgumentException("Changing the target time is not supported by transactions");
-    }
-  }
 
   private void checkOpen()
   {

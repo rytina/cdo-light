@@ -10,9 +10,11 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
 import org.eclipse.emf.cdo.common.util.CDOQueryInfo;
 import org.eclipse.emf.cdo.server.IQueryContext;
@@ -20,11 +22,7 @@ import org.eclipse.emf.cdo.server.IQueryHandler;
 import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.server.StoreThreadLocal;
 import org.eclipse.emf.cdo.spi.server.QueryHandlerFactory;
-
 import org.eclipse.net4j.util.factory.ProductCreationException;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -42,16 +40,7 @@ public class ResourcesQueryHandler implements IQueryHandler
     QueryContext resourcesContext = new QueryContext(info, context);
     accessor.queryResources(resourcesContext);
 
-    CDOBranchPoint branchPoint = context;
-    CDOBranch branch = branchPoint.getBranch();
-    while (!branch.isMainBranch() && resourcesContext.getResourceIDs().size() < info.getMaxResults())
-    {
-      branchPoint = branch.getBase();
-      branch = branchPoint.getBranch();
-
-      resourcesContext.setBranchPoint(branchPoint);
       accessor.queryResources(resourcesContext);
-    }
   }
 
   /**
@@ -66,7 +55,7 @@ public class ResourcesQueryHandler implements IQueryHandler
 
     private CDOBranchPoint branchPoint;
 
-    private Set<CDOID> resourceIDs = new HashSet<CDOID>();
+    private Set<Long> resourceIDs = new HashSet<Long>();
 
     public QueryContext(CDOQueryInfo info, IQueryContext context)
     {
@@ -80,24 +69,15 @@ public class ResourcesQueryHandler implements IQueryHandler
       this.branchPoint = branchPoint;
     }
 
-    public Set<CDOID> getResourceIDs()
+    public Set<Long> getResourceIDs()
     {
       return resourceIDs;
     }
 
-    public CDOBranch getBranch()
-    {
-      return branchPoint.getBranch();
-    }
 
-    public long getTimeStamp()
+    public long getFolderID()
     {
-      return branchPoint.getTimeStamp();
-    }
-
-    public CDOID getFolderID()
-    {
-      return (CDOID)info.getParameters().get(CDOProtocolConstants.QUERY_LANGUAGE_RESOURCES_FOLDER_ID);
+      return (Long)info.getParameters().get(CDOProtocolConstants.QUERY_LANGUAGE_RESOURCES_FOLDER_ID);
     }
 
     public String getName()
@@ -115,7 +95,7 @@ public class ResourcesQueryHandler implements IQueryHandler
       return info.getMaxResults();
     }
 
-    public boolean addResource(CDOID resourceID)
+    public boolean addResource(long resourceID)
     {
       if (resourceIDs.add(resourceID))
       {

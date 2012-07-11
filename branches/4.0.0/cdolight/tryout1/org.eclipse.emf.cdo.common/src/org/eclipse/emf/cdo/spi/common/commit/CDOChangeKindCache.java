@@ -10,27 +10,27 @@
  */
 package org.eclipse.emf.cdo.spi.common.commit;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKindProvider;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-
-import java.util.HashMap;
-import java.util.List;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
 /**
  * @author Eike Stepper
  * @since 4.0
  */
-public class CDOChangeKindCache extends HashMap<CDOID, CDOChangeKind> implements CDOChangeKindProvider
+public class CDOChangeKindCache extends HashMap<Long, CDOChangeKind> implements CDOChangeKindProvider
 {
   private static final long serialVersionUID = 1L;
 
   public CDOChangeKindCache(CDOChangeSetData changeSetData)
   {
-    List<CDOIDAndVersion> newObjects = changeSetData.getNewObjects();
+    List<CDORevision> newObjects = changeSetData.getNewObjects();
     if (newObjects != null)
     {
       for (CDOIDAndVersion key : newObjects)
@@ -39,7 +39,7 @@ public class CDOChangeKindCache extends HashMap<CDOID, CDOChangeKind> implements
       }
     }
 
-    List<CDORevisionKey> changedObjects = changeSetData.getChangedObjects();
+    List<CDORevisionDelta> changedObjects = changeSetData.getChangedObjects();
     if (changedObjects != null)
     {
       for (CDOIDAndVersion key : changedObjects)
@@ -48,17 +48,17 @@ public class CDOChangeKindCache extends HashMap<CDOID, CDOChangeKind> implements
       }
     }
 
-    List<CDOIDAndVersion> detachedObjects = changeSetData.getDetachedObjects();
+    List<Long> detachedObjects = changeSetData.getDetachedObjects();
     if (detachedObjects != null)
     {
-      for (CDOIDAndVersion key : detachedObjects)
+      for (Long key : detachedObjects)
       {
-        put(key.getID(), CDOChangeKind.DETACHED);
+        put(key, CDOChangeKind.DETACHED);
       }
     }
   }
 
-  public CDOChangeKind getChangeKind(CDOID id)
+  public CDOChangeKind getChangeKind(long id)
   {
     return get(id);
   }

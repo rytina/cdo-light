@@ -12,7 +12,6 @@
  */
 package org.eclipse.emf.cdo.common.model;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.internal.common.bundle.OM;
 import org.eclipse.emf.cdo.internal.common.messages.Messages;
@@ -414,7 +413,7 @@ public final class CDOModelUtil implements CDOModelConstants
       return CDOType.STRING;
     }
 
-    if (object instanceof CDOID || object instanceof CDORevision)
+    if (object instanceof CDORevision)
     {
       return CDOType.OBJECT;
     }

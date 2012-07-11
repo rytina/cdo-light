@@ -10,10 +10,8 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.IStore;
-
 import org.eclipse.net4j.util.lifecycle.ILifecycle;
 
 /**
@@ -45,7 +43,7 @@ public interface InternalStore extends IStore, ILifecycle
   /**
    * @since 4.0
    */
-  public boolean isLocal(CDOID id);
+  public boolean isLocal(long id);
 
   /**
    * @since 4.0

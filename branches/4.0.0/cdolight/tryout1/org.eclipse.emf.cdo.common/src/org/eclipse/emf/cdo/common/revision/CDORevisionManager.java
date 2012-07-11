@@ -10,14 +10,10 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.CDOCommonRepository;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
-
-import org.eclipse.emf.ecore.EClass;
-
 import java.util.List;
+
+import org.eclipse.emf.cdo.common.CDOCommonRepository;
+import org.eclipse.emf.ecore.EClass;
 
 /**
  * Provides access to {@link CDORevision revisions} in a CDO {@link CDOCommonRepository repository} by demand loading
@@ -33,18 +29,14 @@ public interface CDORevisionManager
   /**
    * @return The type of an object if a revision for that object is in the revision cache, <code>null</code> otherwise.
    */
-  public EClass getObjectType(CDOID id);
+  public EClass getObjectType(long id);
 
-  public boolean containsRevision(CDOID id, CDOBranchPoint branchPoint);
+  public boolean containsRevision(long id);
 
-  public CDORevision getRevision(CDOID id, CDOBranchPoint branchPoint, int referenceChunk, int prefetchDepth,
+  public CDORevision getRevision(long id, int referenceChunk, int prefetchDepth,
       boolean loadOnDemand);
 
-  public List<CDORevision> getRevisions(List<CDOID> ids, CDOBranchPoint branchPoint, int referenceChunk,
+  public List<CDORevision> getRevisions(List<Long> ids, int referenceChunk,
       int prefetchDepth, boolean loadOnDemand);
 
-  public boolean containsRevisionByVersion(CDOID id, CDOBranchVersion branchVersion);
-
-  public CDORevision getRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk,
-      boolean loadOnDemand);
 }

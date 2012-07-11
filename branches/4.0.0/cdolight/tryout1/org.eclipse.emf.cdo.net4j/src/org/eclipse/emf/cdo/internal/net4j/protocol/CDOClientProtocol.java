@@ -10,25 +10,26 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchHandler;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevisionHandler;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.common.util.TransportException;
 import org.eclipse.emf.cdo.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.session.CDOSession;
@@ -41,7 +42,14 @@ import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.RevisionInfo;
 import org.eclipse.emf.cdo.view.CDOView;
-
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.spi.cdo.AbstractQueryIterator;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
+import org.eclipse.emf.spi.cdo.InternalCDOObject;
+import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
+import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
 import org.eclipse.net4j.signal.RemoteException;
 import org.eclipse.net4j.signal.RequestWithConfirmation;
 import org.eclipse.net4j.signal.RequestWithMonitoring;
@@ -54,21 +62,6 @@ import org.eclipse.net4j.util.io.StringCompressor;
 import org.eclipse.net4j.util.io.StringIO;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.om.trace.PerfTracer;
-
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.spi.cdo.AbstractQueryIterator;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
-import org.eclipse.emf.spi.cdo.InternalCDOObject;
-import org.eclipse.emf.spi.cdo.InternalCDORemoteSessionManager;
-import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -120,11 +113,6 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     return send(new LoadPackagesRequest(this, (InternalCDOPackageUnit)packageUnit));
   }
 
-  public Pair<Integer, Long> createBranch(int branchID, BranchInfo branchInfo)
-  {
-    return send(new CreateBranchRequest(this, branchID, branchInfo));
-  }
-
   public BranchInfo loadBranch(int branchID)
   {
     return send(new LoadBranchRequest(this, branchID));
@@ -140,14 +128,14 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     return send(new LoadBranchesRequest(this, startID, endID, handler));
   }
 
-  public void loadCommitInfos(CDOBranch branch, long startTime, long endTime, CDOCommitInfoHandler handler)
+  public void loadCommitInfos(CDOCommitInfoHandler handler)
   {
-    send(new LoadCommitInfosRequest(this, branch, startTime, endTime, handler));
+    send(new LoadCommitInfosRequest(this, handler));
   }
 
-  public CDOCommitData loadCommitData(long timeStamp)
+  public CDOCommitData loadCommitData()
   {
-    return send(new LoadCommitDataRequest(this, timeStamp));
+    return send(new LoadCommitDataRequest(this));
   }
 
   public Object loadChunk(InternalCDORevision revision, EStructuralFeature feature, int accessIndex, int fetchIndex,
@@ -156,27 +144,25 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     return send(new LoadChunkRequest(this, revision, feature, accessIndex, fetchIndex, fromIndex, toIndex));
   }
 
-  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, CDOBranchPoint branchPoint,
-      int referenceChunk, int prefetchDepth)
+  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, int referenceChunk, int prefetchDepth)
   {
-    return send(new LoadRevisionsRequest(this, infos, branchPoint, referenceChunk, prefetchDepth));
+    return send(new LoadRevisionsRequest(this, infos, referenceChunk, prefetchDepth));
   }
 
-  public InternalCDORevision loadRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk)
+  public InternalCDORevision loadRevision(long id,int referenceChunk)
   {
-    return send(new LoadRevisionByVersionRequest(this, id, branchVersion, referenceChunk));
+    return send(new LoadRevisionByVersionRequest(this, id,  referenceChunk));
   }
 
-  public RefreshSessionResult refresh(long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  public RefreshSessionResult refresh(Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates)
   {
-    return send(new RefreshSessionRequest(this, lastUpdateTime, viewedRevisions, initialChunkSize, enablePassiveUpdates));
+    return send(new RefreshSessionRequest(this, viewedRevisions, initialChunkSize, enablePassiveUpdates));
   }
 
-  public void openView(int viewID, boolean readOnly, CDOBranchPoint branchPoint)
+  public void openView(int viewID, boolean readOnly)
   {
-    send(new OpenViewRequest(this, viewID, readOnly, branchPoint));
+    send(new OpenViewRequest(this, viewID, readOnly));
   }
 
   public CDOBranchPoint openView(int viewID, boolean readOnly, String durableLockingID)
@@ -184,10 +170,10 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     return send(new OpenViewRequest(this, viewID, readOnly, durableLockingID));
   }
 
-  public void switchTarget(int viewID, CDOBranchPoint branchPoint, List<InternalCDOObject> invalidObjects,
-      List<CDORevisionKey> allChangedObjects, List<CDOIDAndVersion> allDetachedObjects, OMMonitor monitor)
+  public void switchTarget(int viewID, List<InternalCDOObject> invalidObjects,
+      List<Long> allChangedObjects, List<Long> allDetachedObjects, OMMonitor monitor)
   {
-    send(new SwitchTargetRequest(this, viewID, branchPoint, invalidObjects, allChangedObjects, allDetachedObjects),
+    send(new SwitchTargetRequest(this, viewID,  invalidObjects, allChangedObjects, allDetachedObjects),
         monitor);
   }
 
@@ -196,7 +182,7 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     send(new CloseViewRequest(this, viewID));
   }
 
-  public void changeSubscription(int viewID, List<CDOID> ids, boolean subscribeMode, boolean clear)
+  public void changeSubscription(int viewID, List<Long> ids, boolean subscribeMode, boolean clear)
   {
     send(new ChangeSubscriptionRequest(this, viewID, ids, subscribeMode, clear));
   }
@@ -218,15 +204,14 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     }
   }
 
-  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewID, CDOBranch viewedBranch,
-      LockType lockType, long timeout) throws InterruptedException
+  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewID, LockType lockType, long timeout) throws InterruptedException
   {
     InterruptedException interruptedException = null;
     RuntimeException runtimeException = null;
 
     try
     {
-      return new LockObjectsRequest(this, viewedRevisions, viewID, viewedBranch, lockType, timeout).send();
+      return new LockObjectsRequest(this, viewedRevisions, viewID, lockType, timeout).send();
     }
     catch (RemoteException ex)
     {
@@ -299,20 +284,19 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
   public void handleRevisions(EClass eClass, CDOBranch branch, boolean exactBranch, long timeStamp, boolean exactTime,
       CDORevisionHandler handler)
   {
-    send(new HandleRevisionsRequest(this, eClass, branch, exactBranch, timeStamp, exactTime, handler));
+    send(new HandleRevisionsRequest(this, eClass, exactBranch, timeStamp, exactTime, handler));
   }
 
-  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks,
-      CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
-    return send(new CommitTransactionRequest(this, transactionID, comment, releaseLocks, idProvider, commitData, lobs),
+    return send(new CommitTransactionRequest(this, transactionID, comment, releaseLocks, commitData, lobs),
         monitor);
   }
 
-  public CommitTransactionResult commitDelegation(CDOBranch branch, String userID, String comment,
-      CDOCommitData commitData, Map<CDOID, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
+  public CommitTransactionResult commitDelegation(String userID, String comment,
+      CDOCommitData commitData, Map<Long, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor)
   {
-    return send(new CommitDelegationRequest(this, branch, userID, comment, commitData, detachedObjectTypes, lobs),
+    return send(new CommitDelegationRequest(this, userID, comment, commitData, detachedObjectTypes, lobs),
         monitor);
   }
 
@@ -351,22 +335,12 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
     return send(new UnsubscribeRemoteSessionsRequest(this));
   }
 
-  public void replicateRepository(CDOReplicationContext context, OMMonitor monitor)
+  public CDOChangeSetData[] loadChangeSets()
   {
-    send(new ReplicateRepositoryRequest(this, context, monitor));
+    return send(new LoadChangeSetsRequest(this));
   }
 
-  public void replicateRepositoryRaw(CDORawReplicationContext context, OMMonitor monitor)
-  {
-    send(new ReplicateRepositoryRawRequest(this, context), monitor);
-  }
-
-  public CDOChangeSetData[] loadChangeSets(CDOBranchPointRange... ranges)
-  {
-    return send(new LoadChangeSetsRequest(this, ranges));
-  }
-
-  public Set<CDOID> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
+  public Set<Long> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
       CDORevisionAvailabilityInfo targetBaseInfo, CDORevisionAvailabilityInfo sourceBaseInfo)
   {
     return send(new LoadMergeDataRequest(this, targetInfo, sourceInfo, targetBaseInfo, sourceBaseInfo));
@@ -447,4 +421,7 @@ public class CDOClientProtocol extends SignalProtocol<CDOSession> implements CDO
       REVISION_LOADING.stop(request);
     }
   }
+
+
+
 }

@@ -49,8 +49,6 @@ public interface InternalSessionManager extends ISessionManager
 
   public void sendRepositoryStateNotification(CDOCommonRepository.State oldState, CDOCommonRepository.State newState);
 
-  public void sendBranchNotification(InternalSession sender, InternalCDOBranch branch);
-
   public void sendCommitNotification(InternalSession sender, CDOCommitInfo commitInfo);
 
   public void sendRemoteSessionNotification(InternalSession sender, byte opcode);

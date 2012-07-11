@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.internal.cdo.query;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.BlockingCloseableIterator;
 import org.eclipse.emf.cdo.internal.common.CDOQueryInfoImpl;
 import org.eclipse.emf.cdo.view.CDOQuery;
@@ -72,7 +71,7 @@ public class CDOQueryImpl extends CDOQueryInfoImpl implements CDOQuery
   protected <T> AbstractQueryIterator<T> createQueryResult(Class<T> classObject)
   {
     CDOQueryInfoImpl queryInfo = createQueryInfo();
-    if (CDOID.class.equals(classObject))
+    if (Long.class.equals(classObject))
     {
       return new CDOQueryCDOIDIteratorImpl<T>(view, queryInfo);
     }
@@ -159,17 +158,11 @@ public class CDOQueryImpl extends CDOQueryInfoImpl implements CDOQuery
     if (object instanceof InternalCDOObject)
     {
       InternalCDOObject internalCDOObject = FSMUtil.adapt(object, view);
-      CDOID id = internalCDOObject.cdoID();
-      if (id == null)
+      long id = internalCDOObject.cdoID();
+      if (id == 0)
       {
         throw new UnsupportedOperationException(OBJECT_NOT_PERSISTED_MESSAGE);
       }
-
-      if (id.isTemporary())
-      {
-        throw new UnsupportedOperationException(OBJECT_NOT_PERSISTED_MESSAGE);
-      }
-
       return id;
     }
 

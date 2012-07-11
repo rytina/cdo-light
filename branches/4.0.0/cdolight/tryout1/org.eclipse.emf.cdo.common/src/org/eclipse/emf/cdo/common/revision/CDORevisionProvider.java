@@ -11,7 +11,6 @@
 package org.eclipse.emf.cdo.common.revision;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 /**
  * Provides consumers with the {@link CDORevision revisions} of {@link CDOID identifiable} CDO objects by selecting a
@@ -22,5 +21,5 @@ import org.eclipse.emf.cdo.common.id.CDOID;
  */
 public interface CDORevisionProvider
 {
-  public CDORevision getRevision(CDOID id);
+  public CDORevision getRevision(long id);
 }

@@ -33,13 +33,6 @@ public interface IRepositorySynchronizer extends INotifier
 
   public CDOSession getRemoteSession();
 
-  public boolean isRawReplication();
-
-  /**
-   * @since 4.0
-   */
-  public void setRawReplication(boolean rawReplication);
-
   public int getMaxRecommits();
 
   public void setMaxRecommits(int maxRecommits);

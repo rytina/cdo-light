@@ -13,9 +13,12 @@ package org.eclipse.emf.cdo.internal.common.commit;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,8 +28,8 @@ public class CDOCommitDataImpl extends CDOChangeSetDataImpl implements CDOCommit
 {
   private List<CDOPackageUnit> newPackageUnits;
 
-  public CDOCommitDataImpl(List<CDOPackageUnit> newPackageUnits, List<CDOIDAndVersion> newObjects,
-      List<CDORevisionKey> changedObjects, List<CDOIDAndVersion> detachedObjects)
+  public CDOCommitDataImpl(List<CDOPackageUnit> newPackageUnits, List<CDORevision> newObjects,
+      List<CDORevisionDelta> changedObjects, Collection<Long> detachedObjects)
   {
     super(newObjects, changedObjects, detachedObjects);
     this.newPackageUnits = newPackageUnits;

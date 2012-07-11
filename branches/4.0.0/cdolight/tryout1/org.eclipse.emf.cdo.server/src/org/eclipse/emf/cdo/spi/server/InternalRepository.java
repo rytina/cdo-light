@@ -10,11 +10,16 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLobHandler;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -36,17 +41,9 @@ import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry.PackagePr
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager.RevisionLoader;
-
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * @author Eike Stepper
@@ -100,22 +97,6 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
 
   public InternalCommitContext createCommitContext(InternalTransaction transaction);
 
-  /**
-   * Returns a commit time stamp that is guaranteed to be unique in this repository. At index 1 of the returned
-   * <code>long</code> array is the previous commit time.
-   * 
-   * @since 4.0
-   */
-  public long[] createCommitTimeStamp(OMMonitor monitor);
-
-  /**
-   * Like {@link #createCommitTimeStamp(OMMonitor)}, but forces the repository to use the timestamp value passed in as
-   * the argument. This should be called only to force the timestamp of the first commit of a new repository to be equal
-   * to its creation time.
-   * 
-   * @since 4.0
-   */
-  public long[] forceCommitTimeStamp(long timestamp, OMMonitor monitor);
 
   /**
    * Notifies the repository of the completion of a commit. The value passed in must be a value obtained earlier through
@@ -123,7 +104,7 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
    * 
    * @since 4.0
    */
-  public void endCommit(long timeStamp);
+  public void endCommit();
 
   /**
    * Notifies the repository of the failure of a commit. The value passed in must be a value obtained earlier through
@@ -131,19 +112,14 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
    * 
    * @since 4.0
    */
-  public void failCommit(long timeStamp);
+  public void failCommit();
 
   /**
    * @since 4.0
    */
   public void sendCommitNotification(InternalSession sender, CDOCommitInfo commitInfo);
 
-  public void setRootResourceID(CDOID rootResourceID);
-
-  /**
-   * @since 4.0
-   */
-  public void setLastCommitTimeStamp(long commitTimeStamp);
+  public void setRootResourceID(long rootResourceID);
 
   public IStoreAccessor ensureChunk(InternalCDORevision revision, EStructuralFeature feature, int chunkStart,
       int chunkEnd);
@@ -154,8 +130,6 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
   public void notifyWriteAccessHandlers(ITransaction transaction, IStoreAccessor.CommitContext commitContext,
       boolean beforeCommit, OMMonitor monitor);
 
-  public void replicate(CDOReplicationContext context);
-
   public CDOReplicationInfo replicateRaw(CDODataOutput out, int lastReplicatedBranchID, long lastReplicatedCommitTime)
       throws IOException;
 
@@ -164,7 +138,7 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
   /**
    * @since 4.0
    */
-  public Set<CDOID> getMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
+  public Set<Long> getMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
       CDORevisionAvailabilityInfo targetBaseInfo, CDORevisionAvailabilityInfo sourceBaseInfo, OMMonitor monitor);
 
   /**
@@ -185,8 +159,7 @@ public interface InternalRepository extends IRepository, PackageProcessor, Packa
   /**
    * @since 4.0
    */
-  public void handleRevisions(EClass eClass, CDOBranch branch, boolean exactBranch, long timeStamp, boolean exactTime,
-      CDORevisionHandler handler);
+  public void handleRevisions(EClass eClass, CDORevisionHandler handler);
 
   /**
    * @since 4.0

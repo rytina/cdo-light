@@ -10,6 +10,11 @@
  */
 package org.eclipse.emf.cdo.internal.server.syncing;
 
+import java.util.List;
+
+import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.RevisionInfo;
 import org.eclipse.emf.cdo.spi.server.InternalCommitContext;
 import org.eclipse.emf.cdo.spi.server.InternalFailoverParticipant;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
@@ -128,4 +133,5 @@ public class FailoverParticipant extends SynchronizableRepository implements Int
 
     return createNormalCommitContext(transaction);
   }
+
 }

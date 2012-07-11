@@ -27,11 +27,6 @@ import java.io.IOException;
  */
 public class LoadCommitInfosIndication extends CDOServerReadIndication
 {
-  private CDOBranch branch;
-
-  private long startTime;
-
-  private long endTime;
 
   public LoadCommitInfosIndication(CDOServerProtocol protocol)
   {
@@ -41,9 +36,6 @@ public class LoadCommitInfosIndication extends CDOServerReadIndication
   @Override
   protected void indicating(CDODataInput in) throws IOException
   {
-    branch = in.readBoolean() ? in.readCDOBranch() : null;
-    startTime = in.readLong();
-    endTime = in.readLong();
   }
 
   @Override
@@ -52,20 +44,14 @@ public class LoadCommitInfosIndication extends CDOServerReadIndication
     try
     {
       InternalCDOCommitInfoManager manager = getRepository().getCommitInfoManager();
-      manager.getCommitInfos(branch, startTime, endTime, new CDOCommitInfoHandler()
+      manager.getCommitInfos(new CDOCommitInfoHandler()
       {
         public void handleCommitInfo(CDOCommitInfo commitInfo)
         {
           try
           {
             out.writeBoolean(true);
-            out.writeLong(commitInfo.getPreviousTimeStamp());
-            if (branch == null)
-            {
-              out.writeCDOBranch(commitInfo.getBranch());
-            }
 
-            out.writeLong(commitInfo.getTimeStamp());
             out.writeString(commitInfo.getUserID());
             out.writeString(commitInfo.getComment());
           }

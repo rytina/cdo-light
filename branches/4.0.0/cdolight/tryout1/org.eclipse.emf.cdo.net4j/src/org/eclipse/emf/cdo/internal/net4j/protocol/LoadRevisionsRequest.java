@@ -10,8 +10,12 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
@@ -22,14 +26,7 @@ import org.eclipse.emf.cdo.session.CDOCollectionLoadingPolicy;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.RevisionInfo;
 import org.eclipse.emf.cdo.view.CDOFetchRuleManager;
-
 import org.eclipse.net4j.util.om.trace.ContextTracer;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -40,18 +37,15 @@ public class LoadRevisionsRequest extends CDOClientRequest<List<InternalCDORevis
 
   private List<RevisionInfo> infos;
 
-  private CDOBranchPoint branchPoint;
-
   private int referenceChunk;
 
   private int prefetchDepth;
 
-  public LoadRevisionsRequest(CDOClientProtocol protocol, List<RevisionInfo> infos, CDOBranchPoint branchPoint,
+  public LoadRevisionsRequest(CDOClientProtocol protocol, List<RevisionInfo> infos,
       int referenceChunk, int prefetchDepth)
   {
     super(protocol, CDOProtocolConstants.SIGNAL_LOAD_REVISIONS);
     this.infos = infos;
-    this.branchPoint = branchPoint;
     this.referenceChunk = referenceChunk;
     this.prefetchDepth = prefetchDepth;
   }
@@ -59,12 +53,6 @@ public class LoadRevisionsRequest extends CDOClientRequest<List<InternalCDORevis
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    if (TRACER.isEnabled())
-    {
-      TRACER.format("Writing branchPoint: {0}", branchPoint); //$NON-NLS-1$
-    }
-
-    out.writeCDOBranchPoint(branchPoint);
     if (TRACER.isEnabled())
     {
       TRACER.format("Writing referenceChunk: {0}", referenceChunk); //$NON-NLS-1$
@@ -92,7 +80,7 @@ public class LoadRevisionsRequest extends CDOClientRequest<List<InternalCDORevis
       out.writeInt(prefetchDepth);
     }
 
-    Collection<CDOID> ids = new ArrayList<CDOID>(size);
+    Collection<Long> ids = new ArrayList<Long>(size);
     for (RevisionInfo info : infos)
     {
       if (TRACER.isEnabled())
@@ -115,7 +103,7 @@ public class LoadRevisionsRequest extends CDOClientRequest<List<InternalCDORevis
     {
       // At this point, fetch size is more than one.
       int fetchSize = fetchRules.size();
-      CDOID contextID = ruleManager.getContext();
+      long contextID = ruleManager.getContext();
 
       out.writeInt(fetchSize);
       out.writeInt(collectionLoadingPolicy != null ? collectionLoadingPolicy.getInitialChunkSize()
@@ -167,7 +155,7 @@ public class LoadRevisionsRequest extends CDOClientRequest<List<InternalCDORevis
   public String toString()
   {
     return MessageFormat.format(
-        "LoadRevisionsRequest(infos={0}, branchPoint={1}, referenceChunk={2}, prefetchDepth={3})", infos, branchPoint,
+        "LoadRevisionsRequest(infos={0}, branchPoint={1}, referenceChunk={2}, prefetchDepth={3})", infos,
         referenceChunk, prefetchDepth);
   }
 }

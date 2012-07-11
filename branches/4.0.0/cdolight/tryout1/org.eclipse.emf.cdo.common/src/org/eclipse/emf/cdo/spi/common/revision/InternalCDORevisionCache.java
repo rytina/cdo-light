@@ -10,16 +10,13 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOAllRevisionsProvider;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
-
 import org.eclipse.net4j.util.lifecycle.ILifecycle;
-
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -29,7 +26,7 @@ public interface InternalCDORevisionCache extends CDORevisionCache, CDOAllRevisi
 {
   public InternalCDORevisionCache instantiate(CDORevision revision);
 
-  public CDORevision removeRevision(CDOID id, CDOBranchVersion branchVersion);
+  public CDORevision removeRevision(long id);
 
   public void clear();
 

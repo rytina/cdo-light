@@ -34,13 +34,9 @@ public interface InternalCDOBranch extends CDOBranch
 
   public InternalCDOBranch getBranch(String path);
 
-  public InternalCDOBranch createBranch(String name, long timeStamp);
-
-  public InternalCDOBranch createBranch(String name);
-
   public BranchInfo getBranchInfo();
 
-  public void setBranchInfo(String name, InternalCDOBranch baseBranch, long baseTimeStamp);
+  public void setBranchInfo(String name);
 
   public void addChild(InternalCDOBranch branch);
 }

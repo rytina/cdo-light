@@ -13,7 +13,6 @@ package org.eclipse.emf.spi.cdo;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageTypeRegistry.CDOObjectMarker;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
@@ -47,7 +46,7 @@ public interface InternalCDOObject extends CDOObject, InternalEObject, InternalC
 
   public void cdoInternalPreCommit();
 
-  public void cdoInternalSetID(CDOID id);
+  public void cdoInternalSetID(long id);
 
   public void cdoInternalSetView(CDOView view);
 

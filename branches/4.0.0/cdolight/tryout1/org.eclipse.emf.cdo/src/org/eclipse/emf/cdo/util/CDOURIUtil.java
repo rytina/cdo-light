@@ -11,7 +11,6 @@
  */
 package org.eclipse.emf.cdo.util;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
 import org.eclipse.emf.cdo.session.CDOSession;
@@ -166,13 +165,13 @@ public final class CDOURIUtil
    * newCDOID = OID2<br>
    * return = cdo://2a57dfcf-8f97-4d39-8e17-9d99ae5c4b3c/resB#1/2
    */
-  public static CDOID convertExternalCDOID(URI baseURI, CDOID newCDOID)
+  public static long convertExternalCDOID(URI baseURI, long newCDOID)
   {
     StringBuilder builder = new StringBuilder();
     CDOIDUtil.write(builder, newCDOID);
 
     baseURI = baseURI.trimFragment().appendFragment(builder.toString());
-    return CDOIDUtil.createExternal(baseURI.toString());
+    return Long.parseLong(baseURI.toString());
   }
 
   public static List<String> analyzePath(URI uri)

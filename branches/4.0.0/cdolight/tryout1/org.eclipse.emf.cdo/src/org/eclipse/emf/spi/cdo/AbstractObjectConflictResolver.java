@@ -10,13 +10,19 @@
  **************************************************************************/
 package org.eclipse.emf.spi.cdo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -32,28 +38,16 @@ import org.eclipse.emf.cdo.transaction.CDOTransactionHandler;
 import org.eclipse.emf.cdo.util.CDOUtil;
 import org.eclipse.emf.cdo.view.CDOAdapterPolicy;
 import org.eclipse.emf.cdo.view.CDOViewInvalidationEvent;
-
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.internal.cdo.bundle.OM;
 import org.eclipse.emf.internal.cdo.messages.Messages;
 import org.eclipse.emf.internal.cdo.object.CDOObjectMerger;
 import org.eclipse.emf.internal.cdo.view.CDOStateMachine;
-
 import org.eclipse.net4j.util.collection.Pair;
 import org.eclipse.net4j.util.event.IEvent;
 import org.eclipse.net4j.util.event.IListener;
-
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * @author Eike Stepper
@@ -67,7 +61,7 @@ public abstract class AbstractObjectConflictResolver extends AbstractConflictRes
 
   public void resolveConflicts(Set<CDOObject> conflicts)
   {
-    Map<CDOID, CDORevisionDelta> localDeltas = getTransaction().getRevisionDeltas();
+    Map<Long, CDORevisionDelta> localDeltas = getTransaction().getRevisionDeltas();
     for (CDOObject conflict : conflicts)
     {
       CDORevisionDelta localDelta = localDeltas.get(conflict.cdoID());
@@ -89,7 +83,7 @@ public abstract class AbstractObjectConflictResolver extends AbstractConflictRes
   public void resolveConflicts(Map<CDOObject, Pair<CDORevision, CDORevisionDelta>> conflicts,
       List<CDORevisionDelta> allRemoteDeltas)
   {
-    Map<CDOID, CDORevisionDelta> localDeltas = getTransaction().getRevisionDeltas();
+    Map<Long, CDORevisionDelta> localDeltas = getTransaction().getRevisionDeltas();
     for (Entry<CDOObject, Pair<CDORevision, CDORevisionDelta>> entry : conflicts.entrySet())
     {
       CDOObject conflict = entry.getKey();
@@ -143,7 +137,6 @@ public abstract class AbstractObjectConflictResolver extends AbstractConflictRes
     readObject(object);
 
     InternalCDORevision revision = (InternalCDORevision)object.cdoRevision().copy();
-    ((InternalCDORevisionDelta)revisionDelta).setVersion(revision.getVersion());
 
     CDORevisionMerger merger = new CDORevisionMerger();
     merger.merge(revision, revisionDelta);
@@ -182,9 +175,9 @@ public abstract class AbstractObjectConflictResolver extends AbstractConflictRes
 
     private CDOChangeSetData createChangeSet(List<CDORevisionDelta> revisionDeltas)
     {
-      List<CDOIDAndVersion> newObjects = Collections.emptyList();
-      List<CDORevisionKey> changedObjects = new ArrayList<CDORevisionKey>();
-      List<CDOIDAndVersion> detachedObjects = Collections.emptyList();
+      List<CDORevision> newObjects = Collections.emptyList();
+      List<CDORevisionDelta> changedObjects = new ArrayList<CDORevisionDelta>();
+      List<Long> detachedObjects = Collections.emptyList();
 
       for (CDORevisionDelta delta : revisionDeltas)
       {

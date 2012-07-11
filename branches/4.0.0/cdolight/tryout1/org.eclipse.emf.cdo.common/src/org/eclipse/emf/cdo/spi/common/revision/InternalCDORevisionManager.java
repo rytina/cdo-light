@@ -10,19 +10,15 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCacheAdder;
 import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
-
 import org.eclipse.net4j.util.lifecycle.ILifecycle;
-
-import java.util.List;
 
 /**
  * @author Eike Stepper
@@ -30,19 +26,7 @@ import java.util.List;
  */
 public interface InternalCDORevisionManager extends CDORevisionManager, CDORevisionCacheAdder, ILifecycle
 {
-  /**
-   * @since 4.0
-   */
-  public boolean isSupportingAudits();
 
-  /**
-   * @since 4.0
-   */
-  public void setSupportingAudits(boolean on);
-
-  public boolean isSupportingBranches();
-
-  public void setSupportingBranches(boolean on);
 
   public RevisionLoader getRevisionLoader();
 
@@ -63,24 +47,16 @@ public interface InternalCDORevisionManager extends CDORevisionManager, CDORevis
    */
   public void setCache(CDORevisionCache cache);
 
-  /**
-   * Called on client via postCommit when there is no version of detached objects available.
-   */
-  public void reviseLatest(CDOID id, CDOBranch branch);
-
-  public void reviseVersion(CDOID id, CDOBranchVersion branchVersion, long timeStamp);
-
-  public InternalCDORevision getRevision(CDOID id, CDOBranchPoint branchPoint, int referenceChunk, int prefetchDepth,
+  public InternalCDORevision getRevision(long id, int referenceChunk, int prefetchDepth,
       boolean loadOnDemand, SyntheticCDORevision[] synthetics);
 
-  public List<CDORevision> getRevisions(List<CDOID> ids, CDOBranchPoint branchPoint, int referenceChunk,
+  public List<CDORevision> getRevisions(List<Long> ids, int referenceChunk,
       int prefetchDepth, boolean loadOnDemand, SyntheticCDORevision[] synthetics);
 
-  public InternalCDORevision getRevision(CDOID id, CDOBranchPoint branchPoint, int referenceChunk, int prefetchDepth,
+  public InternalCDORevision getRevision(long id, int referenceChunk, int prefetchDepth,
       boolean loadOnDemand);
 
-  public InternalCDORevision getRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk,
-      boolean loadOnDemand);
+
 
   /**
    * @author Eike Stepper
@@ -88,10 +64,9 @@ public interface InternalCDORevisionManager extends CDORevisionManager, CDORevis
    */
   public interface RevisionLoader
   {
-    public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, CDOBranchPoint branchPoint,
-        int referenceChunk, int prefetchDepth);
+    public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, int referenceChunk, int prefetchDepth);
 
-    public InternalCDORevision loadRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk);
+    public InternalCDORevision loadRevision(long id, int referenceChunk);
   }
 
   /**

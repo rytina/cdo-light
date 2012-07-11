@@ -12,6 +12,15 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -22,24 +31,12 @@ import org.eclipse.emf.cdo.common.revision.delta.CDOListFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOMoveFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORemoveFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOSetFeatureDelta;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
-
-import org.eclipse.net4j.util.ObjectUtil;
-import org.eclipse.net4j.util.collection.Pair;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
-
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import org.eclipse.net4j.util.ObjectUtil;
+import org.eclipse.net4j.util.collection.Pair;
 
 /**
  * @author Simon McDuff
@@ -405,17 +402,6 @@ public class CDOListFeatureDeltaImpl extends CDOFeatureDeltaImpl implements CDOL
     }
   }
 
-  @Override
-  public boolean adjustReferences(CDOReferenceAdjuster adjuster)
-  {
-    boolean changed = false;
-    for (CDOFeatureDelta featureDelta : featureDeltas)
-    {
-      changed |= ((CDOFeatureDeltaImpl)featureDelta).adjustReferences(adjuster);
-    }
-
-    return changed;
-  }
 
   public void accept(CDOFeatureDeltaVisitor visitor)
   {

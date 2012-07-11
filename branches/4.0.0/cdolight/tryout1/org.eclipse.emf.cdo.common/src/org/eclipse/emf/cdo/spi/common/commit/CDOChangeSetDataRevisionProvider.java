@@ -10,18 +10,17 @@
  */
 package org.eclipse.emf.cdo.spi.common.commit;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetDataProvider;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
 import org.eclipse.emf.cdo.common.revision.CDORevisionProvider;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDeltaProvider;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Eike Stepper
@@ -31,9 +30,9 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
 {
   private static final CDOIDAndVersion DETACHED = new CDOIDAndVersion()
   {
-    public CDOID getID()
+    public long getID()
     {
-      return CDOID.NULL;
+      return 0;
     }
 
     public int getVersion()
@@ -56,7 +55,7 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
 
   private CDORevisionDeltaProvider revisionDeltaCallback;
 
-  private Map<CDOID, CDOIDAndVersion> cachedRevisions;
+  private Map<Long, CDOIDAndVersion> cachedRevisions;
 
   public CDOChangeSetDataRevisionProvider(CDORevisionProvider delegate, CDOChangeSetData changeSetData,
       CDORevisionProvider revisionCallback, CDORevisionDeltaProvider revisionDeltaCallback)
@@ -77,7 +76,7 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
     return changeSetData;
   }
 
-  public synchronized CDORevision getRevision(CDOID id)
+  public synchronized CDORevision getRevision(long id)
   {
     if (cachedRevisions == null)
     {
@@ -117,9 +116,9 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
     return delegate.getRevision(id);
   }
 
-  private Map<CDOID, CDOIDAndVersion> cacheRevisions()
+  private Map<Long, CDOIDAndVersion> cacheRevisions()
   {
-    Map<CDOID, CDOIDAndVersion> cache = new HashMap<CDOID, CDOIDAndVersion>();
+    Map<Long, CDOIDAndVersion> cache = new HashMap<Long, CDOIDAndVersion>();
 
     for (CDOIDAndVersion key : changeSetData.getNewObjects())
     {
@@ -141,9 +140,9 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
       cache.put(key.getID(), key);
     }
 
-    for (CDOIDAndVersion key : changeSetData.getDetachedObjects())
+    for (Long key : changeSetData.getDetachedObjects())
     {
-      cache.put(key.getID(), DETACHED);
+      cache.put(key, DETACHED);
     }
 
     return cache;
@@ -151,7 +150,7 @@ public class CDOChangeSetDataRevisionProvider implements CDORevisionProvider, CD
 
   private CDORevision applyDelta(CDORevisionDelta revisionDelta)
   {
-    CDOID id = revisionDelta.getID();
+    long id = revisionDelta.getID();
     CDORevision changedObject = delegate.getRevision(id).copy();
     revisionDelta.apply(changedObject);
     cachedRevisions.put(id, changedObject);

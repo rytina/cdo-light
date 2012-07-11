@@ -10,17 +10,14 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
+import java.io.IOException;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
-
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
 import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitContext;
-
-import java.io.IOException;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
 
 /**
  * Phase 1 will send all the modifications to the server.
@@ -37,11 +34,6 @@ public class CommitXATransactionPhase1Request extends CommitXATransactionRequest
     super(protocol, CDOProtocolConstants.SIGNAL_XA_COMMIT_TRANSACTION_PHASE1, xaContext);
   }
 
-  @Override
-  protected CDOIDProvider getIDProvider()
-  {
-    return getCommitContext();
-  }
 
   @Override
   protected CommitTransactionResult confirming(CDODataInput in, OMMonitor monitor) throws IOException

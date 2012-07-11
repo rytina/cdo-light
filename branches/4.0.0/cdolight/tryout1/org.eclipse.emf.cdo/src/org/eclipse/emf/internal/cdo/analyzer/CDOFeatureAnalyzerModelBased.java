@@ -12,7 +12,6 @@
 package org.eclipse.emf.internal.cdo.analyzer;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -46,12 +45,12 @@ public class CDOFeatureAnalyzerModelBased extends CDOAbstractFeatureRuleAnalyzer
     }
   }
 
-  public CDOID getContext()
+  public long getContext()
   {
-    return CDOID.NULL;
+    return 0;
   }
 
-  public List<CDOFetchRule> getFetchRules(Collection<CDOID> ids)
+  public List<CDOFetchRule> getFetchRules(Collection<Long> ids)
   {
     fetchData();
     List<CDOFetchRule> rules = new ArrayList<CDOFetchRule>();

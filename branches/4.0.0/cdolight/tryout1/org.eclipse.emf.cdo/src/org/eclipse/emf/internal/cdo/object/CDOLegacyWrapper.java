@@ -13,7 +13,6 @@ package org.eclipse.emf.internal.cdo.object;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.CDOState;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOModelUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.common.model.CDOType;
@@ -74,12 +73,12 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
    * This ThreadLocal map stores all pre-registered objects. This avoids a never-ending loop when setting the container
    * of an object.
    */
-  private static ThreadLocal<Map<CDOID, CDOLegacyWrapper>> wrapperRegistry = new InheritableThreadLocal<Map<CDOID, CDOLegacyWrapper>>()
+  private static ThreadLocal<Map<Long, CDOLegacyWrapper>> wrapperRegistry = new InheritableThreadLocal<Map<Long, CDOLegacyWrapper>>()
   {
     @Override
-    protected Map<CDOID, CDOLegacyWrapper> initialValue()
+    protected Map<Long, CDOLegacyWrapper> initialValue()
     {
-      return new HashMap<CDOID, CDOLegacyWrapper>();
+      return new HashMap<Long, CDOLegacyWrapper>();
     }
   };
 
@@ -347,18 +346,18 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
   protected void instanceToRevisionContainment()
   {
     CDOResource resource = (CDOResource)getInstanceResource(instance);
-    revision.setResourceID(resource == null ? CDOID.NULL : resource.cdoID());
+    revision.setResourceID(resource == null ? 0 : resource.cdoID());
 
     InternalEObject eContainer = getInstanceContainer(instance);
     if (eContainer == null)
     {
-      revision.setContainerID(CDOID.NULL);
+      revision.setContainerID(0);
       revision.setContainingFeatureID(0);
     }
     else
     {
       CDOObject cdoContainer = FSMUtil.adapt(eContainer, view);
-      revision.setContainerID(cdoContainer);
+      revision.setContainerID(cdoContainer.cdoID());
       revision.setContainingFeatureID(getInstanceContainerFeatureID(instance));
     }
   }
@@ -433,7 +432,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
    */
   protected void revisionToInstanceContainer()
   {
-    Object containerID = revision.getContainerID();
+    long containerID = revision.getContainerID();
     InternalEObject container = getEObjectFromPotentialID(view, null, containerID);
     setInstanceContainer(container, revision.getContainingFeatureID());
   }
@@ -445,7 +444,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
   {
     if (revision != null)
     {
-      CDOID resourceID = revision.getResourceID();
+      long resourceID = revision.getResourceID();
       InternalEObject resource = getEObjectFromPotentialID(view, null, resourceID);
       setInstanceResource((Resource.Internal)resource);
       if (resource != null)
@@ -601,39 +600,6 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
 
     CDOType type = CDOModelUtil.getType(feature.getEType());
     object = view.getStore().convertToEMF(instance, revision, feature, index, object);
-
-    if (type == CDOType.OBJECT)
-    {
-      if (object instanceof CDOID)
-      {
-        CDOID id = (CDOID)object;
-        if (id.isNull())
-        {
-          return null;
-        }
-
-        object = getRegisteredWrapper(id);
-        if (object != null)
-        {
-          return ((CDOLegacyWrapper)object).cdoInternalInstance();
-        }
-
-        if (id.isExternal())
-        {
-          object = view.getResourceSet().getEObject(URI.createURI(id.toURIFragment()), true);
-        }
-        else
-        {
-          object = view.getObject(id);
-        }
-
-        if (object instanceof CDOObjectWrapper)
-        {
-          return ((CDOObjectWrapper)object).cdoInternalInstance();
-        }
-      }
-    }
-
     return object;
   }
 
@@ -682,12 +648,13 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
    *          avoided!
    */
   protected InternalEObject getEObjectFromPotentialID(InternalCDOView view, EStructuralFeature feature,
-      Object potentialID)
+      long potentialID)
   {
+	  InternalEObject result;
     CDOLegacyWrapper wrapper;
-    if (potentialID instanceof CDOID && (wrapper = getRegisteredWrapper((CDOID)potentialID)) != null)
+    if ((wrapper = getRegisteredWrapper(potentialID)) != null)
     {
-      potentialID = wrapper.instance;
+      result = wrapper;
 
       if (TRACER.isEnabled())
       {
@@ -696,36 +663,23 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
     }
     else
     {
-      if (potentialID instanceof CDOID)
-      {
-        CDOID id = (CDOID)potentialID;
-        if (id.isNull())
+        long id = potentialID;
+        if (id == 0)
         {
           return null;
         }
 
-        if (id.isExternal())
-        {
-          URI uri = URI.createURI(id.toURIFragment());
-          InternalEObject eObject = (InternalEObject)view.getResourceSet().getEObject(uri, true);
-          return eObject;
-        }
 
         boolean loadOnDemand = feature == null;
-        potentialID = view.getObject(id, loadOnDemand);
-        if (potentialID == null && !loadOnDemand)
+        result = (InternalEObject) view.getObject(id, loadOnDemand);
+        if (potentialID == 0 && !loadOnDemand)
         {
           return createProxy(view, feature, id);
         }
-      }
 
-      if (potentialID instanceof InternalCDOObject)
-      {
-        return ((InternalCDOObject)potentialID).cdoInternalInstance();
-      }
     }
 
-    return (InternalEObject)potentialID;
+    return result;
   }
 
   /**
@@ -743,7 +697,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
    * <p>
    * TODO {@link InternalEObject#eResolveProxy(InternalEObject)}
    */
-  protected InternalEObject createProxy(InternalCDOView view, EStructuralFeature feature, CDOID id)
+  protected InternalEObject createProxy(InternalCDOView view, EStructuralFeature feature, long id)
   {
     EClassifier eType = feature.getEType();
     Class<?> instanceClass = eType.getInstanceClass();
@@ -805,7 +759,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
           Object element = list.get(i);
           if (element instanceof LegacyProxy)
           {
-            CDOID id = ((LegacyProxy)element).getID();
+            long id = ((LegacyProxy)element).getID();
             InternalCDOObject resolved = (InternalCDOObject)view.getObject(id);
             InternalEObject instance = resolved.cdoInternalInstance();
 
@@ -838,7 +792,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
       {
         if (value instanceof LegacyProxy)
         {
-          CDOID id = ((LegacyProxy)value).getID();
+          long id = ((LegacyProxy)value).getID();
           InternalCDOObject resolved = (InternalCDOObject)view.getObject(id);
           InternalEObject instance = resolved.cdoInternalInstance();
           setInstanceValue(instance, feature, instance);
@@ -920,7 +874,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
   /**
    * @since 3.0
    */
-  protected static CDOLegacyWrapper getRegisteredWrapper(CDOID id)
+  protected static CDOLegacyWrapper getRegisteredWrapper(long id)
   {
     return wrapperRegistry.get().get(id);
   }
@@ -1047,7 +1001,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
    */
   private static interface LegacyProxy
   {
-    public CDOID getID();
+    public long getID();
   }
 
   /**
@@ -1063,15 +1017,15 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
 
     private CDOLegacyWrapper wrapper;
 
-    private CDOID id;
+    private long id;
 
-    public LegacyProxyInvocationHandler(CDOLegacyWrapper wrapper, CDOID id)
+    public LegacyProxyInvocationHandler(CDOLegacyWrapper wrapper, long id)
     {
       this.wrapper = wrapper;
       this.id = id;
     }
 
-    public CDOID getID()
+    public long getID()
     {
       return id;
     }
@@ -1094,7 +1048,7 @@ public abstract class CDOLegacyWrapper extends CDOObjectWrapper
         Resource resource = wrapper.eResource();
 
         // TODO Consider using a "fake" Resource implementation. See Resource.getEObject(...)
-        return resource.getURI().appendFragment(id.toURIFragment());
+        return resource.getURI().appendFragment(String.valueOf(id));
       }
 
       // A client must have invoked the proxy while being told not to do so!

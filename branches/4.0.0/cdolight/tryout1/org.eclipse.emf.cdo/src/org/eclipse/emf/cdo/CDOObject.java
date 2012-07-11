@@ -10,8 +10,6 @@
  */
 package org.eclipse.emf.cdo;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDTemp;
 import org.eclipse.emf.cdo.common.id.CDOWithID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionManager;
@@ -42,7 +40,7 @@ public interface CDOObject extends EObject, CDOWithID
    * 
    * @see #cdoState()
    */
-  public CDOID cdoID();
+  public long cdoID();
 
   /**
    * Returns the local {@link CDOState state} of this object.

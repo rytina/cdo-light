@@ -10,11 +10,14 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.cdo.common.CDOCommonView;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
 import org.eclipse.emf.cdo.internal.server.Repository;
@@ -25,7 +28,7 @@ import org.eclipse.emf.cdo.server.IStoreAccessor;
 import org.eclipse.emf.cdo.server.ITransaction;
 import org.eclipse.emf.cdo.server.IView;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
 import org.eclipse.net4j.util.StringUtil;
 import org.eclipse.net4j.util.container.IContainerDelta;
@@ -33,29 +36,14 @@ import org.eclipse.net4j.util.lifecycle.Lifecycle;
 import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.eclipse.net4j.util.om.monitor.ProgressDistributor;
 
-import org.eclipse.emf.ecore.EClass;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author Eike Stepper
  * @since 2.0
  */
 public abstract class Store extends Lifecycle implements InternalStore
 {
-  /**
-   * @since 3.0
-   * @deprecated Use CDOBranchPoint.UNSPECIFIED_DATE
-   */
-  @Deprecated
-  public static final long UNSPECIFIED_DATE = CDOBranchPoint.UNSPECIFIED_DATE;
 
   private String type;
-
-  private Set<ObjectType> objectIDTypes;
 
   private Set<ChangeFormat> supportedChangeFormats;
 
@@ -117,12 +105,11 @@ public abstract class Store extends Lifecycle implements InternalStore
   /**
    * @since 3.0
    */
-  public Store(String type, Set<CDOID.ObjectType> objectIDTypes, Set<ChangeFormat> supportedChangeFormats,
+  public Store(String type, Set<ChangeFormat> supportedChangeFormats,
       Set<RevisionTemporality> supportedRevisionTemporalities, Set<RevisionParallelism> supportedRevisionParallelisms)
   {
     checkArg(!StringUtil.isEmpty(type), "Empty type"); //$NON-NLS-1$
     this.type = type;
-    this.objectIDTypes = objectIDTypes;
 
     checkArg(supportedChangeFormats != null && !supportedChangeFormats.isEmpty(), "Empty supportedChangeFormats"); //$NON-NLS-1$
     this.supportedChangeFormats = supportedChangeFormats;
@@ -141,21 +128,6 @@ public abstract class Store extends Lifecycle implements InternalStore
     return type;
   }
 
-  /**
-   * @since 3.0
-   */
-  public Set<CDOID.ObjectType> getObjectIDTypes()
-  {
-    return objectIDTypes;
-  }
-
-  /**
-   * @since 4.0
-   */
-  protected void setObjectIDTypes(Set<ObjectType> objectIDTypes)
-  {
-    this.objectIDTypes = objectIDTypes;
-  }
 
   public Set<ChangeFormat> getSupportedChangeFormats()
   {
@@ -386,7 +358,7 @@ public abstract class Store extends Lifecycle implements InternalStore
   /**
    * @since 3.0
    */
-  public InternalCDORevision createRevision(EClass eClass, CDOID id)
+  public InternalCDORevision createRevision(EClass eClass, long id)
   {
     CDORevisionFactory factory = repository.getRevisionManager().getFactory();
     InternalCDORevision revision = (InternalCDORevision)factory.createRevision(eClass);
@@ -479,7 +451,7 @@ public abstract class Store extends Lifecycle implements InternalStore
   /**
    * @since 4.0
    */
-  public static String idToString(CDOID id)
+  public static String idToString(long id)
   {
     StringBuilder builder = new StringBuilder();
     CDOIDUtil.write(builder, id);
@@ -489,7 +461,7 @@ public abstract class Store extends Lifecycle implements InternalStore
   /**
    * @since 4.0
    */
-  public static CDOID stringToID(String string)
+  public static long stringToID(String string)
   {
     return CDOIDUtil.read(string);
   }
@@ -497,29 +469,29 @@ public abstract class Store extends Lifecycle implements InternalStore
   /**
    * @since 3.0
    */
-  public static IStoreAccessor.QueryResourcesContext.ExactMatch createExactMatchContext(final CDOID folderID,
-      final String name, final CDOBranchPoint branchPoint)
+  public static IStoreAccessor.QueryResourcesContext.ExactMatch createExactMatchContext(final long folderID,
+      final String name)
   {
     return new IStoreAccessor.QueryResourcesContext.ExactMatch()
     {
-      private CDOID resourceID;
+      private long resourceID;
 
-      public CDOID getResourceID()
+      public long getResourceID()
       {
         return resourceID;
       }
 
       public CDOBranch getBranch()
       {
-        return branchPoint.getBranch();
+        return null;
       }
 
       public long getTimeStamp()
       {
-        return branchPoint.getTimeStamp();
+        return 0;
       }
 
-      public CDOID getFolderID()
+      public long getFolderID()
       {
         return folderID;
       }
@@ -539,7 +511,7 @@ public abstract class Store extends Lifecycle implements InternalStore
         return 1;
       }
 
-      public boolean addResource(CDOID resourceID)
+      public boolean addResource(long resourceID)
       {
         this.resourceID = resourceID;
         return false;

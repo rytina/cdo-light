@@ -10,26 +10,24 @@
  **************************************************************************/
 package org.eclipse.emf.cdo.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.protocol.CDODataInput;
-import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
-import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.spi.common.commit.CDORevisionAvailabilityInfo;
-
-import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.cdo.common.protocol.CDODataInput;
+import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
+import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.spi.common.commit.CDORevisionAvailabilityInfo;
+import org.eclipse.net4j.util.om.monitor.OMMonitor;
+
 /**
  * @author Eike Stepper
  */
-public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDOID>>
+public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<Long>>
 {
   private CDORevisionAvailabilityInfo targetInfo;
 
@@ -83,17 +81,16 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
   private void writeRevisionAvailabilityInfo(CDODataOutput out, CDORevisionAvailabilityInfo info, OMMonitor monitor)
       throws IOException
   {
-    Set<CDOID> availableRevisions = info.getAvailableRevisions().keySet();
+    Set<Long> availableRevisions = info.getAvailableRevisions().keySet();
     int size = availableRevisions.size();
 
-    out.writeCDOBranchPoint(info.getBranchPoint());
     out.writeInt(size);
 
     monitor.begin(size);
 
     try
     {
-      for (CDOID id : availableRevisions)
+      for (Long id : availableRevisions)
       {
         out.writeCDOID(id);
         monitor.worked();
@@ -106,9 +103,9 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
   }
 
   @Override
-  protected Set<CDOID> confirming(CDODataInput in, OMMonitor monitor) throws IOException
+  protected Set<Long> confirming(CDODataInput in, OMMonitor monitor) throws IOException
   {
-    Set<CDOID> result = new HashSet<CDOID>();
+    Set<Long> result = new HashSet<Long>();
 
     int size = in.readInt();
     monitor.begin(size + infos);
@@ -117,7 +114,7 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
     {
       for (int i = 0; i < size; i++)
       {
-        CDOID id = in.readCDOID();
+        long id = in.readCDOID();
         result.add(id);
         monitor.worked();
       }
@@ -143,7 +140,7 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
     }
   }
 
-  private void readRevisionAvailabilityInfo(CDODataInput in, CDORevisionAvailabilityInfo info, Set<CDOID> result,
+  private void readRevisionAvailabilityInfo(CDODataInput in, CDORevisionAvailabilityInfo info, Set<Long> result,
       OMMonitor monitor) throws IOException
   {
     int size = in.readInt();
@@ -160,7 +157,7 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
         }
         else
         {
-          CDORevisionKey key = in.readCDORevisionKey();
+          long key = in.readCDOID();
           revision = getRevision(key, targetInfo);
 
           if (revision == null && sourceInfo != null)
@@ -183,10 +180,10 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
         monitor.worked();
       }
 
-      Set<Map.Entry<CDOID, CDORevisionKey>> entrySet = info.getAvailableRevisions().entrySet();
-      for (Iterator<Map.Entry<CDOID, CDORevisionKey>> it = entrySet.iterator(); it.hasNext();)
+      Set<Map.Entry<Long, CDORevisionKey>> entrySet = info.getAvailableRevisions().entrySet();
+      for (Iterator<Map.Entry<Long, CDORevisionKey>> it = entrySet.iterator(); it.hasNext();)
       {
-        Map.Entry<CDOID, CDORevisionKey> entry = it.next();
+        Map.Entry<Long, CDORevisionKey> entry = it.next();
         if (!result.contains(entry.getKey()))
         {
           it.remove();
@@ -201,15 +198,12 @@ public class LoadMergeDataRequest extends CDOClientRequestWithMonitoring<Set<CDO
     }
   }
 
-  private CDORevision getRevision(CDORevisionKey key, CDORevisionAvailabilityInfo info)
+  private CDORevision getRevision(long key, CDORevisionAvailabilityInfo info)
   {
-    CDORevisionKey revision = info.getRevision(key.getID());
+    CDORevisionKey revision = info.getRevision(key);
     if (revision instanceof CDORevision)
     {
-      if (key.equals(revision))
-      {
         return (CDORevision)revision;
-      }
     }
 
     return null;

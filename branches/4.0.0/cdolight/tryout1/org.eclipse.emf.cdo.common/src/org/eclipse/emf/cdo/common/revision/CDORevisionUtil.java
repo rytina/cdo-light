@@ -10,38 +10,6 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchManager;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.commit.CDOChangeSet;
-import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
-import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
-import org.eclipse.emf.cdo.internal.common.commit.CDOChangeSetDataImpl;
-import org.eclipse.emf.cdo.internal.common.commit.CDOChangeSetImpl;
-import org.eclipse.emf.cdo.internal.common.messages.Messages;
-import org.eclipse.emf.cdo.internal.common.revision.CDOFeatureMapEntryImpl;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisableImpl;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionCacheAuditing;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionCacheBranching;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionCacheNonAuditing;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionImpl;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionKeyImpl;
-import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl;
-import org.eclipse.emf.cdo.internal.common.revision.delta.CDORevisionDeltaImpl;
-import org.eclipse.emf.cdo.spi.common.revision.CDOFeatureMapEntry;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
-import org.eclipse.emf.cdo.spi.common.revision.ManagedRevisionProvider;
-
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.FeatureMap;
-
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +18,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.emf.cdo.common.branch.CDOBranchManager;
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.common.commit.CDOChangeSet;
+import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
+import org.eclipse.emf.cdo.internal.common.commit.CDOChangeSetDataImpl;
+import org.eclipse.emf.cdo.internal.common.commit.CDOChangeSetImpl;
+import org.eclipse.emf.cdo.internal.common.messages.Messages;
+import org.eclipse.emf.cdo.internal.common.revision.CDOFeatureMapEntryImpl;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionCacheNonAuditing;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionImpl;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl;
+import org.eclipse.emf.cdo.internal.common.revision.delta.CDORevisionDeltaImpl;
+import org.eclipse.emf.cdo.spi.common.revision.CDOFeatureMapEntry;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
+import org.eclipse.emf.cdo.spi.common.revision.ManagedRevisionProvider;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.FeatureMap;
 
 /**
  * Various static helper methods for dealing with {@link CDORevision revisions}.
@@ -69,19 +60,9 @@ public final class CDORevisionUtil
    * 
    * @since 4.0
    */
-  public static CDORevisionCache createRevisionCache(boolean supportingAudits, boolean supportingBranches)
+  public static CDORevisionCache createRevisionCache()
   {
-    if (supportingBranches)
-    {
-      return new CDORevisionCacheBranching();
-    }
-
-    if (supportingAudits)
-    {
-      return new CDORevisionCacheAuditing();
-    }
-
-    return new CDORevisionCacheNonAuditing();
+    return CDORevisionCacheNonAuditing.INSTANCE;
   }
 
   /**
@@ -102,37 +83,7 @@ public final class CDORevisionUtil
     return revisionManager;
   }
 
-  /**
-   * @since 4.0
-   */
-  public static CDORevisable copyRevisable(CDORevisable source)
-  {
-    return new CDORevisableImpl(source);
-  }
 
-  /**
-   * @since 4.0
-   */
-  public static CDORevisable createRevisable(CDOBranch branch, int version, long timeStamp, long revised)
-  {
-    return new CDORevisableImpl(branch, version, timeStamp, revised);
-  }
-
-  /**
-   * @since 4.0
-   */
-  public static CDORevisionKey copyRevisionKey(CDORevisionKey source)
-  {
-    return new CDORevisionKeyImpl(source.getID(), source.getBranch(), source.getVersion());
-  }
-
-  /**
-   * @since 3.0
-   */
-  public static CDORevisionKey createRevisionKey(CDOID id, CDOBranch branch, int version)
-  {
-    return new CDORevisionKeyImpl(id, branch, version);
-  }
 
   /**
    * @since 4.0
@@ -141,17 +92,13 @@ public final class CDORevisionUtil
   {
     StringBuilder builder = new StringBuilder();
     CDOIDUtil.write(builder, key.getID());
-    builder.append(":");
-    builder.append(key.getBranch().getID());
-    builder.append(":");
-    builder.append(key.getVersion());
     return builder.toString();
   }
 
   /**
    * @since 4.0
    */
-  public static CDORevisionKey parseRevisionKey(String source, CDOBranchManager branchManager)
+  public static long parseRevisionKey(String source, CDOBranchManager branchManager)
   {
     StringTokenizer tokenizer = new StringTokenizer(source, ":");
     if (!tokenizer.hasMoreTokens())
@@ -160,7 +107,7 @@ public final class CDORevisionUtil
     }
 
     String idSegment = tokenizer.nextToken();
-    CDOID id = CDOIDUtil.read(idSegment);
+    long id = CDOIDUtil.read(idSegment);
 
     if (!tokenizer.hasMoreTokens())
     {
@@ -178,7 +125,7 @@ public final class CDORevisionUtil
     String versionSegment = tokenizer.nextToken();
     int version = Integer.parseInt(versionSegment);
 
-    return new CDORevisionKeyImpl(id, branch, version);
+    return id;
   }
 
   /**
@@ -208,7 +155,7 @@ public final class CDORevisionUtil
   /**
    * @since 4.0
    */
-  public static CDOChangeSetData createChangeSetData(Set<CDOID> ids, final CDOBranchPoint startPoint,
+  public static CDOChangeSetData createChangeSetData(Set<Long> ids, final CDOBranchPoint startPoint,
       final CDOBranchPoint endPoint, final CDORevisionManager revisionManager)
   {
     CDORevisionProvider startProvider = new ManagedRevisionProvider(revisionManager, startPoint);
@@ -219,13 +166,13 @@ public final class CDORevisionUtil
   /**
    * @since 4.0
    */
-  public static CDOChangeSetData createChangeSetData(Set<CDOID> ids, CDORevisionProvider startProvider,
+  public static CDOChangeSetData createChangeSetData(Set<Long> ids, CDORevisionProvider startProvider,
       CDORevisionProvider endProvider)
   {
-    List<CDOIDAndVersion> newObjects = new ArrayList<CDOIDAndVersion>();
-    List<CDORevisionKey> changedObjects = new ArrayList<CDORevisionKey>();
-    List<CDOIDAndVersion> detachedObjects = new ArrayList<CDOIDAndVersion>();
-    for (CDOID id : ids)
+    List<CDORevision> newObjects = new ArrayList<CDORevision>();
+    List<CDORevisionDelta> changedObjects = new ArrayList<CDORevisionDelta>();
+    List<Long> detachedObjects = new ArrayList<Long>();
+    for (Long id : ids)
     {
       CDORevision startRevision = startProvider.getRevision(id);
       CDORevision endRevision = endProvider.getRevision(id);
@@ -236,7 +183,7 @@ public final class CDORevisionUtil
       }
       else if (endRevision == null && startRevision != null)
       {
-        detachedObjects.add(CDOIDUtil.createIDAndVersion(id, CDOBranchVersion.UNSPECIFIED_VERSION));
+        detachedObjects.add(id);
       }
       else if (startRevision != null && endRevision != null)
       {
@@ -257,8 +204,8 @@ public final class CDORevisionUtil
   /**
    * @since 4.0
    */
-  public static CDOChangeSetData createChangeSetData(List<CDOIDAndVersion> newObjects,
-      List<CDORevisionKey> changedObjects, List<CDOIDAndVersion> detachedObjects)
+  public static CDOChangeSetData createChangeSetData(List<CDORevision> newObjects,
+      List<CDORevisionDelta> changedObjects, List<Long> detachedObjects)
   {
     return new CDOChangeSetDataImpl(newObjects, changedObjects, detachedObjects);
   }
@@ -266,18 +213,11 @@ public final class CDORevisionUtil
   /**
    * @since 4.0
    */
-  public static CDOChangeSet createChangeSet(CDOBranchPoint startPoint, CDOBranchPoint endPoint, CDOChangeSetData data)
+  public static CDOChangeSet createChangeSet(CDOChangeSetData data)
   {
-    return new CDOChangeSetImpl(startPoint, endPoint, data);
+    return new CDOChangeSetImpl(data);
   }
 
-  /**
-   * @since 3.0
-   */
-  public static Object remapID(Object value, Map<CDOID, CDOID> idMappings, boolean allowUnmappedTempIDs)
-  {
-    return CDORevisionImpl.remapID(value, idMappings, allowUnmappedTempIDs);
-  }
 
   /**
    * @since 4.0
@@ -307,7 +247,7 @@ public final class CDORevisionUtil
       result.insert(0, name);
     }
 
-    CDOID folder = (CDOID)revision.getContainerID();
+    long folder = revision.getContainerID();
     if (!CDOIDUtil.isNull(folder))
     {
       InternalCDORevision container = (InternalCDORevision)provider.getRevision(folder);
@@ -315,24 +255,7 @@ public final class CDORevisionUtil
     }
   }
 
-  /**
-   * @since 3.0
-   */
-  public static String dumpAllRevisions(Map<CDOBranch, List<CDORevision>> map)
-  {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    PrintStream out = new PrintStream(baos);
-    dumpAllRevisions(map, out);
-    return baos.toString();
-  }
 
-  /**
-   * @since 3.0
-   */
-  public static void dumpAllRevisions(Map<CDOBranch, List<CDORevision>> map, PrintStream out)
-  {
-    new AllRevisionsDumper.Stream.Plain(map, out).dump();
-  }
 
   /**
    * @since 4.0
@@ -403,117 +326,6 @@ public final class CDORevisionUtil
         return out;
       }
 
-      /**
-       * @author Eike Stepper
-       */
-      public static class Plain extends Stream
-      {
-        public static final int pad = 48;
-
-        public Plain(Map<CDOBranch, List<CDORevision>> map, PrintStream out)
-        {
-          super(map, out);
-        }
-
-        @Override
-        protected void dumpEnd(List<CDOBranch> branches)
-        {
-          out().println();
-        }
-
-        @Override
-        protected void dumpBranch(CDOBranch branch)
-        {
-          out().println(
-              padTimeRange(branch.getName() + "[" + branch.getID() + "]", pad, branch.getBase().getTimeStamp(), //$NON-NLS-1$ //$NON-NLS-2$
-                  CDORevision.UNSPECIFIED_DATE));
-        }
-
-        @Override
-        protected void dumpRevision(CDORevision revision)
-        {
-          out().println(padTimeRange("  " + revision, pad, revision.getTimeStamp(), revision.getRevised())); //$NON-NLS-1$
-        }
-
-        private static String padTimeRange(String s, int pos, long t1, long t2)
-        {
-          StringBuffer buffer = new StringBuffer(s);
-          while (buffer.length() < pos)
-          {
-            buffer.append(' ');
-          }
-
-          buffer.append(CDOCommonUtil.formatTimeStamp(t1));
-          buffer.append("/");
-          buffer.append(CDOCommonUtil.formatTimeStamp(t2));
-          return buffer.toString();
-        }
-      }
-
-      /**
-       * @author Eike Stepper
-       */
-      public static class Html extends Stream
-      {
-        public Html(Map<CDOBranch, List<CDORevision>> map, PrintStream out)
-        {
-          super(map, out);
-        }
-
-        @Override
-        protected void dumpStart(List<CDOBranch> branches)
-        {
-          out().println("<table border=\"0\">");
-        }
-
-        @Override
-        protected void dumpEnd(List<CDOBranch> branches)
-        {
-          out().println("</table>");
-        }
-
-        @Override
-        protected void dumpBranch(CDOBranch branch)
-        {
-          PrintStream out = out();
-          if (!branch.isMainBranch())
-          {
-            out.println("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
-          }
-
-          out.println("<tr>");
-          out.println("<td>");
-          out.println("<h4>" + branch.getName() + "[" + branch.getID() + "]</h4>");
-          out.println("</td>");
-          out.println("<td>");
-          out.println("<h4>" + CDOCommonUtil.formatTimeStamp(branch.getBase().getTimeStamp()) + " / "
-              + CDOCommonUtil.formatTimeStamp(CDORevision.UNSPECIFIED_DATE) + "</h4>");
-          out.println("</td>");
-          out.println("</tr>");
-        }
-
-        @Override
-        protected void dumpRevision(CDORevision revision)
-        {
-          PrintStream out = out();
-
-          out.println("<tr>");
-          out.println("<td>&nbsp;&nbsp;&nbsp;&nbsp;");
-          dumpRevision(revision, out);
-          out.println("&nbsp;&nbsp;&nbsp;&nbsp;</td>");
-
-          out.println("<td>");
-          out.println(CDOCommonUtil.formatTimeStamp(revision.getTimeStamp()) + " / "
-              + CDOCommonUtil.formatTimeStamp(revision.getRevised()));
-          out.println("</td>");
-          out.println("</tr>");
-        }
-
-        protected void dumpRevision(CDORevision revision, PrintStream out)
-        {
-          out.println(revision);
-        }
-      }
     }
   }
 
@@ -529,15 +341,7 @@ public final class CDORevisionUtil
 
     public int compare(CDORevisionKey rev1, CDORevisionKey rev2)
     {
-      int result = rev1.getID().compareTo(rev2.getID());
-      if (result == 0)
-      {
-        int version1 = rev1.getVersion();
-        int version2 = rev2.getVersion();
-        result = version1 < version2 ? -1 : version1 == version2 ? 0 : 1;
-      }
-
-      return result;
+      return rev1.getID() < rev2.getID() ? -1 : rev1.getID() == rev2.getID() ? 0 : 1;
     }
   }
 

@@ -10,11 +10,10 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.protocol.CDOProtocolConstants;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.server.internal.net4j.bundle.OM;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
@@ -32,9 +31,9 @@ public class LoadRevisionByVersionIndication extends CDOServerReadIndication
   private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_PROTOCOL,
       LoadRevisionByVersionIndication.class);
 
-  private CDOID id;
+  private long id;
 
-  private CDOBranchVersion branchVersion;
+  private long branchVersion;
 
   private int referenceChunk;
 
@@ -52,7 +51,7 @@ public class LoadRevisionByVersionIndication extends CDOServerReadIndication
       TRACER.format("Read id: {0}", id); //$NON-NLS-1$
     }
 
-    branchVersion = in.readCDOBranchVersion();
+    branchVersion = in.readLong();
     if (TRACER.isEnabled())
     {
       TRACER.format("Read branchVersion: {0}", branchVersion); //$NON-NLS-1$
@@ -69,7 +68,7 @@ public class LoadRevisionByVersionIndication extends CDOServerReadIndication
   protected void responding(CDODataOutput out) throws IOException
   {
     InternalCDORevisionManager revisionManager = getRepository().getRevisionManager();
-    InternalCDORevision revision = revisionManager.getRevisionByVersion(id, branchVersion, referenceChunk, true);
+    InternalCDORevision revision = revisionManager.getRevision(id, referenceChunk,CDORevision.DEPTH_NONE, true);
     RevisionInfo.writeResult(out, revision, referenceChunk);
   }
 }

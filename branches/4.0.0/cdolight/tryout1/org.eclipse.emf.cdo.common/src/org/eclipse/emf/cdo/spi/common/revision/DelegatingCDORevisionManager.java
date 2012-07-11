@@ -10,19 +10,13 @@
  */
 package org.eclipse.emf.cdo.spi.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranch;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionFactory;
-
-import org.eclipse.net4j.util.lifecycle.Lifecycle;
-
 import org.eclipse.emf.ecore.EClass;
-
-import java.util.List;
+import org.eclipse.net4j.util.lifecycle.Lifecycle;
 
 /**
  * @author Eike Stepper
@@ -80,91 +74,48 @@ public abstract class DelegatingCDORevisionManager extends Lifecycle implements 
   /**
    * @since 4.0
    */
-  public boolean isSupportingAudits()
-  {
-    return getDelegate().isSupportingAudits();
-  }
-
-  /**
-   * @since 4.0
-   */
-  public void setSupportingAudits(boolean on)
-  {
-    getDelegate().setSupportingAudits(on);
-  }
-
-  public boolean isSupportingBranches()
-  {
-    return getDelegate().isSupportingBranches();
-  }
-
-  public void setSupportingBranches(boolean on)
-  {
-    getDelegate().setSupportingBranches(on);
-  }
-
-  /**
-   * @since 4.0
-   */
   public void addRevision(CDORevision revision)
   {
     getDelegate().addRevision(revision);
   }
 
-  public boolean containsRevision(CDOID id, CDOBranchPoint branchPoint)
+  public boolean containsRevision(long id)
   {
-    return getDelegate().containsRevision(id, branchPoint);
+    return getDelegate().containsRevision(id);
   }
 
-  public boolean containsRevisionByVersion(CDOID id, CDOBranchVersion branchVersion)
-  {
-    return getDelegate().containsRevisionByVersion(id, branchVersion);
-  }
 
-  public EClass getObjectType(CDOID id)
+  public EClass getObjectType(long id)
   {
     return getDelegate().getObjectType(id);
   }
 
-  public InternalCDORevision getRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk,
+
+  public InternalCDORevision getRevision(long id,  int referenceChunk, int prefetchDepth,
       boolean loadOnDemand)
   {
-    return getDelegate().getRevisionByVersion(id, branchVersion, referenceChunk, loadOnDemand);
+    return getDelegate().getRevision(id, referenceChunk, prefetchDepth, loadOnDemand);
   }
 
-  public InternalCDORevision getRevision(CDOID id, CDOBranchPoint branchPoint, int referenceChunk, int prefetchDepth,
-      boolean loadOnDemand)
-  {
-    return getDelegate().getRevision(id, branchPoint, referenceChunk, prefetchDepth, loadOnDemand);
-  }
-
-  public InternalCDORevision getRevision(CDOID id, CDOBranchPoint branchPoint, int referenceChunk, int prefetchDepth,
+  public InternalCDORevision getRevision(long id, int referenceChunk, int prefetchDepth,
       boolean loadOnDemand, SyntheticCDORevision[] synthetics)
   {
-    return getDelegate().getRevision(id, branchPoint, referenceChunk, prefetchDepth, loadOnDemand, synthetics);
+    return getDelegate().getRevision(id, referenceChunk, prefetchDepth, loadOnDemand, synthetics);
   }
 
-  public List<CDORevision> getRevisions(List<CDOID> ids, CDOBranchPoint branchPoint, int referenceChunk,
+  public List<CDORevision> getRevisions(List<Long> ids, int referenceChunk,
       int prefetchDepth, boolean loadOnDemand)
   {
-    return getDelegate().getRevisions(ids, branchPoint, referenceChunk, prefetchDepth, loadOnDemand);
+    return getDelegate().getRevisions(ids, referenceChunk, prefetchDepth, loadOnDemand);
   }
 
-  public List<CDORevision> getRevisions(List<CDOID> ids, CDOBranchPoint branchPoint, int referenceChunk,
+  public List<CDORevision> getRevisions(List<Long> ids, int referenceChunk,
       int prefetchDepth, boolean loadOnDemand, SyntheticCDORevision[] synthetics)
   {
-    return getDelegate().getRevisions(ids, branchPoint, referenceChunk, prefetchDepth, loadOnDemand, synthetics);
+    return getDelegate().getRevisions(ids, referenceChunk, prefetchDepth, loadOnDemand, synthetics);
   }
 
-  public void reviseLatest(CDOID id, CDOBranch branch)
-  {
-    getDelegate().reviseLatest(id, branch);
-  }
 
-  public void reviseVersion(CDOID id, CDOBranchVersion branchVersion, long timeStamp)
-  {
-    getDelegate().reviseVersion(id, branchVersion, timeStamp);
-  }
 
   @Override
   protected void doActivate() throws Exception

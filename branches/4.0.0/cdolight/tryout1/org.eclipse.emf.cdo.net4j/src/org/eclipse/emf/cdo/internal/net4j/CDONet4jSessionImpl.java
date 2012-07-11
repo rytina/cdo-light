@@ -146,8 +146,6 @@ public class CDONet4jSessionImpl extends CDOSessionImpl implements org.eclipse.e
       setRevisionManager(revisionManager);
     }
 
-    revisionManager.setSupportingAudits(getRepositoryInfo().isSupportingAudits());
-    revisionManager.setSupportingBranches(getRepositoryInfo().isSupportingBranches());
     revisionManager.setRevisionLoader(getSessionProtocol());
     revisionManager.setRevisionLocker(this);
     revisionManager.activate();
@@ -189,8 +187,6 @@ public class CDONet4jSessionImpl extends CDOSessionImpl implements org.eclipse.e
 
       getPackageRegistry().putPackageUnit(packageUnit);
     }
-
-    getRepositoryInfo().getTimeStamp(true);
   }
 
   private CDOClientProtocol createProtocol()
@@ -237,7 +233,6 @@ public class CDONet4jSessionImpl extends CDOSessionImpl implements org.eclipse.e
         .getPassiveUpdateMode());
     setSessionID(result.getSessionID());
     setUserID(result.getUserID());
-    setLastUpdateTime(result.getLastUpdateTime());
     setRepositoryInfo(new RepositoryInfo(repositoryName, result, this));
     return result;
   }

@@ -12,7 +12,6 @@
 package org.eclipse.emf.internal.cdo.object;
 
 import org.eclipse.emf.cdo.CDODeltaNotification;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 
@@ -210,9 +209,9 @@ public class CDODeltaNotificationImpl extends ENotificationImpl implements CDODe
 
   public Object adapt(Object object)
   {
-    if (object instanceof CDOID)
+    if (object instanceof Long)
     {
-      CDOID id = (CDOID)object;
+      Long id = (Long)object;
 
       try
       {

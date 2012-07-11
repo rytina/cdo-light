@@ -24,13 +24,13 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface CDOReference<OBJECT>
+public interface CDOReference
 {
   public static final int NO_INDEX = Notification.NO_INDEX;
 
-  public OBJECT getTargetObject();
+  public long getTargetID();
 
-  public OBJECT getSourceObject();
+  public long getSourceID();
 
   /**
    * Returns the source {@link EReference} or the source {@link EAttribute} if the source feature is a

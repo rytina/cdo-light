@@ -10,8 +10,6 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EStoreEObjectImpl;
 
@@ -36,12 +34,12 @@ public interface CDORevisionData
    */
   public CDORevision revision();
 
-  public CDOID getResourceID();
+  public long getResourceID();
 
   /**
    * @since 2.0
    */
-  public Object getContainerID();
+  public long getContainerID();
 
   public int getContainingFeatureID();
 

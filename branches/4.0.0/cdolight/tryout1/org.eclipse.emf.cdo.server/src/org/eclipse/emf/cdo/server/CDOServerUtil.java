@@ -67,10 +67,10 @@ public final class CDOServerUtil
   /**
    * @since 4.0
    */
-  public static CDOView openView(ISession session, CDOBranchPoint branchPoint, boolean legacyModeEnabled,
+  public static CDOView openView(ISession session, boolean legacyModeEnabled,
       CDORevisionProvider revisionProvider)
   {
-    return new ServerCDOView((InternalSession)session, branchPoint, legacyModeEnabled, revisionProvider);
+    return new ServerCDOView((InternalSession)session, legacyModeEnabled, revisionProvider);
   }
 
   /**
@@ -80,7 +80,7 @@ public final class CDOServerUtil
   {
     CDORevisionManager revisionManager = session.getManager().getRepository().getRevisionManager();
     CDORevisionProvider revisionProvider = new ManagedRevisionProvider(revisionManager, branchPoint);
-    return new ServerCDOView((InternalSession)session, branchPoint, legacyModeEnabled, revisionProvider);
+    return new ServerCDOView((InternalSession)session, legacyModeEnabled, revisionProvider);
   }
 
   /**
@@ -89,8 +89,7 @@ public final class CDOServerUtil
   public static CDOView openView(IView view, boolean legacyModeEnabled)
   {
     ISession session = view.getSession();
-    CDOBranchPoint branchPoint = CDOBranchUtil.copyBranchPoint(view);
-    return openView(session, branchPoint, legacyModeEnabled, view);
+    return openView(session, legacyModeEnabled, view);
   }
 
   /**
@@ -99,8 +98,7 @@ public final class CDOServerUtil
   public static CDOView openView(IStoreAccessor.CommitContext commitContext, boolean legacyModeEnabled)
   {
     ISession session = commitContext.getTransaction().getSession();
-    CDOBranchPoint branchPoint = commitContext.getBranchPoint();
-    return openView(session, branchPoint, legacyModeEnabled, commitContext);
+    return openView(session,legacyModeEnabled, commitContext);
   }
 
   /**

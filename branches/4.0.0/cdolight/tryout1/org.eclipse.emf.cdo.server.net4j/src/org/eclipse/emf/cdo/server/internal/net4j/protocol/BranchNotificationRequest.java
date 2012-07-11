@@ -34,6 +34,5 @@ public class BranchNotificationRequest extends CDOServerRequest
   @Override
   protected void requesting(CDODataOutput out) throws IOException
   {
-    out.writeCDOBranch(branch);
   }
 }

@@ -12,7 +12,6 @@
  */
 package org.eclipse.emf.cdo.common.revision.delta;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 import org.eclipse.emf.ecore.EReference;
 
@@ -31,12 +30,12 @@ public interface CDOContainerFeatureDelta extends CDOFeatureDelta
   /**
    * @since 2.0
    */
-  public CDOID getResourceID();
+  public long getResourceID();
 
   /**
    * @since 2.0
    */
-  public Object getContainerID();
+  public long getContainerID();
 
   public int getContainerFeatureID();
 }

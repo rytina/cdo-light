@@ -34,10 +34,6 @@ public interface ISession extends CDOCommonSession, IContainer<IView>
    */
   public ISessionProtocol getProtocol();
 
-  /**
-   * @since 4.0
-   */
-  public long getLastUpdateTime();
 
   /**
    * @since 2.0
@@ -47,10 +43,10 @@ public interface ISession extends CDOCommonSession, IContainer<IView>
   /**
    * @since 3.0
    */
-  public IView openView(int viewID, CDOBranchPoint branchPoint);
+  public IView openView(int viewID);
 
   /**
    * @since 3.0
    */
-  public ITransaction openTransaction(int viewID, CDOBranchPoint branchPoint);
+  public ITransaction openTransaction(int viewID);
 }

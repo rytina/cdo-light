@@ -10,7 +10,6 @@
  */
 package org.eclipse.emf.cdo.common.commit;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
 
 /**
  * Generic provider for the kinds of changes that have been applied to objects.
@@ -22,5 +21,5 @@ import org.eclipse.emf.cdo.common.id.CDOID;
  */
 public interface CDOChangeKindProvider
 {
-  public CDOChangeKind getChangeKind(CDOID id);
+  public CDOChangeKind getChangeKind(long id);
 }

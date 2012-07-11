@@ -53,14 +53,13 @@ public abstract class CDONet4jViewProvider extends AbstractCDOViewProvider
 
     String branchPath = data.getBranchPath().toPortableString();
     CDOBranch branch = session.getBranchManager().getBranch(branchPath);
-    long timeStamp = data.getTimeStamp();
 
     if (data.isTransactional())
     {
-      return session.openTransaction(branch, resourceSet);
+      return session.openTransaction(resourceSet);
     }
 
-    return session.openView(branch, timeStamp, resourceSet);
+    return session.openView(resourceSet);
   }
 
   @Override
@@ -102,24 +101,6 @@ public abstract class CDONet4jViewProvider extends AbstractCDOViewProvider
     builder.append(path);
 
     int params = 0;
-
-    String branchPath = view.getBranch().getPathName();
-    if (!CDOBranch.MAIN_BRANCH_NAME.equalsIgnoreCase(branchPath))
-    {
-      builder.append(params++ == 0 ? "?" : "&");
-      builder.append(CDOURIData.BRANCH_PARAMETER);
-      builder.append("=");
-      builder.append(branchPath);
-    }
-
-    long timeStamp = view.getTimeStamp();
-    if (timeStamp != CDOBranchPoint.UNSPECIFIED_DATE)
-    {
-      builder.append(params++ == 0 ? "?" : "&");
-      builder.append(CDOURIData.TIME_PARAMETER);
-      builder.append("=");
-      builder.append(new SimpleDateFormat().format(new Date(timeStamp)));
-    }
 
     if (!view.isReadOnly())
     {

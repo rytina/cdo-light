@@ -10,9 +10,9 @@
  */
 package org.eclipse.emf.cdo.internal.server;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.util.CDOQueryInfo;
@@ -33,16 +33,11 @@ import org.eclipse.emf.cdo.spi.server.InternalRepository;
 import org.eclipse.emf.cdo.spi.server.InternalSession;
 import org.eclipse.emf.cdo.spi.server.InternalSessionManager;
 import org.eclipse.emf.cdo.spi.server.InternalStore;
-
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.net4j.util.collection.Pair;
 import org.eclipse.net4j.util.event.IListener;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
-
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EStructuralFeature;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Eike Stepper
@@ -65,10 +60,6 @@ public abstract class DelegatingRepository implements InternalRepository
     getDelegate().addListener(listener);
   }
 
-  public long[] createCommitTimeStamp(OMMonitor monitor)
-  {
-    return getDelegate().createCommitTimeStamp(monitor);
-  }
 
   public IStoreAccessor ensureChunk(InternalCDORevision revision, EStructuralFeature feature, int chunkStart,
       int chunkEnd)
@@ -89,11 +80,6 @@ public abstract class DelegatingRepository implements InternalRepository
   public Object[] getElements()
   {
     return getDelegate().getElements();
-  }
-
-  public long getLastCommitTimeStamp()
-  {
-    return getDelegate().getLastCommitTimeStamp();
   }
 
   public IListener[] getListeners()
@@ -171,16 +157,6 @@ public abstract class DelegatingRepository implements InternalRepository
     return getDelegate().isEmpty();
   }
 
-  public boolean isSupportingAudits()
-  {
-    return getDelegate().isSupportingAudits();
-  }
-
-  public boolean isSupportingBranches()
-  {
-    return getDelegate().isSupportingBranches();
-  }
-
   public EPackage[] loadPackages(CDOPackageUnit packageUnit)
   {
     return getDelegate().loadPackages(packageUnit);
@@ -196,11 +172,6 @@ public abstract class DelegatingRepository implements InternalRepository
     getDelegate().setBranchManager(branchManager);
   }
 
-  public Pair<Integer, Long> createBranch(int branchID, BranchInfo branchInfo)
-  {
-    return getDelegate().createBranch(branchID, branchInfo);
-  }
-
   public BranchInfo loadBranch(int branchID)
   {
     return getDelegate().loadBranch(branchID);
@@ -211,15 +182,15 @@ public abstract class DelegatingRepository implements InternalRepository
     return getDelegate().loadSubBranches(branchID);
   }
 
-  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos, CDOBranchPoint branchPoint,
+  public List<InternalCDORevision> loadRevisions(List<RevisionInfo> infos,
       int referenceChunk, int prefetchDepth)
   {
-    return getDelegate().loadRevisions(infos, branchPoint, referenceChunk, prefetchDepth);
+    return getDelegate().loadRevisions(infos, referenceChunk, prefetchDepth);
   }
 
-  public InternalCDORevision loadRevisionByVersion(CDOID id, CDOBranchVersion branchVersion, int referenceChunk)
+  public InternalCDORevision loadRevision(long id, int referenceChunk)
   {
-    return getDelegate().loadRevisionByVersion(id, branchVersion, referenceChunk);
+    return getDelegate().loadRevision(id, referenceChunk);
   }
 
   public void notifyReadAccessHandlers(InternalSession session, CDORevision[] revisions,
@@ -272,11 +243,6 @@ public abstract class DelegatingRepository implements InternalRepository
   public void setStore(InternalStore store)
   {
     getDelegate().setStore(store);
-  }
-
-  public long getTimeStamp()
-  {
-    return getDelegate().getTimeStamp();
   }
 
   public void validateTimeStamp(long timeStamp) throws IllegalArgumentException

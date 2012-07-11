@@ -16,11 +16,8 @@ import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.CDOCommonSession.Options.PassiveUpdateMode;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchPointRange;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDProvider;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
@@ -28,6 +25,7 @@ import org.eclipse.emf.cdo.common.protocol.CDOProtocol;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevisionHandler;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSession;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSessionMessage;
@@ -38,8 +36,6 @@ import org.eclipse.emf.cdo.spi.common.commit.CDORevisionAvailabilityInfo;
 import org.eclipse.emf.cdo.spi.common.commit.InternalCDOCommitInfoManager.CommitInfoLoader;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageRegistry.PackageLoader;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
-import org.eclipse.emf.cdo.spi.common.revision.CDOIDMapper;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager.RevisionLoader;
 import org.eclipse.emf.cdo.view.CDOView;
@@ -85,8 +81,7 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
   /**
    * @since 3.0
    */
-  public RefreshSessionResult refresh(long lastUpdateTime,
-      Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,
+  public RefreshSessionResult refresh(Map<Long, InternalCDORevision> viewedRevisions, int initialChunkSize,
       boolean enablePassiveUpdates);
 
   /**
@@ -105,7 +100,7 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
   /**
    * @since 4.0
    */
-  public void openView(int viewID, boolean readOnly, CDOBranchPoint branchPoint);
+  public void openView(int viewID, boolean readOnly);
 
   /**
    * @since 4.0
@@ -115,12 +110,12 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
   /**
    * @since 4.0
    */
-  public void switchTarget(int viewID, CDOBranchPoint branchPoint, List<InternalCDOObject> invalidObjects,
-      List<CDORevisionKey> allChangedObjects, List<CDOIDAndVersion> allDetachedObjects, OMMonitor monitor);
+  public void switchTarget(int viewID, List<InternalCDOObject> invalidObjects,
+      List<Long> allChangedObjects, List<Long> allDetachedObjects, OMMonitor monitor);
 
   public void closeView(int viewID);
 
-  public void changeSubscription(int viewId, List<CDOID> ids, boolean subscribeMode, boolean clear);
+  public void changeSubscription(int viewId, List<Long> ids, boolean subscribeMode, boolean clear);
 
   /**
    * @since 4.0
@@ -130,10 +125,11 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
   public boolean cancelQuery(int queryId);
 
   /**
-   * @since 4.0
+   * @param cdoBranch 
+ * @param viewID 
+ * @since 4.0
    */
-  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewID, CDOBranch viewedBranch,
-      LockType lockType, long timeout) throws InterruptedException;
+  public LockObjectsResult lockObjects(List<InternalCDORevision> viewedRevisions, int viewID,  LockType lockType, long timeout) throws InterruptedException;
 
   /**
    * @since 3.0
@@ -163,14 +159,13 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
   /**
    * @since 4.0
    */
-  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks,
-      CDOIDProvider idProvider, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor);
+  public CommitTransactionResult commitTransaction(int transactionID, String comment, boolean releaseLocks, CDOCommitData commitData, Collection<CDOLob<?>> lobs, OMMonitor monitor);
 
   /**
    * @since 4.0
    */
-  public CommitTransactionResult commitDelegation(CDOBranch branch, String userID, String comment,
-      CDOCommitData commitData, Map<CDOID, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor);
+  public CommitTransactionResult commitDelegation(String userID, String comment,
+      CDOCommitData commitData, Map<Long, EClass> detachedObjectTypes, Collection<CDOLob<?>> lobs, OMMonitor monitor);
 
   /**
    * @since 3.0
@@ -204,25 +199,16 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
    */
   public boolean unsubscribeRemoteSessions();
 
-  /**
-   * @since 4.0
-   */
-  public void replicateRepository(CDOReplicationContext context, OMMonitor monitor);
-
-  /**
-   * @since 4.0
-   */
-  public void replicateRepositoryRaw(CDORawReplicationContext context, OMMonitor monitor);
 
   /**
    * @since 3.0
    */
-  public CDOChangeSetData[] loadChangeSets(CDOBranchPointRange... ranges);
+  public CDOChangeSetData[] loadChangeSets();
 
   /**
    * @since 4.0
    */
-  public Set<CDOID> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
+  public Set<Long> loadMergeData(CDORevisionAvailabilityInfo targetInfo, CDORevisionAvailabilityInfo sourceInfo,
       CDORevisionAvailabilityInfo targetBaseInfo, CDORevisionAvailabilityInfo sourceBaseInfo);
 
   /**
@@ -250,15 +236,11 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
 
     private String storeType;
 
-    private Set<CDOID.ObjectType> objectIDTypes;
-
     private long repositoryCreationTime;
-
-    private long lastUpdateTime;
 
     private RepositoryTimeResult repositoryTimeResult;
 
-    private CDOID rootResourceID;
+    private long rootResourceID;
 
     private boolean repositorySupportingAudits;
 
@@ -275,7 +257,7 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
      */
     public OpenSessionResult(int sessionID, String userID, String repositoryUUID,
         CDOCommonRepository.Type repositoryType, CDOCommonRepository.State repositoryState, String storeType,
-        Set<CDOID.ObjectType> objectIDTypes, long repositoryCreationTime, long lastUpdateTime, CDOID rootResourceID,
+        long repositoryCreationTime, long lastUpdateTime, long rootResourceID,
         boolean repositorySupportingAudits, boolean repositorySupportingBranches, boolean repositorySupportingEcore,
         boolean repositoryEnsuringReferentialIntegrity)
     {
@@ -285,9 +267,7 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       this.repositoryType = repositoryType;
       this.repositoryState = repositoryState;
       this.storeType = storeType;
-      this.objectIDTypes = objectIDTypes;
       this.repositoryCreationTime = repositoryCreationTime;
-      this.lastUpdateTime = lastUpdateTime;
       this.rootResourceID = rootResourceID;
       this.repositorySupportingAudits = repositorySupportingAudits;
       this.repositorySupportingBranches = repositorySupportingBranches;
@@ -337,18 +317,11 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       return storeType;
     }
 
-    /**
-     * @since 3.0
-     */
-    public Set<CDOID.ObjectType> getObjectIDTypes()
-    {
-      return objectIDTypes;
-    }
 
     /**
      * @since 3.0
      */
-    public CDOID getRootResourceID()
+    public long getRootResourceID()
     {
       return rootResourceID;
     }
@@ -397,13 +370,6 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       this.repositoryTimeResult = repositoryTimeResult;
     }
 
-    /**
-     * @since 3.0
-     */
-    public long getLastUpdateTime()
-    {
-      return lastUpdateTime;
-    }
 
     public List<InternalCDOPackageUnit> getPackageUnits()
     {
@@ -417,22 +383,14 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
    */
   public static final class RefreshSessionResult
   {
-    private long lastUpdateTime;
-
     private List<CDOPackageUnit> packageUnits = new ArrayList<CDOPackageUnit>();
 
-    private Map<CDOBranch, List<InternalCDORevision>> changedObjects = new HashMap<CDOBranch, List<InternalCDORevision>>();
+    private List<InternalCDORevision> changedObjects = new ArrayList<InternalCDORevision>();
 
-    private Map<CDOBranch, List<CDOIDAndVersion>> detachedObjects = new HashMap<CDOBranch, List<CDOIDAndVersion>>();
+    private List<Long> detachedObjects = new ArrayList<Long>();
 
-    public RefreshSessionResult(long lastUpdateTime)
+    public RefreshSessionResult()
     {
-      this.lastUpdateTime = lastUpdateTime;
-    }
-
-    public long getLastUpdateTime()
-    {
-      return lastUpdateTime;
     }
 
     public List<CDOPackageUnit> getPackageUnits()
@@ -440,26 +398,14 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       return packageUnits;
     }
 
-    public List<InternalCDORevision> getChangedObjects(CDOBranch branch)
+    public List<InternalCDORevision> getChangedObjects()
     {
-      List<InternalCDORevision> list = changedObjects.get(branch);
-      if (list == null)
-      {
-        return Collections.emptyList();
-      }
-
-      return list;
+      return changedObjects;
     }
 
-    public List<CDOIDAndVersion> getDetachedObjects(CDOBranch branch)
+    public List<Long> getDetachedObjects()
     {
-      List<CDOIDAndVersion> list = detachedObjects.get(branch);
-      if (list == null)
-      {
-        return Collections.emptyList();
-      }
-
-      return list;
+      return detachedObjects;
     }
 
     public void addPackageUnit(CDOPackageUnit packageUnit)
@@ -469,28 +415,12 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
 
     public void addChangedObject(InternalCDORevision revision)
     {
-      CDOBranch branch = revision.getBranch();
-      List<InternalCDORevision> list = changedObjects.get(branch);
-      if (list == null)
-      {
-        list = new ArrayList<InternalCDORevision>();
-        changedObjects.put(branch, list);
-      }
-
-      list.add(revision);
+      changedObjects.add(revision);
     }
 
-    public void addDetachedObject(CDORevisionKey revision)
+    public void addDetachedObject(Long id)
     {
-      CDOBranch branch = revision.getBranch();
-      List<CDOIDAndVersion> list = detachedObjects.get(branch);
-      if (list == null)
-      {
-        list = new ArrayList<CDOIDAndVersion>();
-        detachedObjects.put(branch, list);
-      }
-
-      list.add(revision);
+      detachedObjects.add(id);
     }
   }
 
@@ -569,8 +499,8 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
     {
       return MessageFormat.format(
           "RepositoryTime[requested={0}, indicated={1}, responded={2}, confirmed={3}]", //$NON-NLS-1$
-          CDOCommonUtil.formatTimeStamp(requested), CDOCommonUtil.formatTimeStamp(indicated),
-          CDOCommonUtil.formatTimeStamp(responded), CDOCommonUtil.formatTimeStamp(confirmed));
+          requested, indicated,
+          responded, confirmed);
     }
   }
 
@@ -580,89 +510,32 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
    */
   public final class CommitTransactionResult implements CDOBranchPoint
   {
-    private CDOIDProvider idProvider;
-
     private String rollbackMessage;
 
     private List<CDOObjectReference> xRefs;
 
-    private CDOBranchPoint branchPoint;
-
-    private long previousTimeStamp;
-
-    private Map<CDOID, CDOID> idMappings = new HashMap<CDOID, CDOID>();
-
-    private CDOReferenceAdjuster referenceAdjuster;
-
     /**
      * @since 4.0
      */
-    public CommitTransactionResult(CDOIDProvider idProvider, String rollbackMessage, CDOBranchPoint branchPoint,
-        long previousTimeStamp, List<CDOObjectReference> xRefs)
+    public CommitTransactionResult(String rollbackMessage, List<CDOObjectReference> xRefs)
     {
-      this.idProvider = idProvider;
       this.rollbackMessage = rollbackMessage;
-      this.branchPoint = branchPoint;
-      this.previousTimeStamp = previousTimeStamp;
       this.xRefs = xRefs;
     }
 
     /**
      * @since 4.0
      */
-    public CommitTransactionResult(CDOIDProvider idProvider, CDOBranchPoint branchPoint, long previousTimeStamp)
+    public CommitTransactionResult()
     {
-      this.idProvider = idProvider;
-      this.branchPoint = branchPoint;
-      this.previousTimeStamp = previousTimeStamp;
     }
 
-    /**
-     * @since 4.0
-     */
-    public CDOReferenceAdjuster getReferenceAdjuster()
-    {
-      if (referenceAdjuster == null)
-      {
-        referenceAdjuster = createReferenceAdjuster();
-      }
-
-      return referenceAdjuster;
-    }
-
-    /**
-     * @since 4.0
-     */
-    public void setReferenceAdjuster(CDOReferenceAdjuster referenceAdjuster)
-    {
-      this.referenceAdjuster = referenceAdjuster;
-    }
 
     public String getRollbackMessage()
     {
       return rollbackMessage;
     }
 
-    /**
-     * @since 3.0
-     */
-    public CDOBranch getBranch()
-    {
-      return branchPoint.getBranch();
-    }
-
-    public long getTimeStamp()
-    {
-      return branchPoint.getTimeStamp();
-    }
-
-    /**
-     * @since 4.0
-     */
-    public long getPreviousTimeStamp()
-    {
-      return previousTimeStamp;
-    }
 
     /**
      * @since 4.0
@@ -672,57 +545,11 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       return xRefs;
     }
 
-    public Map<CDOID, CDOID> getIDMappings()
-    {
-      return idMappings;
-    }
+	public CDOBranch getBranch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /**
-     * @since 3.0
-     */
-    public void addIDMapping(CDOID oldID, CDOID newID)
-    {
-      idMappings.put(oldID, newID);
-    }
-
-    protected PostCommitReferenceAdjuster createReferenceAdjuster()
-    {
-      return new PostCommitReferenceAdjuster(idProvider, new CDOIDMapper(idMappings));
-    }
-
-    /**
-     * @author Simon McDuff
-     */
-    protected static class PostCommitReferenceAdjuster implements CDOReferenceAdjuster
-    {
-      private CDOIDProvider idProvider;
-
-      private CDOIDMapper idMapper;
-
-      public PostCommitReferenceAdjuster(CDOIDProvider idProvider, CDOIDMapper idMapper)
-      {
-        this.idProvider = idProvider;
-        this.idMapper = idMapper;
-      }
-
-      /**
-       * @since 4.0
-       */
-      public Object adjustReference(Object id, EStructuralFeature feature, int index)
-      {
-        if (id == null || id == CDOID.NULL)
-        {
-          return id;
-        }
-
-        if (idProvider != null && (id instanceof CDOID || id instanceof InternalEObject))
-        {
-          id = idProvider.provideCDOID(id);
-        }
-
-        return idMapper.adjustReference(id, feature, index);
-      }
-    }
   }
 
   /**
@@ -736,17 +563,14 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
 
     private boolean waitForUpdate;
 
-    private long requiredTimestamp;
+    private long[] staleRevisions;
 
-    private CDORevisionKey[] staleRevisions;
-
-    public LockObjectsResult(boolean successful, boolean timedOut, boolean waitForUpdate, long requiredTimestamp,
-        CDORevisionKey[] staleRevisions)
+    public LockObjectsResult(boolean successful, boolean timedOut, boolean waitForUpdate,
+        long[] staleRevisions)
     {
       this.successful = successful;
       this.timedOut = timedOut;
       this.waitForUpdate = waitForUpdate;
-      this.requiredTimestamp = requiredTimestamp;
       this.staleRevisions = staleRevisions;
     }
 
@@ -765,12 +589,7 @@ public interface CDOSessionProtocol extends CDOProtocol, PackageLoader, BranchLo
       return waitForUpdate;
     }
 
-    public long getRequiredTimestamp()
-    {
-      return requiredTimestamp;
-    }
-
-    public CDORevisionKey[] getStaleRevisions()
+    public long[] getStaleRevisions()
     {
       return staleRevisions;
     }

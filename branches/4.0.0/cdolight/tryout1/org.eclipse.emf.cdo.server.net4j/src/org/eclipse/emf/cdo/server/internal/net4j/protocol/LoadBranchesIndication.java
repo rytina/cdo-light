@@ -53,7 +53,6 @@ public class LoadBranchesIndication extends CDOServerReadIndication
         try
         {
           out.writeByte(CDOProtocolConstants.REPLICATE_BRANCH);
-          out.writeCDOBranch(branch);
         }
         catch (IOException ex)
         {

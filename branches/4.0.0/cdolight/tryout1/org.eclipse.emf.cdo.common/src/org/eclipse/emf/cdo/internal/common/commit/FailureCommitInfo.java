@@ -10,48 +10,28 @@
  */
 package org.eclipse.emf.cdo.internal.common.commit;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.commit.CDOChangeKind;
 import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoManager;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-
-import java.util.Collections;
-import java.util.List;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 
 /**
  * @author Eike Stepper
  */
 public class FailureCommitInfo implements CDOCommitInfo
 {
-  private long timeStamp;
 
-  private long previousTimeStamp;
-
-  public FailureCommitInfo(long timeStamp, long previousTimeStamp)
+  public FailureCommitInfo()
   {
-    this.timeStamp = timeStamp;
-    this.previousTimeStamp = previousTimeStamp;
   }
 
-  public long getTimeStamp()
-  {
-    return timeStamp;
-  }
-
-  public long getPreviousTimeStamp()
-  {
-    return previousTimeStamp;
-  }
-
-  public CDOBranch getBranch()
-  {
-    return null;
-  }
 
   public String getUserID()
   {
@@ -78,22 +58,22 @@ public class FailureCommitInfo implements CDOCommitInfo
     return Collections.emptyList();
   }
 
-  public List<CDOIDAndVersion> getNewObjects()
+  public List<CDORevision> getNewObjects()
   {
     return Collections.emptyList();
   }
 
-  public List<CDORevisionKey> getChangedObjects()
+  public List<CDORevisionDelta> getChangedObjects()
   {
     return Collections.emptyList();
   }
 
-  public List<CDOIDAndVersion> getDetachedObjects()
+  public List<Long> getDetachedObjects()
   {
     return Collections.emptyList();
   }
 
-  public CDOChangeKind getChangeKind(CDOID id)
+  public CDOChangeKind getChangeKind(long id)
   {
     return null;
   }

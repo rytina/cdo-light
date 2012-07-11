@@ -10,6 +10,20 @@
  */
 package org.eclipse.emf.cdo.internal.server.syncing;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
 import org.eclipse.emf.cdo.common.CDOCommonRepository;
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
@@ -17,14 +31,11 @@ import org.eclipse.emf.cdo.common.commit.CDOChangeSetData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfo;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
-import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
-import org.eclipse.emf.cdo.common.util.CDOCommonUtil;
+import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
 import org.eclipse.emf.cdo.internal.common.commit.CDOCommitDataImpl;
 import org.eclipse.emf.cdo.internal.server.Repository;
 import org.eclipse.emf.cdo.internal.server.TransactionCommitContext;
@@ -43,27 +54,11 @@ import org.eclipse.emf.cdo.spi.server.InternalSessionManager;
 import org.eclipse.emf.cdo.spi.server.InternalStore;
 import org.eclipse.emf.cdo.spi.server.InternalSynchronizableRepository;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
-
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
+import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
 import org.eclipse.net4j.util.om.monitor.Monitor;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
 import org.eclipse.net4j.util.transaction.TransactionException;
-
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol;
-import org.eclipse.emf.spi.cdo.CDOSessionProtocol.CommitTransactionResult;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 /**
  * TODO:
@@ -107,8 +102,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
   private InternalSession replicatorSession;
 
   private int lastReplicatedBranchID = CDOBranch.MAIN_BRANCH_ID;
-
-  private long lastReplicatedCommitTime = CDOBranchPoint.UNSPECIFIED_DATE;
 
   private int lastTransactionID;
 
@@ -160,18 +153,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
     }
   }
 
-  public long getLastReplicatedCommitTime()
-  {
-    return lastReplicatedCommitTime;
-  }
-
-  public void setLastReplicatedCommitTime(long lastReplicatedCommitTime)
-  {
-    if (this.lastReplicatedCommitTime < lastReplicatedCommitTime)
-    {
-      this.lastReplicatedCommitTime = lastReplicatedCommitTime;
-    }
-  }
 
   public void handleBranch(CDOBranch branch)
   {
@@ -181,29 +162,13 @@ public abstract class SynchronizableRepository extends Repository.Default implem
     }
 
     int branchID = branch.getID();
-    String name = branch.getName();
 
-    CDOBranchPoint base = branch.getBase();
-    InternalCDOBranch baseBranch = (InternalCDOBranch)base.getBranch();
-    long baseTimeStamp = base.getTimeStamp();
-
-    InternalCDOBranchManager branchManager = getBranchManager();
-    branchManager.createBranch(branchID, name, baseBranch, baseTimeStamp);
     setLastReplicatedBranchID(branchID);
   }
 
   public void handleCommitInfo(CDOCommitInfo commitInfo)
   {
-    CDOBranch branch = commitInfo.getBranch();
-    if (branch.isLocal())
-    {
-      return;
-    }
-
-    long timeStamp = commitInfo.getTimeStamp();
-    CDOBranchPoint head = branch.getHead();
-
-    InternalTransaction transaction = replicatorSession.openTransaction(++lastTransactionID, head);
+    InternalTransaction transaction = replicatorSession.openTransaction(++lastTransactionID);
     ReplicatorCommitContext commitContext = new ReplicatorCommitContext(transaction, commitInfo);
     commitContext.preWrite();
     boolean success = false;
@@ -214,9 +179,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
 
       commitContext.write(new Monitor());
       commitContext.commit(new Monitor());
-
-      setLastCommitTimeStamp(timeStamp);
-      setLastReplicatedCommitTime(timeStamp);
       success = true;
     }
     finally
@@ -227,95 +189,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
     }
   }
 
-  public void replicateRaw(CDODataInput in, OMMonitor monitor) throws IOException
-  {
-    try
-    {
-      int fromBranchID = lastReplicatedBranchID + 1;
-      int toBranchID = in.readInt();
-      long fromCommitTime = lastReplicatedCommitTime + 1L;
-      long toCommitTime = in.readLong();
-
-      StoreThreadLocal.setSession(replicatorSession);
-      IStoreAccessor.Raw accessor = (IStoreAccessor.Raw)StoreThreadLocal.getAccessor();
-      accessor.rawImport(in, fromBranchID, toBranchID, fromCommitTime, toCommitTime, monitor);
-
-      replicateRawReviseRevisions();
-      replicateRawNotifyClients(lastReplicatedCommitTime, toCommitTime);
-
-      setLastReplicatedBranchID(toBranchID);
-      setLastReplicatedCommitTime(toCommitTime);
-      setLastCommitTimeStamp(toCommitTime);
-    }
-    finally
-    {
-      StoreThreadLocal.release();
-    }
-  }
-
-  private void replicateRawReviseRevisions()
-  {
-    InternalCDORevisionCache cache = getRevisionManager().getCache();
-    for (CDORevision revision : cache.getCurrentRevisions())
-    {
-      cache.removeRevision(revision.getID(), revision);
-    }
-  }
-
-  private void replicateRawNotifyClients(long fromCommitTime, long toCommitTime)
-  {
-    InternalCDOCommitInfoManager manager = getCommitInfoManager();
-    InternalSessionManager sessionManager = getSessionManager();
-
-    Map<CDOBranch, TimeRange> branches = replicateRawGetBranches(fromCommitTime, toCommitTime);
-    for (Entry<CDOBranch, TimeRange> entry : branches.entrySet())
-    {
-      CDOBranch branch = entry.getKey();
-      TimeRange range = entry.getValue();
-      fromCommitTime = range.getTime1();
-      toCommitTime = range.getTime2();
-
-      CDOBranchPoint startPoint = branch.getPoint(fromCommitTime);
-      CDOBranchPoint endPoint = branch.getPoint(toCommitTime);
-      CDOChangeSetData changeSet = getChangeSet(startPoint, endPoint);
-
-      List<CDOPackageUnit> newPackages = Collections.emptyList(); // TODO Notify about new packages
-      List<CDOIDAndVersion> newObjects = changeSet.getNewObjects();
-      List<CDORevisionKey> changedObjects = changeSet.getChangedObjects();
-      List<CDOIDAndVersion> detachedObjects = changeSet.getDetachedObjects();
-      CDOCommitData data = new CDOCommitDataImpl(newPackages, newObjects, changedObjects, detachedObjects);
-
-      String comment = "<replicate raw commits>"; //$NON-NLS-1$
-      CDOCommitInfo commitInfo = manager.createCommitInfo(branch, toCommitTime, fromCommitTime, SYSTEM_USER_ID,
-          comment, data);
-      sessionManager.sendCommitNotification(replicatorSession, commitInfo);
-    }
-  }
-
-  private Map<CDOBranch, TimeRange> replicateRawGetBranches(long fromCommitTime, long toCommitTime)
-  {
-    final Map<CDOBranch, TimeRange> branches = new HashMap<CDOBranch, TimeRange>();
-    CDOCommitInfoHandler handler = new CDOCommitInfoHandler()
-    {
-      public void handleCommitInfo(CDOCommitInfo commitInfo)
-      {
-        CDOBranch branch = commitInfo.getBranch();
-        long timeStamp = commitInfo.getTimeStamp();
-        TimeRange range = branches.get(branch);
-        if (range == null)
-        {
-          branches.put(branch, new TimeRange(timeStamp));
-        }
-        else
-        {
-          range.update(timeStamp);
-        }
-      }
-    };
-
-    getCommitInfoManager().getCommitInfos(null, fromCommitTime, toCommitTime, handler);
-    return branches;
-  }
 
   @Override
   public abstract InternalCommitContext createCommitContext(InternalTransaction transaction);
@@ -358,7 +231,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
 
         map = store.getPersistentProperties(names);
         setLastReplicatedBranchID(Integer.valueOf(map.get(PROP_LAST_REPLICATED_BRANCH_ID)));
-        setLastReplicatedCommitTime(Long.valueOf(map.get(PROP_LAST_REPLICATED_COMMIT_TIME)));
       }
     }
 
@@ -377,7 +249,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
 
     Map<String, String> map = new HashMap<String, String>();
     map.put(PROP_LAST_REPLICATED_BRANCH_ID, Integer.toString(lastReplicatedBranchID));
-    map.put(PROP_LAST_REPLICATED_COMMIT_TIME, Long.toString(lastReplicatedCommitTime));
     map.put(PROP_GRACEFULLY_SHUT_DOWN, Boolean.TRUE.toString());
 
     InternalStore store = getStore();
@@ -406,7 +277,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
   protected void setReplicationCountersToLatest()
   {
     setLastReplicatedBranchID(getStore().getLastBranchID());
-    setLastReplicatedCommitTime(getStore().getLastNonLocalCommitTime());
   }
 
   protected void doInitRootResource()
@@ -461,7 +331,7 @@ public abstract class SynchronizableRepository extends Repository.Default implem
     @Override
     public String toString()
     {
-      return "[" + CDOCommonUtil.formatTimeStamp(time1) + " - " + CDOCommonUtil.formatTimeStamp(time1) + "]";
+      return "[" + time1 + " - " + time1 + "]";
     }
   }
 
@@ -493,7 +363,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
       InternalTransaction transaction = getTransaction();
 
       // Prepare commit to the master
-      CDOBranch branch = transaction.getBranch();
       String userID = getUserID();
       String comment = getCommitComment();
       CDOCommitData commitData = new CommitContextData(this);
@@ -501,7 +370,7 @@ public abstract class SynchronizableRepository extends Repository.Default implem
 
       // Delegate commit to the master
       CDOSessionProtocol sessionProtocol = getSynchronizer().getRemoteSession().getSessionProtocol();
-      CommitTransactionResult result = sessionProtocol.commitDelegation(branch, userID, comment, commitData,
+      CommitTransactionResult result = sessionProtocol.commitDelegation(userID, comment, commitData,
           getDetachedObjectTypes(), lobs, monitor);
 
       // Stop if commit to master failed
@@ -510,12 +379,6 @@ public abstract class SynchronizableRepository extends Repository.Default implem
       {
         throw new TransactionException(rollbackMessage);
       }
-
-      // Prepare data needed for commit result and commit notifications
-      long timeStamp = result.getTimeStamp();
-      setTimeStamp(timeStamp);
-      addIDMappings(result.getIDMappings());
-      applyIDMappings(new Monitor());
 
       try
       {
@@ -530,23 +393,8 @@ public abstract class SynchronizableRepository extends Repository.Default implem
       {
         writeThroughCommitLock.unlock();
       }
-
-      // Remember commit time in the local repository
-      setLastCommitTimeStamp(timeStamp);
-      setLastReplicatedCommitTime(timeStamp);
-
-      // Remember commit time in the replicator session.
-      getSynchronizer().getRemoteSession().setLastUpdateTime(timeStamp);
     }
 
-    @Override
-    protected long[] createTimeStamp(OMMonitor monitor)
-    {
-      // Already set after commit to the master.
-      // Do not call getTimeStamp() of the enclosing Repo class!!!
-      InternalRepository repository = getTransaction().getSession().getManager().getRepository();
-      return repository.forceCommitTimeStamp(WriteThroughCommitContext.this.getTimeStamp(), monitor);
-    }
 
     @Override
     protected void lockObjects() throws InterruptedException
@@ -554,14 +402,5 @@ public abstract class SynchronizableRepository extends Repository.Default implem
       // Do nothing
     }
 
-    private void addIDMappings(Map<CDOID, CDOID> idMappings)
-    {
-      for (Map.Entry<CDOID, CDOID> idMapping : idMappings.entrySet())
-      {
-        CDOID oldID = idMapping.getKey();
-        CDOID newID = idMapping.getValue();
-        addIDMapping(oldID, newID);
-      }
-    }
   }
 }

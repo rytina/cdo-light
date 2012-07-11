@@ -6,23 +6,23 @@ Bundle-Activator: org.eclipse.internal.net4j.bundle.OM$Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
  ";resolution:=optional,org.eclipse.net4j.util;bundle-version="[3.0.0,
  4.0.0)";visibility:=reexport
-Export-Package: org.eclipse.internal.net4j;version="4.0.0"; x-friends:
+Export-Package: org.eclipse.internal.net4j;version="4.0.1"; x-friends:
  ="org.eclipse.net4j.http.server,  org.eclipse.net4j.jvm,  org.eclipse
  .net4j.tcp,  org.eclipse.net4j.http,  org.eclipse.net4j.http.common, 
   org.eclipse.net4j.http.tests,  org.eclipse.net4j.tests,  org.eclipse
- .net4j.defs",org.eclipse.internal.net4j.buffer;version="4.0.0"; x-fri
+ .net4j.defs",org.eclipse.internal.net4j.buffer;version="4.0.1"; x-fri
  ends:="org.eclipse.net4j.http.server,  org.eclipse.net4j.jvm,  org.ec
  lipse.net4j.tcp,  org.eclipse.net4j.http,  org.eclipse.net4j.http.com
  mon,  org.eclipse.net4j.http.tests,  org.eclipse.net4j.tests,  org.ec
- lipse.net4j.defs",org.eclipse.internal.net4j.bundle;version="4.0.0";x
- -internal:=true,org.eclipse.net4j;version="4.0.0",org.eclipse.net4j.a
- cceptor;version="4.0.0",org.eclipse.net4j.buffer;version="4.0.0",org.
- eclipse.net4j.channel;version="4.0.0",org.eclipse.net4j.connector;ver
- sion="4.0.0",org.eclipse.net4j.protocol;version="4.0.0",org.eclipse.n
- et4j.signal;version="4.0.0",org.eclipse.net4j.signal.heartbeat;versio
- n="4.0.0",org.eclipse.net4j.signal.wrapping;version="4.0.0",org.eclip
- se.spi.net4j;version="4.0.0"
-Bundle-Version: 4.0.0.v20110608-1440
+ lipse.net4j.defs",org.eclipse.internal.net4j.bundle;version="4.0.1";x
+ -internal:=true,org.eclipse.net4j;version="4.0.1",org.eclipse.net4j.a
+ cceptor;version="4.0.1",org.eclipse.net4j.buffer;version="4.0.1",org.
+ eclipse.net4j.channel;version="4.0.1",org.eclipse.net4j.connector;ver
+ sion="4.0.1",org.eclipse.net4j.protocol;version="4.0.1",org.eclipse.n
+ et4j.signal;version="4.0.1",org.eclipse.net4j.signal.heartbeat;versio
+ n="4.0.1",org.eclipse.net4j.signal.wrapping;version="4.0.1",org.eclip
+ se.spi.net4j;version="4.0.1"
+Bundle-Version: 4.0.1.v20110706-0633
 Eclipse-BuddyPolicy: registered
 Ant-Version: Apache Ant 1.8.2
 Bundle-ClassPath: .
@@ -31,6 +31,9 @@ Bundle-Vendor: %providerName
 Bundle-Name: %pluginName
 Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
 Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/signal/SetTimeoutRequest.class
+SHA1-Digest: BEoKZZTZCV8XTqSQZZFIcBWgM4E=
 
 Name: about.ini
 SHA1-Digest: KQMVTFcyVja5dvVmIh2o+qDsslY=
@@ -64,6 +67,9 @@ SHA1-Digest: MNji1Aqk2iFK0V7e/BPf7d+WkH0=
 
 Name: org/eclipse/net4j/connector/doc-files/IConnector-2.gif
 SHA1-Digest: ND2uHpPIT7CAqyrr1rrVKuw+OUA=
+
+Name: org/eclipse/net4j/signal/SetTimeoutIndication.class
+SHA1-Digest: ZPyGmcnMm0aZUadUe9aulIcHB1M=
 
 Name: org/eclipse/spi/net4j/InternalChannel.class
 SHA1-Digest: BCkXz3sFZWPYHODyzD87a17+qtM=
@@ -128,7 +134,7 @@ Name: org/eclipse/internal/net4j/TransportConfig.class
 SHA1-Digest: nbPY1zWYooExaqf6Q+8rVJqE0r8=
 
 Name: org/eclipse/net4j/signal/SignalProtocol$SignalInputStream.class
-SHA1-Digest: Zx/DSEkMm2NgOpSljtTMrqIA99g=
+SHA1-Digest: Faq1jvnlolBPcQDmGjqZ1N8IaJc=
 
 Name: org/eclipse/net4j/buffer/IBufferProvider.class
 SHA1-Digest: bv4FSgQDVU4yj705/NfM4errSPk=
@@ -173,7 +179,7 @@ Name: org/eclipse/net4j/signal/Request.class
 SHA1-Digest: 5h8Y1M2Y1qR58GCzeFKvjLj6Vo8=
 
 Name: org/eclipse/net4j/signal/SignalProtocol.class
-SHA1-Digest: 9L+Bcn6jIJbSW9JS0DEATIcHaNs=
+SHA1-Digest: b4r7jTDTl1yg7JL4a2wuG9Hosa4=
 
 Name: org/eclipse/net4j/connector/package.html
 SHA1-Digest: zSconXWFVnEvsU1myC1eBc1WOUY=
@@ -202,7 +208,7 @@ SHA1-Digest: sb3xU6AWekpW5pAZIs4suxugTmY=
 
 Name: org/eclipse/net4j/signal/SignalProtocol$SignalOutputStream$1.cla
  ss
-SHA1-Digest: hRbA9xZO2GMxqCdRfZXLKDx7Vg4=
+SHA1-Digest: lUfIm4gKfUV+6NbqMG+ym/n3y5Q=
 
 Name: org/eclipse/net4j/signal/SignalReactor.class
 SHA1-Digest: RECRTR5WIDIvqd3K3LLSHVEZmiA=
@@ -290,7 +296,7 @@ Name: META-INF/eclipse.inf
 SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
 
 Name: about.mappings
-SHA1-Digest: TEwHHiRTevG30NAuwqm2aXge0GU=
+SHA1-Digest: T0MXhwyBeOufFdZxXOtuyjbvkhA=
 
 Name: org/eclipse/net4j/buffer/IBufferPool$Introspection.class
 SHA1-Digest: 03PiGG6HvXoXUWYgyhaoh4FzDwE=
@@ -389,7 +395,7 @@ Name: org/eclipse/internal/net4j/buffer/Buffer.class
 SHA1-Digest: 6QzfNhDx5hX4990Yc4cZ+VE4cfg=
 
 Name: org/eclipse/net4j/signal/SignalProtocol$SignalOutputStream.class
-SHA1-Digest: if6BO0D0Jk0HyLCe9Hr+Hv/8gFY=
+SHA1-Digest: n0d8zQRum9LyBCnqPEf2xb4b3wk=
 
 Name: org/eclipse/net4j/signal/heartbeat/HeartBeatProtocol$3.class
 SHA1-Digest: boIo3lbKxv20gmtGxq+W5dOjfXM=
@@ -421,12 +427,12 @@ SHA1-Digest: aXYIAr8aaTwAEr33L6QtgTh7k6c=
 Name: org/eclipse/net4j/signal/wrapping/StreamWrapperInjector.class
 SHA1-Digest: Qfq2M8d+j7r0FAgNZFYDcU74+ys=
 
-Name: org/eclipse/net4j/ContainerProtocolProvider$Server.class
-SHA1-Digest: a9TtzsZE9LWkOMSYvGJDjpEaKy0=
-
 Name: org/eclipse/net4j/signal/heartbeat/HeartBeatProtocol$Server$2.cl
  ass
 SHA1-Digest: XzROCq+5tCXw39ql7eeawO+EgCA=
+
+Name: org/eclipse/net4j/ContainerProtocolProvider$Server.class
+SHA1-Digest: a9TtzsZE9LWkOMSYvGJDjpEaKy0=
 
 Name: org/eclipse/net4j/signal/SignalScheduledEvent.class
 SHA1-Digest: vkhv0RNHA4itl0BWjOQb4N1UJME=

@@ -13,7 +13,6 @@ package org.eclipse.emf.cdo.internal.server;
 
 import org.eclipse.emf.cdo.common.branch.CDOBranch;
 import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndBranch;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -111,25 +110,20 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
     LockEntry<Object, IView> lockEntry = getLockEntry(key);
     return lockEntry.getObject();
   }
-
-  public Object getLockKey(CDOID id, CDOBranch branch)
+  
+  public Object getLockKey(long id)
   {
-    if (repository.isSupportingBranches())
-    {
-      return CDOIDUtil.createIDAndBranch(id, branch);
-    }
-
     return id;
   }
 
-  public Map<CDOID, LockGrade> getLocks(final IView view)
+  public Map<Long, LockGrade> getLocks(final IView view)
   {
-    final Map<CDOID, LockGrade> result = new HashMap<CDOID, LockGrade>();
+    final Map<Long, LockGrade> result = new HashMap<Long, LockGrade>();
     LockEntryHandler<Object, IView> handler = new LockEntryHandler<Object, IView>()
     {
       public boolean handleLockEntry(LockEntry<Object, IView> lockEntry)
       {
-        CDOID id = getLockKeyID(lockEntry.getObject());
+        long id = getLockKeyID(lockEntry.getObject());
         LockGrade grade = LockGrade.NONE;
         if (lockEntry.isReadLock(view))
         {
@@ -207,21 +201,20 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
     super.unlock(view);
   }
 
-  public LockArea createLockArea(String userID, CDOBranchPoint branchPoint, boolean readOnly,
-      Map<CDOID, LockGrade> locks)
+  public LockArea createLockArea(String userID, boolean readOnly,
+      Map<Long, LockGrade> locks)
   {
     DurableLocking accessor = getDurableLocking();
-    return accessor.createLockArea(userID, branchPoint, readOnly, locks);
+    return accessor.createLockArea(userID, readOnly, locks);
   }
 
   public LockArea createLockArea(InternalView view)
   {
     String userID = view.getSession().getUserID();
-    CDOBranchPoint branchPoint = CDOBranchUtil.copyBranchPoint(view);
     boolean readOnly = view.isReadOnly();
-    Map<CDOID, LockGrade> locks = getLocks(view);
+    Map<Long, LockGrade> locks = getLocks(view);
 
-    LockArea area = createLockArea(userID, branchPoint, readOnly, locks);
+    LockArea area = createLockArea(userID, readOnly, locks);
     synchronized (openViews)
     {
       openViews.put(area.getDurableLockingID(), view);
@@ -272,11 +265,11 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
 
       if (readOnly)
       {
-        view = (InternalView)session.openView(viewID, area);
+        view = (InternalView)session.openView(viewID);
       }
       else
       {
-        view = (InternalView)session.openTransaction(viewID, area);
+        view = (InternalView)session.openTransaction(viewID);
       }
 
       changeContext(new DurableView(durableLockingID), view);
@@ -364,11 +357,11 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
     }
   }
 
-  public CDOID getLockKeyID(Object key)
+  public long getLockKeyID(Object key)
   {
-    if (key instanceof CDOID)
+    if (key instanceof Long)
     {
-      return (CDOID)key;
+      return (Long)key;
     }
 
     if (key instanceof CDOIDAndBranch)
@@ -416,7 +409,7 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
       throw new UnsupportedOperationException();
     }
 
-    public CDORevision getRevision(CDOID id)
+    public CDORevision getRevision(long id)
     {
       throw new UnsupportedOperationException();
     }
@@ -482,9 +475,9 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
 
       Collection<Object> readLocks = new ArrayList<Object>();
       Collection<Object> writeLocks = new ArrayList<Object>();
-      for (Entry<CDOID, LockGrade> entry : area.getLocks().entrySet())
+      for (Entry<Long, LockGrade> entry : area.getLocks().entrySet())
       {
-        Object key = getLockKey(entry.getKey(), area.getBranch());
+        Object key = getLockKey(entry.getKey());
         LockGrade grade = entry.getValue();
         if (grade.isRead())
         {
@@ -510,4 +503,6 @@ public class LockManager extends RWLockManager<Object, IView> implements Interna
       return true;
     }
   }
+
+
 }

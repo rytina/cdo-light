@@ -13,36 +13,32 @@
  */
 package org.eclipse.emf.cdo.internal.common.revision.delta;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
+import java.io.IOException;
+import java.text.MessageFormat;
+
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOContainerFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDeltaVisitor;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
-
-import org.eclipse.net4j.util.ObjectUtil;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.EReferenceImpl;
-
-import java.io.IOException;
-import java.text.MessageFormat;
+import org.eclipse.net4j.util.ObjectUtil;
 
 /**
  * @author Simon McDuff
  */
 public class CDOContainerFeatureDeltaImpl extends CDOFeatureDeltaImpl implements CDOContainerFeatureDelta
 {
-  private CDOID newResourceID;
+  private long newResourceID;
 
-  private Object newContainerID;
+  private long newContainerID;
 
   private int newContainerFeatureID;
 
-  public CDOContainerFeatureDeltaImpl(CDOID newResourceID, Object newContainerID, int newContainerFeatureID)
+  public CDOContainerFeatureDeltaImpl(long newResourceID, long newContainerID, int newContainerFeatureID)
   {
     super(CONTAINER_FEATURE);
     this.newResourceID = newResourceID;
@@ -68,12 +64,12 @@ public class CDOContainerFeatureDeltaImpl extends CDOFeatureDeltaImpl implements
     return new CDOContainerFeatureDeltaImpl(newResourceID, newContainerID, newContainerFeatureID);
   }
 
-  public CDOID getResourceID()
+  public long getResourceID()
   {
     return newResourceID;
   }
 
-  public Object getContainerID()
+  public long getContainerID()
   {
     return newContainerID;
   }
@@ -90,34 +86,13 @@ public class CDOContainerFeatureDeltaImpl extends CDOFeatureDeltaImpl implements
     ((InternalCDORevision)revision).setContainingFeatureID(newContainerFeatureID);
   }
 
-  @Override
-  public boolean adjustReferences(CDOReferenceAdjuster referenceAdjuster)
-  {
-    boolean changed = false;
-
-    CDOID id1 = (CDOID)referenceAdjuster.adjustReference(newResourceID, CONTAINER_FEATURE, NO_INDEX);
-    if (id1 != newResourceID)
-    {
-      newResourceID = id1;
-      changed = true;
-    }
-
-    Object id2 = referenceAdjuster.adjustReference(newContainerID, CONTAINER_FEATURE, NO_INDEX);
-    if (id2 != newContainerID)
-    {
-      newContainerID = id2;
-      changed = true;
-    }
-
-    return changed;
-  }
 
   @Override
   public void write(CDODataOutput out, EClass eClass) throws IOException
   {
     out.writeInt(getType().ordinal());
     out.writeInt(newContainerFeatureID);
-    out.writeCDOID(out.getIDProvider().provideCDOID(newContainerID));
+    out.writeCDOID(newContainerID);
     out.writeCDOID(newResourceID);
   }
 

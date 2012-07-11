@@ -22,7 +22,7 @@ public class CommitXATransactionRequest extends CommitTransactionRequest
   public CommitXATransactionRequest(CDOClientProtocol protocol, short signalID, InternalCDOXACommitContext xaContext)
   {
     super(protocol, signalID, xaContext.getTransaction().getViewID(), xaContext.getTransaction().getCommitComment(),
-        xaContext.getTransaction().options().isAutoReleaseLocksEnabled(), xaContext.getTransaction(), xaContext
+        xaContext.getTransaction().options().isAutoReleaseLocksEnabled(), xaContext
             .getCommitData(), xaContext.getLobs());
     this.xaContext = xaContext;
   }

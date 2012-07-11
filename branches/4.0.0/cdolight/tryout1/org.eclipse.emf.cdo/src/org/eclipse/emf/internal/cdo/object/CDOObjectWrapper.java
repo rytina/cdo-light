@@ -11,7 +11,6 @@
 package org.eclipse.emf.internal.cdo.object;
 
 import org.eclipse.emf.cdo.CDOLock;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.eresource.impl.CDOResourceImpl;
 import org.eclipse.emf.cdo.view.CDOView;
 
@@ -50,7 +49,7 @@ public abstract class CDOObjectWrapper implements InternalCDOObject
 {
   private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_OBJECT, CDOObjectWrapper.class);
 
-  protected CDOID id;
+  protected long id;
 
   protected InternalCDOView view;
 
@@ -60,7 +59,7 @@ public abstract class CDOObjectWrapper implements InternalCDOObject
   {
   }
 
-  public CDOID cdoID()
+  public long cdoID()
   {
     return id;
   }
@@ -95,7 +94,7 @@ public abstract class CDOObjectWrapper implements InternalCDOObject
     return null;
   }
 
-  public void cdoInternalSetID(CDOID id)
+  public void cdoInternalSetID(long id)
   {
     if (TRACER.isEnabled())
     {

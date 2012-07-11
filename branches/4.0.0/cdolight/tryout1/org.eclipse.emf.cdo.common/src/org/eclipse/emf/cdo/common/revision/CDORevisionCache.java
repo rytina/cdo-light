@@ -10,17 +10,13 @@
  */
 package org.eclipse.emf.cdo.common.revision;
 
-import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
-import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.internal.common.revision.NOOPRevisionCache;
+import java.util.List;
 
+import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+import org.eclipse.emf.cdo.internal.common.revision.NOOPRevisionCache;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.net4j.util.event.IEvent;
 import org.eclipse.net4j.util.event.INotifier;
-
-import org.eclipse.emf.ecore.EClass;
-
-import java.util.List;
 
 /**
  * Caches {@link CDORevision revisions} and possibly {@link EvictionEvent evicts} those that are no longer strongly
@@ -38,17 +34,13 @@ public interface CDORevisionCache extends CDORevisionCacheAdder, INotifier
    */
   public static final CDORevisionCache NOOP = NOOPRevisionCache.INSTANCE;
 
-  public EClass getObjectType(CDOID id);
+  public EClass getObjectType(long id);
 
   /**
    * @since 3.0
    */
-  public CDORevision getRevision(CDOID id, CDOBranchPoint branchPoint);
+  public CDORevision getRevision(long id);
 
-  /**
-   * @since 3.0
-   */
-  public CDORevision getRevisionByVersion(CDOID id, CDOBranchVersion branchVersion);
 
   /**
    * Returns a list of {@link CDORevision revisions} that are current.

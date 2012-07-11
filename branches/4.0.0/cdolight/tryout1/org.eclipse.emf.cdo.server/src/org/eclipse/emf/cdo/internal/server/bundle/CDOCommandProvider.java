@@ -289,8 +289,6 @@ public class CDOCommandProvider implements CommandProvider
           {
             interpreter.println(area.getDurableLockingID());
             interpreter.println(INDENT + "userID = " + area.getUserID());
-            interpreter.println(INDENT + "branch = " + area.getBranch());
-            interpreter.println(INDENT + "timeStamp = " + CDOCommonUtil.formatTimeStamp(area.getTimeStamp()));
             interpreter.println(INDENT + "readOnly = " + area.isReadOnly());
             interpreter.println(INDENT + "locks = " + area.getLocks());
             return true;

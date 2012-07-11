@@ -13,7 +13,6 @@ package org.eclipse.emf.cdo.common.model;
 
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
-import org.eclipse.emf.cdo.spi.common.revision.CDOReferenceAdjuster;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -126,11 +125,6 @@ public interface CDOType
   public Object getDefaultValue();
 
   public Object copyValue(Object value);
-
-  /**
-   * @since 4.0
-   */
-  public Object adjustReferences(CDOReferenceAdjuster adjuster, Object value, EStructuralFeature feature, int index);
 
   /**
    * @since 3.0

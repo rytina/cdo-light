@@ -10,19 +10,12 @@
  */
 package org.eclipse.emf.cdo.internal.server.embedded;
 
-import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOID.ObjectType;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.embedded.CDOSessionConfiguration;
 import org.eclipse.emf.cdo.spi.server.InternalRepository;
-
 import org.eclipse.emf.internal.cdo.session.CDOSessionConfigurationImpl;
-
-import org.eclipse.net4j.util.CheckUtil;
-
 import org.eclipse.emf.spi.cdo.InternalCDOSession;
-
-import java.util.Set;
+import org.eclipse.net4j.util.CheckUtil;
 
 /**
  * @author Eike Stepper
@@ -100,29 +93,10 @@ public class EmbeddedClientSessionConfiguration extends CDOSessionConfigurationI
       return session.getRepository().getCreationTime();
     }
 
-    public long getTimeStamp()
-    {
-      return getTimeStamp(false);
-    }
 
-    public long getTimeStamp(boolean forceRefresh)
-    {
-      return System.currentTimeMillis();
-    }
-
-    public CDOID getRootResourceID()
+    public long getRootResourceID()
     {
       return session.getRepository().getRootResourceID();
-    }
-
-    public boolean isSupportingAudits()
-    {
-      return session.getRepository().isSupportingAudits();
-    }
-
-    public boolean isSupportingBranches()
-    {
-      return session.getRepository().isSupportingBranches();
     }
 
     public boolean isSupportingEcore()
@@ -140,9 +114,5 @@ public class EmbeddedClientSessionConfiguration extends CDOSessionConfigurationI
       return session.getRepository().getStoreType();
     }
 
-    public Set<ObjectType> getObjectIDTypes()
-    {
-      return session.getRepository().getObjectIDTypes();
-    }
   }
 }

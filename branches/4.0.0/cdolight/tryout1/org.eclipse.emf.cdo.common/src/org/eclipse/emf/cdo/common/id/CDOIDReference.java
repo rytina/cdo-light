@@ -10,6 +10,7 @@
  */
 package org.eclipse.emf.cdo.common.id;
 
+import org.eclipse.emf.cdo.common.id.CDOReference;
 import org.eclipse.emf.cdo.common.protocol.CDODataInput;
 import org.eclipse.emf.cdo.common.protocol.CDODataOutput;
 
@@ -26,17 +27,17 @@ import java.io.IOException;
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
-public class CDOIDReference implements CDOReference<CDOID>
+public class CDOIDReference implements CDOReference
 {
-  private CDOID targetID;
+  private long targetID;
 
-  private CDOID sourceID;
+  private long sourceID;
 
   private EStructuralFeature sourceFeature;
 
   private int sourceIndex;
 
-  public CDOIDReference(CDOID targetID, CDOID sourceID, EStructuralFeature sourceFeature, int sourceIndex)
+  public CDOIDReference(long targetID, long sourceID, EStructuralFeature sourceFeature, int sourceIndex)
   {
     this.targetID = targetID;
     this.sourceID = sourceID;
@@ -65,12 +66,12 @@ public class CDOIDReference implements CDOReference<CDOID>
     out.writeInt(sourceIndex);
   }
 
-  public CDOID getTargetObject()
+  public long getTargetID()
   {
     return targetID;
   }
 
-  public CDOID getSourceObject()
+  public long getSourceID()
   {
     return sourceID;
   }

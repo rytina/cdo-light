@@ -20,29 +20,15 @@ import org.eclipse.emf.cdo.spi.common.branch.CDOBranchUtil;
  */
 public class CDOChangeSetImpl extends CDOChangeSetDataImpl implements CDOChangeSet
 {
-  private CDOBranchPoint startPoint;
 
-  private CDOBranchPoint endPoint;
-
-  public CDOChangeSetImpl(CDOBranchPoint startPoint, CDOBranchPoint endPoint, CDOChangeSetData data)
+  public CDOChangeSetImpl(CDOChangeSetData data)
   {
     super(data.getNewObjects(), data.getChangedObjects(), data.getDetachedObjects());
-    this.startPoint = startPoint;
-    this.endPoint = endPoint;
   }
 
-  public CDOBranchPoint getStartPoint()
-  {
-    return startPoint;
-  }
-
-  public CDOBranchPoint getEndPoint()
-  {
-    return endPoint;
-  }
 
   public CDOBranchPoint getAncestorPoint()
   {
-    return CDOBranchUtil.getAncestor(startPoint, endPoint);
+    return null;
   }
 }
