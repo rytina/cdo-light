@@ -1,0 +1,25 @@
+#This page is dedicated to discussion outcomes of group meetings.
+
+= Introduction =
+
+First Team meeting.
+
+
+= Details =
+
+
+1- identified IBuffer as a concept to be changed/adapted in order to avoid marshaling to bytes array. Method  ByteBuffer IBuffer.startPutting(long  channelID), this method needs to be "replaced" by a new semantic to transfer objects through IChannel. 
+
+2- Direct instance transfer is not possible because of client/server state interdependency i.e., there needs to be two instances of the same object.
+
+
+3- Task
+  - Need to find out a strategy for optimized "non marshaled" object from client to server.
+
+
+ 
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
