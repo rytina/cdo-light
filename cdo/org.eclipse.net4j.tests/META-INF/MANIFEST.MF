@@ -1,0 +1,661 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.tests;singleton:=true
+Bundle-Activator: org.eclipse.net4j.tests.bundle.OM$Activator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";visibility:=reexport,org.eclipse.net4j.tcp;bundle-version="[4.0.0,5
+ .0.0)";visibility:=reexport,org.eclipse.net4j.jvm;bundle-version="[4.
+ 0.0,5.0.0)";visibility:=reexport,org.eclipse.net4j.http;bundle-versio
+ n="[4.0.0,5.0.0)";visibility:=reexport,org.eclipse.net4j.http.server;
+ bundle-version="[4.0.0,5.0.0)";visibility:=reexport,org.eclipse.net4j
+ .defs;bundle-version="[4.0.0,5.0.0)";visibility:=reexport,org.eclipse
+ .net4j.util.defs;bundle-version="[4.0.0,5.0.0)";visibility:=reexport,
+ org.junit;bundle-version="[4.0.0,5.0.0)";visibility:=reexport
+Export-Package: org.eclipse.net4j.tests;version="4.0.0",org.eclipse.ne
+ t4j.tests.apps;version="4.0.0",org.eclipse.net4j.tests.bugzilla;versi
+ on="4.0.0",org.eclipse.net4j.tests.bundle;version="4.0.0";x-internal:
+ =true,org.eclipse.net4j.tests.data;version="4.0.0",org.eclipse.net4j.
+ tests.defs;version="4.0.0",org.eclipse.net4j.tests.signal;version="4.
+ 0.0",org.eclipse.net4j.util.tests;version="4.0.0",org.eclipse.net4j.u
+ til.tests.cache;version="4.0.0",org.eclipse.net4j.util.tests.defs;ver
+ sion="4.0.0",org.eclipse.net4j.util.tests.defs.impl;version="4.0.0",o
+ rg.eclipse.net4j.util.tests.defs.util;version="4.0.0"
+Bundle-Version: 4.0.0.v20110516-1727
+Ant-Version: Apache Ant 1.8.2
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/tests/ChannelTest$DeactivationListener.class
+SHA1-Digest: P801f++d9tZZ7WzNS10c0588gX0=
+
+Name: about.ini
+SHA1-Digest: KQMVTFcyVja5dvVmIh2o+qDsslY=
+
+Name: org/eclipse/net4j/util/tests/ReferenceValueMapTest.class
+SHA1-Digest: iuzgKTL4IdadvoVsZWKyxOV4E7c=
+
+Name: org/eclipse/net4j/tests/signal/AsyncRequest.class
+SHA1-Digest: kcC2H+XI2QL4eWc/sbVkEYb4/lA=
+
+Name: org/eclipse/net4j/tests/bundle/OM$Activator.class
+SHA1-Digest: qgxWUZnm56WAMCgqsb4/yoaY6d4=
+
+Name: org/eclipse/net4j/util/tests/defs/impl/DefsFactoryImpl.class
+SHA1-Digest: MQCW5ZWfgG5E46zH7egwRUueovU=
+
+Name: org/eclipse/net4j/tests/ChannelTest$5.class
+SHA1-Digest: m4ByzyqerzTebN+evPXkmQ62zpw=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeSSLAcc
+ eptorFactory.class
+SHA1-Digest: vWKLlT8Xi5uzT/E0R6sI3eW0xAs=
+
+Name: org/eclipse/net4j/tests/signal/ExceptionRequest.class
+SHA1-Digest: ou5xrUPvH/DkNDZJ68oUngfCke8=
+
+Name: org/eclipse/net4j/tests/BufferPoolTest.class
+SHA1-Digest: 8VICSC2aA+ZmACsq+Y/TIF1QV4M=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$2.class
+SHA1-Digest: y96ObANLzV2EgUThjotGiCBgNm0=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$WorkP
+ roducer.class
+SHA1-Digest: fAjZCwANQClw+m2uIh88F1UGQxc=
+
+Name: org/eclipse/net4j/util/tests/StringCompressorTest$Stream.class
+SHA1-Digest: G5IRxRJJDT6MYEq3E4z3oFM7R74=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$1$1.c
+ lass
+SHA1-Digest: tw+huRgrWuPZ4R6eUPtZfrD9kHw=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$2.class
+SHA1-Digest: F0xYoyknCMEI7z+6PKnzxaJ7AZE=
+
+Name: org/eclipse/net4j/util/tests/StreamWrapperTest.class
+SHA1-Digest: 8qvrT6xK0DdsFj4tH+9lkAaDqxY=
+
+Name: org/eclipse/net4j/tests/AllTests.class
+SHA1-Digest: TqMTlR93svhBQZrH7EVVgQT8sEY=
+
+Name: org/eclipse/net4j/tests/TransportTest.class
+SHA1-Digest: b99BMU/JSH9ATN6A/B8eMCb9w+0=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDef.class
+SHA1-Digest: xTgBUvVUlLR3k95J7Vkv4JYObLo=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test.class
+SHA1-Digest: vYb4wtCcp+JPtirutGziK5pR6Sk=
+
+Name: org/eclipse/net4j/util/tests/defs/DefsPackage.class
+SHA1-Digest: VSQ4XpbHD0vNN0n5AcP6zn5r6FI=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$1.class
+SHA1-Digest: wqzLb8sEDaCJBjHj9o/JOMsaO6k=
+
+Name: about.properties
+SHA1-Digest: 3bDKT9YZd50wPSkL5Jjq96ktPOs=
+
+Name: org/eclipse/net4j/tests/apps/TCPConnectivityLoss$Server.class
+SHA1-Digest: tK0nuh0tIH+MUe6x6buGl+NMptg=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefsPackage.class
+SHA1-Digest: Ttvjv8V3j6aukk6d9vw3UuOt/4Y=
+
+Name: org/eclipse/net4j/tests/signal/StringRequest.class
+SHA1-Digest: QgKTc96VNcg4L/w6AVRJL3aqFQo=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeAccept
+ orFactory$1.class
+SHA1-Digest: mxe3KXyWRDXvq+bJC7y6q5NVcdg=
+
+Name: org/eclipse/net4j/tests/ChannelTest.class
+SHA1-Digest: kBnOhDtakCd2N/9cLNBxTDy8w0k=
+
+Name: org/eclipse/net4j/util/tests/defs/impl/TestDefImpl.class
+SHA1-Digest: RnBOrizl3Ea1UL1Q17Q57tiS5QM=
+
+Name: org/eclipse/net4j/util/tests/OMTest.class
+SHA1-Digest: xMogQxJflwpwlq5fwEtFCuAJoxE=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test$TestProtoc
+ ol$Request.class
+SHA1-Digest: K47C0xWE6ipPX6r5i6mYRH2v/5g=
+
+Name: org/eclipse/net4j/util/tests/SecurityTest.class
+SHA1-Digest: VeZ4pmrLngcW1VpUE4g5f1lJEZ8=
+
+Name: org/eclipse/net4j/util/tests/defs/impl/DefsPackageImpl.class
+SHA1-Digest: YkhurMJZzco+YiqRsAiQXoF26KU=
+
+Name: org/eclipse/net4j/tests/ChannelTest$2.class
+SHA1-Digest: FXfF4tL8+7QwEsTqp8lv3d3jDC8=
+
+Name: org/eclipse/net4j/util/tests/cache/RevisionManager$TimeLine.clas
+ s
+SHA1-Digest: QBLnxPw2nH9MsGUqLVmeQYGYNtM=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefTest.class
+SHA1-Digest: 1XGlX7P59LygpahMjMCxg/FYMcU=
+
+Name: org/eclipse/net4j/util/tests/ConcurrentRunner.class
+SHA1-Digest: ZOTBzW7CRvrLXPlfyDZwnNZTy38=
+
+Name: org/eclipse/net4j/tests/ChannelTest$JVM.class
+SHA1-Digest: hCrmDGTidrBGnZiCpAfjSZE7Sl4=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeSSLAcc
+ eptorFactory$1.class
+SHA1-Digest: fpmIQ0bfAfUZ7XhhhD2KV4n5430=
+
+Name: org/eclipse/net4j/util/tests/defs/util/DefsSwitch.class
+SHA1-Digest: iFrPPRGEYkzKpJnR3pJy2xRzOYc=
+
+Name: org/eclipse/net4j/util/tests/cache/CacheTest.class
+SHA1-Digest: jQf0ZhmjluIx7rw+0GQ0v5bYfi0=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest.class
+SHA1-Digest: 06yRawFnfSw8TaV7Hbgaow63xIM=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefTest$2.class
+SHA1-Digest: 1ynZnjnGA/2KkMj5FZoi2rXsgu4=
+
+Name: org/eclipse/net4j/tests/TransportTest$SSL.class
+SHA1-Digest: WxGF4JE4hgdNoC1NKeKaxrX2TeY=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$TimeOuter.class
+SHA1-Digest: Sbp4hEPT5Z0uN0SY6yApyzjM73Q=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$SSL.class
+SHA1-Digest: 0ah4GkjOZhHBQHgGV25gKQwcuFk=
+
+Name: org/eclipse/net4j/tests/TransportTest$TestProtocol$ClientFactory
+ .class
+SHA1-Digest: 3M+lgftKE7zjG/yTmquwzg83Uzc=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$6.class
+SHA1-Digest: 6B/0WfktuVH5aYIjlenViSmGQYI=
+
+Name: org/eclipse/net4j/tests/TransportTest$5.class
+SHA1-Digest: pCKxJy6M3YzLe/kWzs42WT5HW+g=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$PollingTimeOuter.cla
+ ss
+SHA1-Digest: ZmHSuOaYDyLkFD91x/ZbhN8JeF8=
+
+Name: org/eclipse/net4j/tests/SignalStreamWrappingTest.class
+SHA1-Digest: a34hIpV9KLfea0MOZ6m+U2zmVKg=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test$TestProtoc
+ ol$Factory.class
+SHA1-Digest: GFN7wynoytPPD7yH09GuLJZ9yrs=
+
+Name: org/eclipse/net4j/tests/TransportTest$2$1.class
+SHA1-Digest: 8Z5D3WGLPLFtBGu6ANbqLHABgSo=
+
+Name: org/eclipse/net4j/tests/TransportTest$TCP.class
+SHA1-Digest: +LyRUsg/vGF4CkhNd6uABwi5p5Y=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$WorkP
+ roducerFactory.class
+SHA1-Digest: wfmpcQOqAg1Ta/ecMNGLYPKYkSQ=
+
+Name: org/eclipse/net4j/tests/apps/Performance$1.class
+SHA1-Digest: pPHDR2sYwO9gCyTiNDTI9m8phWk=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$TCP.class
+SHA1-Digest: WOtKPSsqxakSf0zOJlUMsNBIMp8=
+
+Name: sslKey/testTrust
+SHA1-Digest: LiBSYolBGHlJYn/GzwoWITAdYwc=
+
+Name: org/eclipse/net4j/tests/apps/TCPConnectivityLoss$Client$1.class
+SHA1-Digest: wlNJ9jjEEu9TwMjXLBZW6ekB6jc=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$1.cla
+ ss
+SHA1-Digest: +6jEns8eg14YCZK2MLpmNKGYKiY=
+
+Name: org/eclipse/net4j/tests/defs/JVMConnectorDefImplTest.class
+SHA1-Digest: QG7jMCq9yiHfplP+cR/BMoS2AHg=
+
+Name: org/eclipse/net4j/util/tests/SynchronizingCorrelatorTest$2.class
+SHA1-Digest: uFFujK4nsuIrTu8C7GWP5YNyrHc=
+
+Name: org/eclipse/net4j/util/tests/cache/Revision.class
+SHA1-Digest: DXOrL2DkqQiyhZkYJHq1Wqn0UKw=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: about.mappings
+SHA1-Digest: TEwHHiRTevG30NAuwqm2aXge0GU=
+
+Name: org/eclipse/net4j/tests/signal/IntFailIndication.class
+SHA1-Digest: qIWO6YeJ5vVmowwv9zQez4IZRbA=
+
+Name: org/eclipse/net4j/util/tests/defs/util/DefsAdapterFactory.class
+SHA1-Digest: AJ9avhL8u4vzufhj/wiA16+EgEk=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$1$1.class
+SHA1-Digest: M5hhPnwhUxXP62p0DTAkSGuWIeU=
+
+Name: org/eclipse/net4j/util/tests/MultiMapTest.class
+SHA1-Digest: h7/EZLLbc1HWU4bEj5Rtb708QNw=
+
+Name: .options
+SHA1-Digest: cFp11blCVLOqkUhauCU7wegPYB0=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$3.class
+SHA1-Digest: iYT/BRrX311R0RdpH9iPJm1Of4w=
+
+Name: org/eclipse/net4j/tests/TransportTest$2.class
+SHA1-Digest: PsxHP3WFAyceh1FIoZblLvDH+8Q=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test$TestProtoc
+ ol$Indication.class
+SHA1-Digest: Y7tNmGs1wUM2v9CQB5lMsJLmv8k=
+
+Name: test.xml
+SHA1-Digest: BUTWPDIymNVNHr5Q5Y/S38TaedY=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test$TestProtoc
+ ol.class
+SHA1-Digest: naxrMEyY/TGvScn5VgGVZ3WVlac=
+
+Name: org/eclipse/net4j/tests/apps/TCPConnectivityLoss$Client.class
+SHA1-Digest: umegEYzgTk0i7LNmlkSdAuZJijg=
+
+Name: org/eclipse/net4j/util/tests/cache/RevisionManager.class
+SHA1-Digest: vkZNIDPIGffYDUHIjgt71DuYLxY=
+
+Name: org/eclipse/net4j/tests/apps/TCPConnectivityLoss.class
+SHA1-Digest: dAWOwSU6Z/SJTEKUtXP3EfIWuDM=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$LockTimeOuter.class
+SHA1-Digest: oEVC0G//clNHh2ZmWwbMxjiOG6U=
+
+Name: org/eclipse/net4j/util/tests/MonitorTest.class
+SHA1-Digest: GsbT2pT34i5MqJCvCesiiBQodvE=
+
+Name: org/eclipse/net4j/util/tests/cache/SensitiveProtoTest$KeyedAndVa
+ luedWeakReference.class
+SHA1-Digest: zXwxMPj7JpPDjsVm/HY+FfYzQ+k=
+
+Name: org/eclipse/net4j/util/tests/StringCompressorTest$Writer.class
+SHA1-Digest: 3m8p4/91T1fwfrf+5UIzvl0Arp0=
+
+Name: plugin.properties
+SHA1-Digest: ETDijt4vAmKd3NNvryf9c3xH75o=
+
+Name: org/eclipse/net4j/tests/SignalTest$1.class
+SHA1-Digest: vBurL0bSmqwH3ZAbkV+D2tnc1tU=
+
+Name: org/eclipse/net4j/util/tests/cache/RevisionManager$CacheElement.
+ class
+SHA1-Digest: TB3njjy0TI8GHBDBAk2VOQ94PwM=
+
+Name: org/eclipse/net4j/tests/ChannelTest$4.class
+SHA1-Digest: dHPYbowe4ek+gNnoGPai7xSB9vI=
+
+Name: org/eclipse/net4j/tests/signal/ArrayIndication.class
+SHA1-Digest: 4otiJj77YuIYAU0/CGDvZPmlJa8=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$1.class
+SHA1-Digest: 9CcgSCmAC3UWkeaJWaZGLOblrn8=
+
+Name: org/eclipse/net4j/util/tests/UTFTest.class
+SHA1-Digest: tS/Zltw7c6fSbEG50uSii6379+g=
+
+Name: org/eclipse/net4j/tests/defs/JVMAcceptorDefImplTest.class
+SHA1-Digest: xAXwWeQVzuBeHUlBN0lIxSgebLw=
+
+Name: plugin.xml
+SHA1-Digest: BZ/B3kMtEVSyOpDUiYaYI07vSoI=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$1.class
+SHA1-Digest: A34TM7OIWdBIQ0vg7w4pIeYB56g=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefTest$BlockingTokenDef.c
+ lass
+SHA1-Digest: S2h/2UQsIT229HdEVCRG9a7eEbc=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefsPackage$Literals.class
+SHA1-Digest: +3529abcmVqx6x/Wua7ivX7Eahc=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$Work.
+ class
+SHA1-Digest: wZ0UG07WQTe9cqwWkIJre9V3wCQ=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$ClientProtocol.class
+SHA1-Digest: E/Nzx+/V1//VyzTktHwsylUje5Y=
+
+Name: org/eclipse/net4j/tests/defs/Util.class
+SHA1-Digest: Njw20obJUFS5yzpMLMAOnpoWpiE=
+
+Name: org/eclipse/net4j/tests/bundle/OM.class
+SHA1-Digest: QqLEPk2jtElCJnOHk1pGZQGTO2Y=
+
+Name: org/eclipse/net4j/tests/SelectorTest.class
+SHA1-Digest: 2Fy/iYgJoK6JibzDRbKGSIyMt4A=
+
+Name: org/eclipse/net4j/tests/signal/AsyncIndication.class
+SHA1-Digest: 6UCubIwp5IuOHEtH+wyG24WLsdM=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$8.class
+SHA1-Digest: FeM5nAqHjiS2fg6tqp2IHpK9dkI=
+
+Name: org/eclipse/net4j/util/tests/FastListTest$TestList.class
+SHA1-Digest: yVYOz1xNdJdeBZzs2Wk4/TL6K5U=
+
+Name: org/eclipse/net4j/tests/ChannelTest$1.class
+SHA1-Digest: T3CvwVgEg2GlKF6iS2d3CltvT+A=
+
+Name: org/eclipse/net4j/tests/TCPConnectorTest$2.class
+SHA1-Digest: r9WxTxMVWbFxqpXGMSJUOtCveeg=
+
+Name: org/eclipse/net4j/util/tests/defs/util/TestDefsSwitch.class
+SHA1-Digest: etT6CEq5Z1K0thoEnKd5S6eq4hM=
+
+Name: org/eclipse/net4j/tests/ExceptionTest$SSL.class
+SHA1-Digest: YEAcQqUwTJolNgxcg5Aniz3dMhI=
+
+Name: org/eclipse/net4j/util/tests/SynchronizingCorrelatorTest$4.class
+SHA1-Digest: ++qTaY/j+OBpbBw8epbBWME9M6o=
+
+Name: org/eclipse/net4j/util/tests/SortedFileMapTest$TestMap.class
+SHA1-Digest: R3p2wMVjnx3gf0QqSvprrss2EHA=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$2$1.c
+ lass
+SHA1-Digest: hCJy3Fk0P55qLCQGI5CKr2x9ex8=
+
+Name: org/eclipse/net4j/util/tests/StringCompressorTest$Reader.class
+SHA1-Digest: 1IoBZneWca197KLL40T4WO9NBFw=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefTest$1.class
+SHA1-Digest: K7xsUKQ66SyXYlzrd4ZPPYjBN0Q=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$2$1$1
+ .class
+SHA1-Digest: ePgRUfbRWllgfBrNef9gBjLnB1Q=
+
+Name: org/eclipse/net4j/tests/ExceptionTest$TCP.class
+SHA1-Digest: 9ffEpY0ydMKiyg7pllDZM8s9Bug=
+
+Name: org/eclipse/net4j/tests/signal/TestSignalProtocol$Factory.class
+SHA1-Digest: o38Ss60SM0J/yXnk2Pf+SvySb2I=
+
+Name: org/eclipse/net4j/util/tests/defs/DefsPackage$Literals.class
+SHA1-Digest: RUMEab/oUZHOuB4DaJC/4zkybRk=
+
+Name: org/eclipse/net4j/tests/AbstractProtocolTest.class
+SHA1-Digest: KrdY8Ydez5zENdCDU0mhc+Rqtuo=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$5.class
+SHA1-Digest: LBLIVWEyHA2yKDMVRGGepb+L8YE=
+
+Name: org/eclipse/net4j/util/tests/defs/util/DefsAdapterFactory$1.clas
+ s
+SHA1-Digest: I5qM7E2wHmVXU+UBffCKc5WP5CQ=
+
+Name: org/eclipse/net4j/tests/TransportTest$4.class
+SHA1-Digest: sg9eQ2VBCa7FR5oC6zgUYJALITg=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$1$1$1.class
+SHA1-Digest: 862nx6CmUP/ToFjG2aZ/tHFmbNU=
+
+Name: org/eclipse/net4j/util/tests/StringCompressorTest.class
+SHA1-Digest: eBMic43LaN/HB1eHCq8Z/r0Ktgo=
+
+Name: org/eclipse/net4j/tests/TransportTest$JVM.class
+SHA1-Digest: db16gaXVWgnekxulTWxflHjSnGU=
+
+Name: org/eclipse/net4j/util/tests/ConcurrentRunner$ThrowableCatchingW
+ rapper.class
+SHA1-Digest: 4kZC38hlNVQCeF/QTu5o83Z9m74=
+
+Name: org/eclipse/net4j/tests/signal/ArrayRequest.class
+SHA1-Digest: soWpCcWYRN9p3D7WViRMd5vnKHY=
+
+Name: org/eclipse/net4j/util/tests/SynchronizingCorrelatorTest$1.class
+SHA1-Digest: Vw33KIuY9c/GxPOwj4dC7mmYBMc=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$3.class
+SHA1-Digest: 7hRIz2QTkhdaxARx6BtOrxT7gMM=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$LatchTimeOuter.class
+SHA1-Digest: YUSrcvwXKPKD2Q1YZs6GQ5VOZS4=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefTest$BlockingToken.clas
+ s
+SHA1-Digest: ZDf34wYvSFXkGXVz9YmXzuJQ3fo=
+
+Name: org/eclipse/net4j/util/tests/defs/util/TestDefsAdapterFactory.cl
+ ass
+SHA1-Digest: 91vur4ewInveie5iDZ17Wz0sddA=
+
+Name: org/eclipse/net4j/tests/signal/StringIndication.class
+SHA1-Digest: 9Mt8HKhe/sQMoy2qugY7ZtQBMCA=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$SkipTestException.cl
+ ass
+SHA1-Digest: B8EwIFkPcG8tKfADhmu6yNQsVBQ=
+
+Name: model/TestDef.ecore
+SHA1-Digest: ZFxMe9jVgVoOYQaOkymn+M4Ew2U=
+
+Name: org/eclipse/net4j/tests/signal/TestSignalProtocol.class
+SHA1-Digest: lwjgE3oug+/5xUX2O64aurHwS9A=
+
+Name: org/eclipse/net4j/util/tests/ExtendedIOTest.class
+SHA1-Digest: OmUZEApCFWL44Y353bROmzTPj78=
+
+Name: org/eclipse/net4j/util/tests/cache/SensitiveProtoTest.class
+SHA1-Digest: SjpIJv8mKaZrjPTwC/B0vxtPEl0=
+
+Name: org/eclipse/net4j/util/tests/defs/util/TestDefsAdapterFactory$1.
+ class
+SHA1-Digest: N4LqXlYUa7Kk40GbRRkXQM2lB6E=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeSSLAcc
+ eptorFactory$1$1.class
+SHA1-Digest: ZC1RYzK4Hxbkwao2slLu2scoChM=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeAccept
+ orFactory.class
+SHA1-Digest: Mjf5uevIJfgWNnscWC8rqTFVLPY=
+
+Name: modeling32.png
+SHA1-Digest: ADlLWFV0eQ74YnLvHnPFkYLeLrs=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$2.class
+SHA1-Digest: PJHMfBsJsRugy3jadsNNs8iOQBY=
+
+Name: org/eclipse/net4j/tests/TransportTest$1.class
+SHA1-Digest: K2osXel15WXNFsXcKVqs94Ljm50=
+
+Name: org/eclipse/net4j/tests/TransportTest$1$1.class
+SHA1-Digest: 8cddI0MpczmGN+LVmlkFEK6Jqh0=
+
+Name: sslKey/testKeys
+SHA1-Digest: ciqcicLGeLPOLHI0VqdBIWbeGPg=
+
+Name: org/eclipse/net4j/tests/AllSSLTests.class
+SHA1-Digest: I+KtVWUrmaCEmm+ao8i19xB6jGw=
+
+Name: org/eclipse/net4j/tests/TransportTest$3$1.class
+SHA1-Digest: cTcgqWbYnu8U+RwLmK5h6Gri3qI=
+
+Name: org/eclipse/net4j/tests/TransportTest$5$1.class
+SHA1-Digest: zD134mErTJFMqWtZRyjXgioKdOQ=
+
+Name: org/eclipse/net4j/util/tests/SynchronizingCorrelatorTest.class
+SHA1-Digest: jXv8tJHrGuaf+if0BWZnv7IISD8=
+
+Name: org/eclipse/net4j/tests/data/HugeData.class
+SHA1-Digest: Clq6+FHWtH3n6ud9l/lQmxEymX8=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest.class
+SHA1-Digest: 4SI+dzYB5v858tNZ47qxK7Ljufs=
+
+Name: org/eclipse/net4j/tests/SignalTest$SSL.class
+SHA1-Digest: qZxAvIJgsSyAgbjLrwRmeh9JpJk=
+
+Name: org/eclipse/net4j/tests/ChannelTest$SSL.class
+SHA1-Digest: Q9Q3oU+QLBXfi53a7Ii7Hol3sL4=
+
+Name: org/eclipse/net4j/tests/TCPConnectorTest$SSL.class
+SHA1-Digest: 6CxkFOoT9em5A9WrCUc3vaMJ5a8=
+
+Name: org/eclipse/net4j/tests/ChannelTest$3.class
+SHA1-Digest: XHRCg76rsXf+U82Fokc2xmMx86k=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$ITimeOuter.class
+SHA1-Digest: XrB0WtXl7lHsmu51siDPVHn2mOY=
+
+Name: org/eclipse/net4j/util/tests/MonitorTest$1.class
+SHA1-Digest: CTlCktB3wX3fwkpT4kWFLDnYZCs=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$SSL.class
+SHA1-Digest: MXMWFb5dPwnfUpOoxIkNN06IBLE=
+
+Name: org/eclipse/net4j/tests/defs/TCPAcceptorDefImplTest.class
+SHA1-Digest: gWbOl8Wt60WCZck864ASTGpkPxY=
+
+Name: model/TestDef.genmodel
+SHA1-Digest: cgfQvRw0dFvBE4vWPASwM9l1tGY=
+
+Name: org/eclipse/net4j/util/tests/defs/impl/TestDefsFactoryImpl.class
+SHA1-Digest: Ft9vD8Wy09r7J5lg8ULn2XBS+VM=
+
+Name: org/eclipse/net4j/tests/data/TinyData.class
+SHA1-Digest: xWAZ99gX2Cuy3CXmLkh5Ee47vs4=
+
+Name: org/eclipse/net4j/tests/SignalTest$TCP.class
+SHA1-Digest: UWdLIJWxVd75QN7JIT7Go3Qr3Do=
+
+Name: org/eclipse/net4j/tests/ChannelTest$TCP.class
+SHA1-Digest: A9HQFHplVAFxVe/E0w5Jw/eD66k=
+
+Name: org/eclipse/net4j/tests/TCPConnectorTest$TCP.class
+SHA1-Digest: rqMHdlzFQcq9YxYjlDuKF3YsrHg=
+
+Name: org/eclipse/net4j/util/tests/FastListTest.class
+SHA1-Digest: UT0EeXwG1diRqBVNSkgbykHlmGw=
+
+Name: org/eclipse/net4j/tests/AbstractTransportTest.class
+SHA1-Digest: W+VPnJTOm6+1aHtECv0pl/MAQD8=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$TCP.class
+SHA1-Digest: NEKusa2OSOWWK235WtIOfPGbqsM=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test$1.class
+SHA1-Digest: TL77YCHfS3aH5VAGuqiamoaDz9U=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$7.class
+SHA1-Digest: s1gkay4DpWxKofG9TUk+RgGkF0k=
+
+Name: org/eclipse/net4j/tests/apps/Performance.class
+SHA1-Digest: I+ZacdtwtTh80ERWmuISvzkEpFI=
+
+Name: org/eclipse/net4j/tests/TransportTest$TestProtocol.class
+SHA1-Digest: BMQF7jJUQoMV9ycNfHQY61tx8R4=
+
+Name: org/eclipse/net4j/util/tests/AbstractOMTest$AsyncResult.class
+SHA1-Digest: ehkh1VbHHq+F0fzniVNN4/zKnok=
+
+Name: org/eclipse/net4j/tests/SignalTest.class
+SHA1-Digest: vkd06q4dgMm7Y9LmTx8sKIP0dVI=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest.class
+SHA1-Digest: 1ZkFcjZ7+EA1BAE1JnIqG4nXUPY=
+
+Name: org/eclipse/net4j/tests/TCPUnitTest.class
+SHA1-Digest: fco1luR5Qb8B5gW23uDHwJsHwp0=
+
+Name: org/eclipse/net4j/tests/TCPConnectorTest.class
+SHA1-Digest: YEFPdZdxwL8w40B+gf8iEyiSoKI=
+
+Name: copyright.txt
+SHA1-Digest: cSsGaSTLSfayKkd0dFKnvLSGDh0=
+
+Name: org/eclipse/net4j/tests/signal/ExceptionIndication.class
+SHA1-Digest: o7F6bvFOUzqyb7gNUq91X+RpT5M=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_241463_Test$FakeAccept
+ orFactory$1$1.class
+SHA1-Digest: tSd06woUJQhvkdfde9XBpgU3QrA=
+
+Name: org/eclipse/net4j/tests/ExceptionTest.class
+SHA1-Digest: z1+aGjDRodPXv8i4Ia0LiJGxJZQ=
+
+Name: org/eclipse/net4j/util/tests/QueueWorkerWorkSerializerTest$2.cla
+ ss
+SHA1-Digest: A0Wl69dA43k6QYDs8EUX17Fzsjk=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest.class
+SHA1-Digest: gbvmhX82GJRHz4lw7GMtCu5I248=
+
+Name: org/eclipse/net4j/tests/defs/TCPConnectorDefImplTest.class
+SHA1-Digest: Pky2wwCirF6BPi9q6I943m2Hm0k=
+
+Name: org/eclipse/net4j/util/tests/ZipTest.class
+SHA1-Digest: ondKNN9vw72M6yp0ZQn+g0EtRnA=
+
+Name: org/eclipse/net4j/tests/TCPConnectorTest$1.class
+SHA1-Digest: vCMkyPLkJwilf8NhT0iJH5s49EM=
+
+Name: org/eclipse/net4j/util/tests/SynchronizingCorrelatorTest$3.class
+SHA1-Digest: qbUBhCjhYo+nfUpxqDl5Pu76wGM=
+
+Name: org/eclipse/net4j/util/tests/defs/impl/TestDefsPackageImpl.class
+SHA1-Digest: Ues79qKjSYIffh29bkmQD6dHf+U=
+
+Name: org/eclipse/net4j/util/tests/SecurityTest$PeerNegotiationContext
+ .class
+SHA1-Digest: QWlzkzboCDBAhmzkgvNURnkEaUY=
+
+Name: org/eclipse/net4j/tests/bugzilla/Bugzilla_262875_Test.class
+SHA1-Digest: AsNPccPQw/P3eu+4d42lnAfkVOY=
+
+Name: org/eclipse/net4j/tests/signal/IntIndication.class
+SHA1-Digest: k7GefdyAeoqluXqvkwSVD5a8kb0=
+
+Name: org/eclipse/net4j/util/tests/defs/DefsFactory.class
+SHA1-Digest: /TxrhOT+tIOdNCXCEx0si7utZMo=
+
+Name: org/eclipse/net4j/util/tests/SortedFileMapTest.class
+SHA1-Digest: ewGWFbrUzQ6hXmboWJFi6yCi3bE=
+
+Name: org/eclipse/net4j/tests/signal/IntRequest.class
+SHA1-Digest: ZWNoLyZ16DuaCn/ejFZ351/4p2M=
+
+Name: org/eclipse/net4j/tests/SignalMonitorTest$TestMonitor.class
+SHA1-Digest: gTtNbp/KwpRm8k13F1ghALgrXJg=
+
+Name: org/eclipse/net4j/tests/signal/IntFailRequest.class
+SHA1-Digest: cHJTq2S50yO25HlsKQuq0XFgb8M=
+
+Name: org/eclipse/net4j/util/tests/ExpectedIOTest$4.class
+SHA1-Digest: xWCMqoe2e0rO4WSWfmcIqYP6djU=
+
+Name: org/eclipse/net4j/tests/TransportTest$3.class
+SHA1-Digest: S1lU9ufvWVUMqbd4hV0XVXOTkys=
+
+Name: org/eclipse/net4j/tests/TransportTest$TestProtocol$ServerFactory
+ .class
+SHA1-Digest: VYaZ1Sz2BtCtkuC+/ns/iVowwC4=
+
+Name: org/eclipse/net4j/util/tests/defs/TestDefsFactory.class
+SHA1-Digest: ioRe8FweJrvp0veZaZsn84XmhOM=
+
