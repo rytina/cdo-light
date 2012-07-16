@@ -1,0 +1,73 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.http;singleton:=true
+Bundle-Activator: org.eclipse.net4j.internal.http.bundle.OM$Activator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";resolution:=optional,org.eclipse.net4j.http.common;bundle-version="
+ [4.0.0,5.0.0)";visibility:=reexport
+Export-Package: org.eclipse.net4j.http;version="4.0.0",org.eclipse.net
+ 4j.internal.http;version="4.0.0";x-friends:="org.eclipse.net4j.http.t
+ ests,org.eclipse.net4j.defs",org.eclipse.net4j.internal.http.bundle;v
+ ersion="4.0.0";x-internal:=true
+Bundle-Version: 4.0.0.v20110528-1118
+Ant-Version: Apache Ant 1.8.2
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Import-Package: org.apache.commons.codec;version="[1.3.0,2.0.0)",org.a
+ pache.commons.httpclient;version="[3.0.0,4.0.0)",org.apache.commons.h
+ ttpclient.methods;version="[3.0.0,4.0.0)",org.apache.commons.logging;
+ version="[1.1.0,2.0.0)"
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/internal/http/HTTPClientConnector.class
+SHA1-Digest: Vp02DjjlVqWQSdez84xSgshcd/w=
+
+Name: org/eclipse/net4j/internal/http/bundle/OM$Activator.class
+SHA1-Digest: wwHBju9O6Ufdl+uVZF+Eu2G+uR4=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: copyright.txt
+SHA1-Digest: cSsGaSTLSfayKkd0dFKnvLSGDh0=
+
+Name: org/eclipse/net4j/http/package.html
+SHA1-Digest: a31BpEEOrNPDp6968reUuQhgYIo=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: org/eclipse/net4j/http/HTTPUtil.class
+SHA1-Digest: Uvs2mjNVhZPrBLRMsC/dL5bpLec=
+
+Name: org/eclipse/net4j/internal/http/HTTPClientConnector$1.class
+SHA1-Digest: 14frDcssovGC+qG/H543mWZN4sk=
+
+Name: plugin.properties
+SHA1-Digest: zXsG5pFTGhIamHBP8lFB6MsPOJ4=
+
+Name: org/eclipse/net4j/internal/http/HTTPClientConnector$2.class
+SHA1-Digest: PyLqcJAHz6+bDNG7N9lUSACnJCs=
+
+Name: org/eclipse/net4j/internal/http/HTTPClientConnector$3.class
+SHA1-Digest: 2nl9X0S+NtIK+IA2PbqJ+3U2+nE=
+
+Name: .options
+SHA1-Digest: YIq9dYzninpj8HLrZQFl5OzkNbc=
+
+Name: org/eclipse/net4j/internal/http/HTTPClientConnector$4.class
+SHA1-Digest: Q2yi7dDS8tu+v94poDommZAbU1w=
+
+Name: org/eclipse/net4j/internal/http/bundle/OM.class
+SHA1-Digest: 6gxrG5kXgsaHx3GnfKtQ7TRo7z0=
+
+Name: org/eclipse/net4j/internal/http/HTTPConnectorFactory.class
+SHA1-Digest: 7bH7VCLWftSZf6g/PyxRxjjzQsM=
+
+Name: plugin.xml
+SHA1-Digest: pAbEHHWOk+oVwfeZR4r0EIgCgqc=
+
