@@ -1,0 +1,86 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.http.common
+Bundle-Activator: org.eclipse.net4j.http.internal.common.bundle.OM$Act
+ ivator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";resolution:=optional,org.eclipse.net4j;bundle-version="[4.0.0,5.0.0
+ )";visibility:=reexport
+Export-Package: org.eclipse.net4j.http.common;version="4.0.0";uses:="o
+ rg.eclipse.net4j.connector",org.eclipse.net4j.http.internal.common;ve
+ rsion="4.0.0"; x-friends:="org.eclipse.net4j.http,  org.eclipse.net4j
+ .http.server,  org.eclipse.net4j.http.tests,  org.eclipse.net4j.defs"
+ ,org.eclipse.net4j.http.internal.common.bundle;version="4.0.0";x-frie
+ nds:="org.eclipse.net4j.http,org.eclipse.net4j.http.server,org.eclips
+ e.net4j.http.tests",org.eclipse.net4j.http.internal.common.messages;v
+ ersion="4.0.0";x-internal:=true
+Bundle-Version: 4.0.0.v20110528-1118
+Ant-Version: Apache Ant 1.8.2
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector$OpenChannel
+ Operation.class
+SHA1-Digest: EjHQhPNlYZJl9JMpbRYRkPl3rvg=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector$OpenAckChan
+ nelOperation.class
+SHA1-Digest: awVJfJfwzVcDsuwmYluOHPFw/lk=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector.class
+SHA1-Digest: xZuE5vCL9qsMqJN/eLoqYUj5atQ=
+
+Name: copyright.txt
+SHA1-Digest: cSsGaSTLSfayKkd0dFKnvLSGDh0=
+
+Name: org/eclipse/net4j/http/internal/common/bundle/OM.class
+SHA1-Digest: JdtF31X/rxwS0SPhqodPH3M6QDY=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: plugin.properties
+SHA1-Digest: n4aCvCoLkZGxJViabxBXHkgjwJo=
+
+Name: org/eclipse/net4j/http/internal/common/messages/Messages.class
+SHA1-Digest: XZuuXx3NeOQjLFhmXkxTRznM4a0=
+
+Name: .options
+SHA1-Digest: GiFMsVj+fOlJyT2lJgQxkvsFJEQ=
+
+Name: org/eclipse/net4j/http/common/IHTTPConnector.class
+SHA1-Digest: QHlPyayOzky2WI1eByNt+h8uYIE=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector$BufferChann
+ elOperation.class
+SHA1-Digest: LxpvplFOyUraw9XMeBHC01c4uHk=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector$ChannelOper
+ ation.class
+SHA1-Digest: ZMiq7S5+ZnpUsdL+9cvzPOSc6z8=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPChannel.class
+SHA1-Digest: pXVOQPlBU5IEhFHsPfkFSKVfn2g=
+
+Name: org/eclipse/net4j/http/internal/common/messages/messages.propert
+ ies
+SHA1-Digest: Wv6gYdbZfGapyg3Q80w1WkpBHRg=
+
+Name: org/eclipse/net4j/http/internal/common/bundle/OM$Activator.class
+SHA1-Digest: kumdPyODTmt35VVWUfI20Pi5CH4=
+
+Name: org/eclipse/net4j/http/internal/common/HTTPConnector$CloseChanne
+ lOperation.class
+SHA1-Digest: d0kBQ+jQaBVdvolACDVIuY5fwyE=
+
+Name: org/eclipse/net4j/http/common/package.html
+SHA1-Digest: a31BpEEOrNPDp6968reUuQhgYIo=
+
