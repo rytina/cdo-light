@@ -1,0 +1,98 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.jvm;singleton:=true
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/cdo/cd
+ o.git
+Bundle-Activator: org.eclipse.net4j.internal.jvm.bundle.OM$Activator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";resolution:=optional,org.eclipse.net4j;bundle-version="[4.0.0,5.0.0
+ )";visibility:=reexport
+Bundle-Version: 4.1.0.v20120607-1039
+Export-Package: org.eclipse.net4j.internal.jvm;version="4.1.0";x-frien
+ ds:="org.eclipse.net4j.defs,org.eclipse.net4j.tests,org.eclipse.net4j
+ .ui",org.eclipse.net4j.internal.jvm.bundle;version="4.1.0";x-internal
+ :=true,org.eclipse.net4j.internal.jvm.messages;version="4.1.0";x-inte
+ rnal:=true,org.eclipse.net4j.jvm;version="4.1.0"
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Import-Package: org.osgi.framework;version="[1.3.0,2.0.0)";resolution:
+ =optional
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/jvm/IJVMConnector.class
+SHA1-Digest: eiUoKg9MqcSM8Hu7GKztCBsmX0M=
+
+Name: org/eclipse/net4j/internal/jvm/messages/messages.properties
+SHA1-Digest: WLMJbau+PIuzg3i8GmEPu+evXgo=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/net4j/internal/jvm/JVMServerConnector.class
+SHA1-Digest: tx9JlKiJFSZn1WBf0CvLgcetTVY=
+
+Name: org/eclipse/net4j/internal/jvm/bundle/OM.class
+SHA1-Digest: IYhcGCXJQBUrh8lBcJ4XhcTu4vk=
+
+Name: org/eclipse/net4j/internal/jvm/JVMAcceptor.class
+SHA1-Digest: QYD3n1XDiesJ07fvNrTZT2ZBSws=
+
+Name: org/eclipse/net4j/internal/jvm/JVMConnector.class
+SHA1-Digest: WW109r5/EIYN6d+foO+qAMd3OcA=
+
+Name: org/eclipse/net4j/internal/jvm/messages/Messages.class
+SHA1-Digest: OI/YPsYIAhm7AgIVDs/9pLs8zZs=
+
+Name: copyright.txt
+SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
+
+Name: org/eclipse/net4j/jvm/IJVMAcceptor.class
+SHA1-Digest: oqZmCm859YfQoHVbUBWcvmb2D2o=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: plugin.properties
+SHA1-Digest: v4/wddTxldIQ38VXE01qDrE49oU=
+
+Name: .options
+SHA1-Digest: P1zxApmA/9YPJh45SJF9QrcfPeQ=
+
+Name: org/eclipse/net4j/jvm/JVMUtil.class
+SHA1-Digest: F+wPzC8JhxOLbXErGgf5K1DXNuk=
+
+Name: org/eclipse/net4j/internal/jvm/bundle/OM$Activator.class
+SHA1-Digest: 6Y7op79ao4he08+lqQ61EV345mg=
+
+Name: org/eclipse/net4j/jvm/IJVMAcceptorManager.class
+SHA1-Digest: FWbKE+VVWQV2KV6wbHmLKleqJXg=
+
+Name: org/eclipse/net4j/internal/jvm/JVMConnectorFactory.class
+SHA1-Digest: oLP7zbm490PLjCJLsRmfiJWkDjM=
+
+Name: org/eclipse/net4j/jvm/IJVMChannel.class
+SHA1-Digest: QO/bHU3BIdchUU+CmX2KRk2WwY0=
+
+Name: org/eclipse/net4j/internal/jvm/JVMAcceptorFactory.class
+SHA1-Digest: DaeMz8vvzOHElNgtLMDiz65lXY0=
+
+Name: plugin.xml
+SHA1-Digest: cQfhwlWsBs3iuHe0o/IBCK6W7tc=
+
+Name: org/eclipse/net4j/jvm/package-info.class
+SHA1-Digest: CmoBSjrU4RuNSjLXqNibEdRoOaA=
+
+Name: org/eclipse/net4j/internal/jvm/JVMAcceptorManager.class
+SHA1-Digest: bgb5wDUgFZDtPQ1JBoKB6m7EHd0=
+
+Name: org/eclipse/net4j/internal/jvm/JVMClientConnector.class
+SHA1-Digest: sSuKIiYENe1+Fa90/UoKgXZlsMI=
+
+Name: org/eclipse/net4j/internal/jvm/JVMChannel.class
+SHA1-Digest: MbeKcW7LjJwN2hy7gJp8MjvBYRk=
+
