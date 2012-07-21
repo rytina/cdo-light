@@ -1,0 +1,5 @@
+#list of the meeting summaries.
+
+  * Text in *bold* or _italic_
+  * https://intern.itemis.de/confluence/display/4plus1/Meeting+Minutes+am+20.07.2012
+ 
