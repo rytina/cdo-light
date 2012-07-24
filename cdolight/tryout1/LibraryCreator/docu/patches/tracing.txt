@@ -2,7 +2,7 @@
 #P org.eclipse.net4j.util
 Index: src/org/eclipse/net4j/util/fsm/ITransition.java
 ===================================================================
---- src/org/eclipse/net4j/util/fsm/ITransition.java	(revision 6)
+--- src/org/eclipse/net4j/util/fsm/ITransition.java	(revision 10)
 +++ src/org/eclipse/net4j/util/fsm/ITransition.java	(working copy)
 @@ -13,7 +13,9 @@
  /**
@@ -18,7 +18,7 @@ Index: src/org/eclipse/net4j/util/fsm/ITransition.java
  }
 Index: src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java
 ===================================================================
---- src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(revision 6)
+--- src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(revision 10)
 +++ src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(working copy)
 @@ -226,10 +226,11 @@
    /**
@@ -65,7 +65,7 @@ Index: src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java
  
 Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
 ===================================================================
---- src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(revision 6)
+--- src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(revision 10)
 +++ src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(working copy)
 @@ -188,10 +188,11 @@
    /**
@@ -80,34 +80,10 @@ Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
        execute(context, buffer);
      }
  
-#P org.eclipse.emf.cdo.server
-Index: src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java
-===================================================================
---- src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java	(revision 6)
-+++ src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java	(working copy)
-@@ -100,7 +100,17 @@
- 
-   private int lastLocalBranchID;
- 
--  private Map<Object, List<InternalCDORevision>> revisions = new HashMap<Object, List<InternalCDORevision>>();
-+  private Map<Object, List<InternalCDORevision>> revisions = new HashMap<Object, List<InternalCDORevision>>(){
-+	  
-+	public java.util.List<InternalCDORevision> put(Object key, java.util.List<InternalCDORevision> value) {
-+		return super.put(key, value);
-+	};
-+	
-+	public java.util.List<InternalCDORevision> get(Object key) {
-+		return super.get(key);
-+	};
-+	
-+  };
- 
-   private List<CommitInfo> commitInfos = new ArrayList<CommitInfo>();
- 
 #P org.eclipse.net4j
 Index: src/org/eclipse/net4j/signal/IndicationWithResponse.java
 ===================================================================
---- src/org/eclipse/net4j/signal/IndicationWithResponse.java	(revision 6)
+--- src/org/eclipse/net4j/signal/IndicationWithResponse.java	(revision 10)
 +++ src/org/eclipse/net4j/signal/IndicationWithResponse.java	(working copy)
 @@ -56,6 +56,7 @@
    @Override
@@ -119,7 +95,7 @@ Index: src/org/eclipse/net4j/signal/IndicationWithResponse.java
      try
 Index: src/org/eclipse/net4j/signal/Indication.java
 ===================================================================
---- src/org/eclipse/net4j/signal/Indication.java	(revision 6)
+--- src/org/eclipse/net4j/signal/Indication.java	(revision 10)
 +++ src/org/eclipse/net4j/signal/Indication.java	(working copy)
 @@ -46,6 +46,7 @@
    @Override
@@ -131,7 +107,7 @@ Index: src/org/eclipse/net4j/signal/Indication.java
  
 Index: src/org/eclipse/net4j/signal/SignalActor.java
 ===================================================================
---- src/org/eclipse/net4j/signal/SignalActor.java	(revision 6)
+--- src/org/eclipse/net4j/signal/SignalActor.java	(revision 10)
 +++ src/org/eclipse/net4j/signal/SignalActor.java	(working copy)
 @@ -48,6 +48,7 @@
    @Override
@@ -144,9 +120,9 @@ Index: src/org/eclipse/net4j/signal/SignalActor.java
 #P org.eclipse.emf.cdo
 Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
 ===================================================================
---- src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(revision 6)
+--- src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(revision 10)
 +++ src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(working copy)
-@@ -510,12 +510,13 @@
+@@ -503,12 +503,13 @@
     * @see AttachTransition
     * @author Eike Stepper
     */
@@ -161,7 +137,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOTransaction transaction = transactionAndContents.getElement1();
        List<InternalCDOObject> contents = transactionAndContents.getElement2();
  
-@@ -637,10 +638,11 @@
+@@ -629,10 +630,11 @@
     * @see PrepareTransition
     * @author Eike Stepper
     */
@@ -174,7 +150,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        object.cdoInternalPostAttach();
        changeState(object, CDOState.NEW);
      }
-@@ -651,11 +653,12 @@
+@@ -643,11 +645,12 @@
     * 
     * @author Caspar De Groot
     */
@@ -188,7 +164,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDORevisionManager revisionManager = transaction.getSession().getRevisionManager();
        CDORevision cleanRevision = transaction.getCleanRevisions().get(object);
  
-@@ -695,12 +698,13 @@
+@@ -685,12 +688,13 @@
    /**
     * @author Eike Stepper
     */
@@ -203,7 +179,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOTransaction transaction = (InternalCDOTransaction)object.cdoView();
        objectsToDetach.add(object);
        boolean isResource = object instanceof Resource;
-@@ -725,7 +729,7 @@
+@@ -715,7 +719,7 @@
    /**
     * @author Eike Stepper
     */
@@ -212,15 +188,15 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        ITransition<CDOState, CDOEvent, InternalCDOObject, CommitTransactionResult>
    {
      public CommitTransition(boolean useDeltas)
-@@ -734,6 +738,7 @@
+@@ -724,6 +728,7 @@
  
      public void execute(InternalCDOObject object, CDOState state, CDOEvent event, CommitTransactionResult data)
      {
 +    	super.execute(object, state, event, data);
        InternalCDOTransaction transaction = object.cdoView().toTransaction();
        InternalCDORevision revision = object.cdoRevision();
-       Map<CDOID, CDOID> idMappings = data.getIDMappings();
-@@ -763,10 +768,11 @@
+ 
+@@ -741,10 +746,11 @@
    /**
     * @author Eike Stepper
     */
@@ -233,7 +209,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        object.cdoInternalSetRevision(null);
        changeState(object, CDOState.PROXY);
      }
-@@ -775,10 +781,11 @@
+@@ -753,10 +759,11 @@
    /**
     * @author Eike Stepper
     */
@@ -246,7 +222,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOTransaction transaction = object.cdoView().toTransaction();
        InternalCDORevision cleanRevision = object.cdoRevision();
        transaction.getCleanRevisions().put(object, cleanRevision);
-@@ -795,10 +802,11 @@
+@@ -773,10 +780,11 @@
    /**
     * @author Simon McDuff
     */
@@ -259,7 +235,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOTransaction transaction = object.cdoView().toTransaction();
        transaction.registerFeatureDelta(object, (CDOFeatureDelta)featureDelta);
      }
-@@ -807,10 +815,11 @@
+@@ -785,10 +793,11 @@
    /**
     * @author Simon McDuff
     */
@@ -272,7 +248,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOTransaction transaction = object.cdoView().toTransaction();
        transaction.registerFeatureDelta(object, (CDOFeatureDelta)featureDelta);
      }
-@@ -819,12 +828,13 @@
+@@ -797,12 +806,13 @@
    /**
     * @author Simon McDuff
     */
@@ -287,7 +263,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        CDOStateMachine.INSTANCE.changeState(object, CDOState.INVALID);
  
        InternalCDOView view = object.cdoView();
-@@ -836,11 +846,12 @@
+@@ -814,11 +824,12 @@
    /**
     * @author Eike Stepper
     */
@@ -300,8 +276,8 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
 +    	super.execute(object, state, event, keyAndTime);
        CDORevisionKey key = keyAndTime.getElement1();
        InternalCDORevision oldRevision = object.cdoRevision();
-       if (key == null || key.getVersion() >= oldRevision.getVersion())
-@@ -907,7 +918,7 @@
+         InternalCDOView view = object.cdoView();
+@@ -876,7 +887,7 @@
    /**
     * @author Eike Stepper
     */
@@ -310,7 +286,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
    {
      private boolean forWrite;
  
-@@ -918,6 +929,7 @@
+@@ -887,6 +898,7 @@
  
      public void execute(InternalCDOObject object, CDOState state, CDOEvent event, Object delta)
      {
@@ -318,7 +294,7 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        object.cdoInternalPreLoad();
  
        InternalCDOView view = object.cdoView();
-@@ -943,12 +955,13 @@
+@@ -912,12 +924,13 @@
    /**
     * @author Simon McDuff
     */
