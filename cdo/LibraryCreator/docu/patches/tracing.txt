@@ -1,10 +1,30 @@
 ### Eclipse Workspace Patch 1.0
 #P org.eclipse.net4j.util
+Index: META-INF/MANIFEST.MF
+===================================================================
+--- META-INF/MANIFEST.MF	(revision 6)
++++ META-INF/MANIFEST.MF	(working copy)
+@@ -3,8 +3,8 @@
+ Bundle-RequiredExecutionEnvironment: J2SE-1.5
+ Bundle-SymbolicName: org.eclipse.net4j.util;singleton:=true
+ Bundle-Activator: org.eclipse.net4j.internal.util.bundle.OM$Activator
+-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+- ";resolution:=optional
++Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)";resolution:=optional,
++ org.eclipselabs.cdolight;bundle-version="0.1.0"
+ Export-Package: org.eclipse.net4j.internal.util.bundle;version="3.1.0"
+  ;x-friends:="org.eclipse.net4j.util.ui,org.eclipse.net4j.tests",org.e
+  clipse.net4j.internal.util.container;version="3.1.0";x-friends:="org.
 Index: src/org/eclipse/net4j/util/fsm/ITransition.java
 ===================================================================
 --- src/org/eclipse/net4j/util/fsm/ITransition.java	(revision 6)
 +++ src/org/eclipse/net4j/util/fsm/ITransition.java	(working copy)
-@@ -13,7 +13,9 @@
+@@ -10,10 +10,14 @@
+  */
+ package org.eclipse.net4j.util.fsm;
+ 
++import org.eclipselabs.cdolight.utils.CDOLightUtils;
++
  /**
   * @author Eike Stepper
   */
@@ -13,7 +33,7 @@ Index: src/org/eclipse/net4j/util/fsm/ITransition.java
  {
 -  public void execute(SUBJECT subject, STATE state, EVENT event, DATA data);
 +  public void execute(SUBJECT subject, STATE state, EVENT event, DATA data){
-+	  System.out.println("ITransition.execute() - " +this);
++	  CDOLightUtils.appendTrace("ITransition.execute() - " +this);
 +  }
  }
 Index: src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java
@@ -80,36 +100,31 @@ Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
        execute(context, buffer);
      }
  
-Index: src/org/eclipse/net4j/util/lifecycle/ILifecycle.java
-===================================================================
---- src/org/eclipse/net4j/util/lifecycle/ILifecycle.java	(revision 6)
-+++ src/org/eclipse/net4j/util/lifecycle/ILifecycle.java	(working copy)
-@@ -20,7 +20,7 @@
-   public void activate() throws LifecycleException;
- 
-   public Exception deactivate();
--
-+  
-   /**
-    * @since 3.0
-    */
 Index: src/org/eclipse/net4j/util/lifecycle/Lifecycle.java
 ===================================================================
 --- src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(revision 6)
 +++ src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(working copy)
-@@ -51,6 +51,7 @@
+@@ -17,6 +17,7 @@
+ import org.eclipse.net4j.util.event.IListener;
+ import org.eclipse.net4j.util.event.Notifier;
+ import org.eclipse.net4j.util.om.trace.ContextTracer;
++import org.eclipselabs.cdolight.utils.CDOLightUtils;
+ 
+ import java.util.concurrent.Semaphore;
+ 
+@@ -51,6 +52,7 @@
    {
      try
      {
-+    	System.out.println("Lifecycle.activate() - " +this);
++    	CDOLightUtils.appendTrace("Lifecycle.activate() - " +this);
        if (lifecycleState == LifecycleState.INACTIVE)
        {
          if (TRACER.isEnabled())
-@@ -103,6 +104,7 @@
+@@ -103,6 +105,7 @@
  
    public final Exception deactivate()
    {
-+	  System.out.println("Lifecycle.deactivate() - " +this);
++	  CDOLightUtils.appendTrace("Lifecycle.deactivate() - " +this);
      try
      {
        if (lifecycleState == LifecycleState.ACTIVE)
@@ -142,11 +157,19 @@ Index: src/org/eclipse/net4j/signal/IndicationWithResponse.java
 ===================================================================
 --- src/org/eclipse/net4j/signal/IndicationWithResponse.java	(revision 6)
 +++ src/org/eclipse/net4j/signal/IndicationWithResponse.java	(working copy)
-@@ -56,6 +56,7 @@
+@@ -15,6 +15,7 @@
+ import org.eclipse.net4j.util.StringUtil;
+ import org.eclipse.net4j.util.io.ExtendedDataInputStream;
+ import org.eclipse.net4j.util.io.ExtendedDataOutputStream;
++import org.eclipselabs.cdolight.utils.CDOLightUtils;
+ 
+ /**
+  * @author Eike Stepper
+@@ -56,6 +57,7 @@
    @Override
    protected void execute(BufferInputStream in, BufferOutputStream out) throws Exception
    {
-+	  System.out.println("IndicationWithResponse.execute() - " +toString());
++	  CDOLightUtils.appendTrace("IndicationWithResponse.execute() - " +toString());
      boolean responding = false;
  
      try
@@ -154,11 +177,19 @@ Index: src/org/eclipse/net4j/signal/Indication.java
 ===================================================================
 --- src/org/eclipse/net4j/signal/Indication.java	(revision 6)
 +++ src/org/eclipse/net4j/signal/Indication.java	(working copy)
-@@ -46,6 +46,7 @@
+@@ -13,6 +13,7 @@
+ import org.eclipse.net4j.buffer.BufferInputStream;
+ import org.eclipse.net4j.buffer.BufferOutputStream;
+ import org.eclipse.net4j.util.io.ExtendedDataInputStream;
++import org.eclipselabs.cdolight.utils.CDOLightUtils;
+ 
+ /**
+  * @author Eike Stepper
+@@ -46,6 +47,7 @@
    @Override
    protected void execute(BufferInputStream in, BufferOutputStream out) throws Exception
    {
-+	  System.out.println("Indication.execute() - " +toString());
++	  CDOLightUtils.appendTrace("Indication.execute() - " +toString());
      doInput(in);
    }
  
@@ -166,14 +197,39 @@ Index: src/org/eclipse/net4j/signal/SignalActor.java
 ===================================================================
 --- src/org/eclipse/net4j/signal/SignalActor.java	(revision 6)
 +++ src/org/eclipse/net4j/signal/SignalActor.java	(working copy)
-@@ -48,6 +48,7 @@
+@@ -12,6 +12,7 @@
+ 
+ import org.eclipse.net4j.buffer.BufferInputStream;
+ import org.eclipse.net4j.buffer.BufferOutputStream;
++import org.eclipselabs.cdolight.utils.CDOLightUtils;
+ 
+ /**
+  * @author Eike Stepper
+@@ -48,6 +49,7 @@
    @Override
    protected final void execute(BufferInputStream in, BufferOutputStream out) throws Exception
    {
-+	  System.out.println("SignalActor.execute() - " +toString());
++	  CDOLightUtils.appendTrace("SignalActor.execute() - " +toString());
      doExecute(in, out);
    }
  
+Index: META-INF/MANIFEST.MF
+===================================================================
+--- META-INF/MANIFEST.MF	(revision 6)
++++ META-INF/MANIFEST.MF	(working copy)
+@@ -3,9 +3,9 @@
+ Bundle-RequiredExecutionEnvironment: J2SE-1.5
+ Bundle-SymbolicName: org.eclipse.net4j;singleton:=true
+ Bundle-Activator: org.eclipse.internal.net4j.bundle.OM$Activator
+-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+- ";resolution:=optional,org.eclipse.net4j.util;bundle-version="[3.0.0,
+- 4.0.0)";visibility:=reexport
++Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)";resolution:=optional,
++ org.eclipse.net4j.util;bundle-version="[3.0.0,4.0.0)";visibility:=reexport,
++ org.eclipselabs.cdolight;bundle-version="0.1.0"
+ Export-Package: org.eclipse.internal.net4j;version="4.0.0"; x-friends:
+  ="org.eclipse.net4j.http.server,  org.eclipse.net4j.jvm,  org.eclipse
+  .net4j.tcp,  org.eclipse.net4j.http,  org.eclipse.net4j.http.common, 
 #P org.eclipse.emf.cdo
 Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
 ===================================================================
