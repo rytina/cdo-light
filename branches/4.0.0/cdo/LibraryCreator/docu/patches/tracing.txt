@@ -80,6 +80,39 @@ Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
        execute(context, buffer);
      }
  
+Index: src/org/eclipse/net4j/util/lifecycle/ILifecycle.java
+===================================================================
+--- src/org/eclipse/net4j/util/lifecycle/ILifecycle.java	(revision 6)
++++ src/org/eclipse/net4j/util/lifecycle/ILifecycle.java	(working copy)
+@@ -20,7 +20,7 @@
+   public void activate() throws LifecycleException;
+ 
+   public Exception deactivate();
+-
++  
+   /**
+    * @since 3.0
+    */
+Index: src/org/eclipse/net4j/util/lifecycle/Lifecycle.java
+===================================================================
+--- src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(revision 6)
++++ src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(working copy)
+@@ -51,6 +51,7 @@
+   {
+     try
+     {
++    	System.out.println("Lifecycle.activate() - " +this);
+       if (lifecycleState == LifecycleState.INACTIVE)
+       {
+         if (TRACER.isEnabled())
+@@ -103,6 +104,7 @@
+ 
+   public final Exception deactivate()
+   {
++	  System.out.println("Lifecycle.deactivate() - " +this);
+     try
+     {
+       if (lifecycleState == LifecycleState.ACTIVE)
 #P org.eclipse.emf.cdo.server
 Index: src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java
 ===================================================================
