@@ -1,0 +1,415 @@
+Lifecycle.activate() - ManagedContainer
+Lifecycle.activate() - {}
+Lifecycle.activate() - []
+Lifecycle.activate() - CDOViewProviderRegistryImpl@1
+CDOPerformanceTests.setUp()
+CDOPerformanceTests.testCreateModel()
+1%
+2%
+3%
+4%
+5%
+6%
+7%
+8%
+9%
+10%
+11%
+12%
+13%
+14%
+15%
+16%
+17%
+18%
+19%
+20%
+21%
+22%
+23%
+24%
+25%
+26%
+27%
+28%
+29%
+30%
+31%
+32%
+33%
+34%
+35%
+36%
+37%
+38%
+39%
+40%
+41%
+42%
+43%
+44%
+45%
+46%
+47%
+48%
+49%
+50%
+51%
+52%
+53%
+54%
+55%
+56%
+57%
+58%
+59%
+60%
+61%
+62%
+63%
+64%
+65%
+66%
+67%
+68%
+69%
+70%
+71%
+72%
+73%
+74%
+75%
+76%
+77%
+78%
+79%
+80%
+81%
+82%
+83%
+84%
+85%
+86%
+87%
+88%
+89%
+90%
+91%
+92%
+93%
+94%
+95%
+96%
+97%
+98%
+99%
+100%
+CDOPerformanceTests.testCreateModel() - took: 3875
+CDOPerformanceTests.testCreateModel() - dump
+Lifecycle.activate() - Repository[TESTI]
+Lifecycle.activate() - MEMStore@2
+Lifecycle.activate() - SessionManager@3
+[INFO] No user manager configured. Users will not be authenticated
+!SESSION 2012-07-25 07:18:14.843 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.6.0_31
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=de_DE
+Framework arguments:  -version 3 -port 4991 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -classNames CDOPerformanceTests -application org.eclipse.pde.junit.runtime.nonuithreadtestapplication -testApplication org.eclipse.pde.junit.runtime.coretestapplication -testpluginname LibraryCreator
+Command-line arguments:  -os win32 -ws win32 -arch x86 -consoleLog -version 3 -port 4991 -testLoaderClass org.eclipse.jdt.internal.junit4.runner.JUnit4TestLoader -loaderpluginname org.eclipse.jdt.junit4.runtime -classNames CDOPerformanceTests -application org.eclipse.pde.junit.runtime.nonuithreadtestapplication -testApplication org.eclipse.pde.junit.runtime.coretestapplication -data C:\WORKSPACES\W_CDO-Light/../junit-workspace -dev file:C:/WORKSPACES/W_CDO-Light/.metadata/.plugins/org.eclipse.pde.core/pde-junit/dev.properties -os win32 -ws win32 -arch x86 -consoleLog -testpluginname LibraryCreator
+
+!ENTRY org.eclipse.emf.cdo.server 1 0 2012-07-25 07:18:27.625
+!MESSAGE No user manager configured. Users will not be authenticated
+Lifecycle.activate() - CDORevisionManagerImpl@4
+Lifecycle.activate() - {}
+Lifecycle.activate() - CDOBranchManagerImpl@5
+Lifecycle.activate() - QueryManager@6
+Lifecycle.activate() - CDOCommitInfoManagerImpl@7
+Lifecycle.activate() - CommitManager@8
+Lifecycle.activate() - Branch[id=0, name=MAIN]
+Lifecycle.activate() - MEMStoreAccessor@9
+Lifecycle.deactivate() - MEMStoreAccessor@9
+Lifecycle.activate() - Session[1]
+Lifecycle.activate() - Session[1]
+Lifecycle.activate() - Transaction[1:1]
+Lifecycle.activate() - MEMStoreAccessor@10
+[ERROR] Duplicate resource: name=null, folderID=0
+java.lang.IllegalStateException: Duplicate resource: name=null, folderID=0
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.checkDuplicateResource(MEMStore.java:760)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.addRevision(MEMStore.java:308)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevision(MEMStoreAccessor.java:259)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevisions(MEMStoreAccessor.java:252)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessor.doWrite(StoreAccessor.java:81)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.doWrite(MEMStoreAccessor.java:218)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessorBase.write(StoreAccessorBase.java:138)
+	at org.eclipse.emf.cdo.internal.server.TransactionCommitContext.write(TransactionCommitContext.java:362)
+	at org.eclipse.emf.cdo.internal.server.Repository.initRootResource(Repository.java:1282)
+	at org.eclipse.emf.cdo.internal.server.Repository.doActivate(Repository.java:1387)
+	at org.eclipse.net4j.util.lifecycle.Lifecycle.activate(Lifecycle.java:73)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:99)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:89)
+	at org.eclipse.emf.cdo.server.CDOServerUtil.addRepository(CDOServerUtil.java:199)
+	at CDOPerformanceTests.startCDOServer(CDOPerformanceTests.java:222)
+	at CDOPerformanceTests.commit(CDOPerformanceTests.java:133)
+	at CDOPerformanceTests.testCreateModel(CDOPerformanceTests.java:120)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.runApp(NonUIThreadTestApplication.java:56)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.start(NonUIThreadTestApplication.java:48)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+
+!ENTRY org.eclipse.emf.cdo.server 4 0 2012-07-25 07:18:29.078
+!MESSAGE Duplicate resource: name=null, folderID=0
+!STACK 0
+java.lang.IllegalStateException: Duplicate resource: name=null, folderID=0
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.checkDuplicateResource(MEMStore.java:760)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.addRevision(MEMStore.java:308)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevision(MEMStoreAccessor.java:259)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevisions(MEMStoreAccessor.java:252)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessor.doWrite(StoreAccessor.java:81)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.doWrite(MEMStoreAccessor.java:218)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessorBase.write(StoreAccessorBase.java:138)
+	at org.eclipse.emf.cdo.internal.server.TransactionCommitContext.write(TransactionCommitContext.java:362)
+	at org.eclipse.emf.cdo.internal.server.Repository.initRootResource(Repository.java:1282)
+	at org.eclipse.emf.cdo.internal.server.Repository.doActivate(Repository.java:1387)
+	at org.eclipse.net4j.util.lifecycle.Lifecycle.activate(Lifecycle.java:73)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:99)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:89)
+	at org.eclipse.emf.cdo.server.CDOServerUtil.addRepository(CDOServerUtil.java:199)
+	at CDOPerformanceTests.startCDOServer(CDOPerformanceTests.java:222)
+	at CDOPerformanceTests.commit(CDOPerformanceTests.java:133)
+	at CDOPerformanceTests.testCreateModel(CDOPerformanceTests.java:120)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.runApp(NonUIThreadTestApplication.java:56)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.start(NonUIThreadTestApplication.java:48)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+org.eclipse.net4j.util.transaction.TransactionException: Rollback in MEMStore: java.lang.IllegalStateException: Duplicate resource: name=null, folderID=0
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.checkDuplicateResource(MEMStore.java:760)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStore.addRevision(MEMStore.java:308)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevision(MEMStoreAccessor.java:259)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.writeRevisions(MEMStoreAccessor.java:252)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessor.doWrite(StoreAccessor.java:81)
+	at org.eclipse.emf.cdo.internal.server.mem.MEMStoreAccessor.doWrite(MEMStoreAccessor.java:218)
+	at org.eclipse.emf.cdo.spi.server.StoreAccessorBase.write(StoreAccessorBase.java:138)
+	at org.eclipse.emf.cdo.internal.server.TransactionCommitContext.write(TransactionCommitContext.java:362)
+	at org.eclipse.emf.cdo.internal.server.Repository.initRootResource(Repository.java:1282)
+	at org.eclipse.emf.cdo.internal.server.Repository.doActivate(Repository.java:1387)
+	at org.eclipse.net4j.util.lifecycle.Lifecycle.activate(Lifecycle.java:73)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:99)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:89)
+	at org.eclipse.emf.cdo.server.CDOServerUtil.addRepository(CDOServerUtil.java:199)
+	at CDOPerformanceTests.startCDOServer(CDOPerformanceTests.java:222)
+	at CDOPerformanceTests.commit(CDOPerformanceTests.java:133)
+	at CDOPerformanceTests.testCreateModel(CDOPerformanceTests.java:120)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.runApp(NonUIThreadTestApplication.java:56)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.start(NonUIThreadTestApplication.java:48)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+
+	at org.eclipse.emf.cdo.internal.server.Repository.initRootResource(Repository.java:1288)
+	at org.eclipse.emf.cdo.internal.server.Repository.doActivate(Repository.java:1387)
+	at org.eclipse.net4j.util.lifecycle.Lifecycle.activate(Lifecycle.java:73)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:99)
+	at org.eclipse.net4j.util.lifecycle.LifecycleUtil.activate(LifecycleUtil.java:89)
+	at org.eclipse.emf.cdo.server.CDOServerUtil.addRepository(CDOServerUtil.java:199)
+	at CDOPerformanceTests.startCDOServer(CDOPerformanceTests.java:222)
+	at CDOPerformanceTests.commit(CDOPerformanceTests.java:133)
+	at CDOPerformanceTests.testCreateModel(CDOPerformanceTests.java:120)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.runApp(NonUIThreadTestApplication.java:56)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.start(NonUIThreadTestApplication.java:48)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+CDOPerformanceTests.setUp()
+press any key...
+
+CDOPerformanceTests.testValidateModel()
+java.lang.NullPointerException
+	at CDOPerformanceTests.testValidateModel(CDOPerformanceTests.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:44)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:15)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:41)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:20)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:28)
+	at org.junit.runners.BlockJUnit4ClassRunner.runNotIgnored(BlockJUnit4ClassRunner.java:79)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:71)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:49)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:193)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:52)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:191)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:42)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:184)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:236)
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:50)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:467)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:683)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:390)
+	at org.eclipse.pde.internal.junit.runtime.RemotePluginTestRunner.main(RemotePluginTestRunner.java:62)
+	at org.eclipse.pde.internal.junit.runtime.CoreTestApplication.run(CoreTestApplication.java:23)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.runApp(NonUIThreadTestApplication.java:56)
+	at org.eclipse.pde.internal.junit.runtime.NonUIThreadTestApplication.start(NonUIThreadTestApplication.java:48)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1386)
+Lifecycle.deactivate() - CDOViewProviderRegistryImpl@1
+Lifecycle.deactivate() - ManagedContainer
+Lifecycle.deactivate() - Repository[TESTI]
+Lifecycle.deactivate() - {org.eclipse.net4j.acceptors[jvm]=Factory[org.eclipse.net4j.acceptors, jvm], org.eclipse.net4j.acceptors[ssl]=Factory[org.eclipse.net4j.acceptors, ssl], org.eclipse.net4j.connectors[jvm]=Factory[org.eclipse.net4j.connectors, jvm], org.eclipse.net4j.connectors[ssl]=Factory[org.eclipse.net4j.connectors, ssl], org.eclipse.net4j.randomizers[default]=Factory[org.eclipse.net4j.randomizers, default], org.eclipse.net4j.serverProtocols[failover-client]=Factory[org.eclipse.net4j.serverProtocols, failover-client], org.eclipse.net4j.userManagers[file]=Factory[org.eclipse.net4j.userManagers, file], org.eclipse.net4j.clientProtocols[cdo]=Factory[org.eclipse.net4j.clientProtocols, cdo], org.eclipse.net4j.serverProtocols[cdo]=Factory[org.eclipse.net4j.serverProtocols, cdo], org.eclipse.net4j.serverProtocols[heartbeat]=Factory[org.eclipse.net4j.serverProtocols, heartbeat], org.eclipse.net4j.bufferProviders[default]=Factory[org.eclipse.net4j.bufferProviders, default], org.eclipse.net4j.acceptors[tcp]=Factory[org.eclipse.net4j.acceptors, tcp], org.eclipse.net4j.Negotiators[challenge]=Factory[org.eclipse.net4j.Negotiators, challenge], org.eclipse.net4j.connectors[tcp]=Factory[org.eclipse.net4j.connectors, tcp], org.eclipse.net4j.executorServices[default]=Factory[org.eclipse.net4j.executorServices, default], org.eclipse.emf.cdo.server.browsers[default]=Factory[org.eclipse.emf.cdo.server.browsers, default], org.eclipse.net4j.serverProtocols[failover]=Factory[org.eclipse.net4j.serverProtocols, failover], org.eclipse.net4j.util.timers[daemon]=Factory[org.eclipse.net4j.util.timers, daemon], org.eclipse.net4j.selectors[tcp]=Factory[org.eclipse.net4j.selectors, tcp], org.eclipse.emf.cdo.server.net4j.failoverMonitors[net4j]=Factory[org.eclipse.emf.cdo.server.net4j.failoverMonitors, net4j], org.eclipse.emf.cdo.sessions[cdo]=Factory[org.eclipse.emf.cdo.sessions, cdo]}
+Lifecycle.deactivate() - [org.eclipse.emf.cdo.internal.net4j.Net4jConnectorInjector@6f19d5, org.eclipse.net4j.util.security.ChallengeNegotiatorConfigurer@91520, org.eclipse.emf.cdo.spi.server.RepositoryUserManager$RepositoryInjector@4a0ac5, org.eclipse.net4j.internal.tcp.TCPSelectorInjector@1092447, org.eclipse.net4j.TransportInjector@12cd8d4, org.eclipse.net4j.signal.heartbeat.HeartBeatProtocol$Server$TimerInjector@14f5021, org.eclipse.net4j.TransportInjector@15da7d, org.eclipse.net4j.signal.heartbeat.HeartBeatProtocol$Server$TimerInjector@bb6255]
