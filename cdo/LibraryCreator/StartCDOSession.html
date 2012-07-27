@@ -1,0 +1,43 @@
+Repository[TESTI]
+MEMStore@13
+SessionManager@14
+CDORevisionManagerImpl@15
+{}
+CDOBranchManagerImpl@16
+QueryManager@17
+CDOCommitInfoManagerImpl@18
+CommitManager@19
+Branch[id=0, name=MAIN]
+MEMStoreAccessor@20
+Lifecycle.deactivate() - MEMStoreAccessor@20
+Session[1]
+Session[1]
+Transaction[1:1]
+MEMStoreAccessor@21
+Lifecycle.deactivate() - MEMStoreAccessor@21
+Lifecycle.deactivate() - Session[1]
+Lifecycle.deactivate() - Transaction[1:1]
+LockManager@22
+MEMStoreAccessor@23
+Lifecycle.deactivate() - MEMStoreAccessor@23
+JVMClientConnector@24
+JVMServerConnector@25
+Session0 [?]
+SignalProtocol[cdo]
+Channel[1, CLIENT, cdo]
+ChannelReceiveSerializer@26
+SignalProtocol[cdo]
+Channel[1, SERVER, cdo]
+ChannelReceiveSerializer@27
+SignalActor.execute() - Signal[protocol=cdo, id=1, name=OpenSessionRequest, correlation=1]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=1, name=OpenSessionIndication, correlation=-1]
+Session[2]
+Session[2]
+CDORemoteSessionManagerImpl@28
+CDORevisionManagerImpl@29
+{}
+Branch[id=0, name=MAIN]
+CDOBranchManagerImpl@30
+CDOCommitInfoManagerImpl@31
+SignalActor.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeRequest, correlation=2]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeIndication, correlation=-2]

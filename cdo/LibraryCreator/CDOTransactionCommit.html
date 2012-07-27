@@ -1,0 +1,60 @@
+Repository[TESTI]
+MEMStore@83
+SessionManager@84
+CDORevisionManagerImpl@85
+{}
+CDOBranchManagerImpl@86
+QueryManager@87
+CDOCommitInfoManagerImpl@88
+CommitManager@89
+Branch[id=0, name=MAIN]
+MEMStoreAccessor@90
+Lifecycle.deactivate() - MEMStoreAccessor@90
+Session[1]
+Session[1]
+Transaction[1:1]
+MEMStoreAccessor@91
+Lifecycle.deactivate() - MEMStoreAccessor@91
+Lifecycle.deactivate() - Session[1]
+Lifecycle.deactivate() - Transaction[1:1]
+LockManager@92
+MEMStoreAccessor@93
+Lifecycle.deactivate() - MEMStoreAccessor@93
+Session0 [?]
+SignalProtocol[cdo]
+Channel[5, CLIENT, cdo]
+ChannelReceiveSerializer@94
+SignalProtocol[cdo]
+Channel[5, SERVER, cdo]
+ChannelReceiveSerializer@95
+SignalActor.execute() - Signal[protocol=cdo, id=1, name=OpenSessionRequest, correlation=1]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=1, name=OpenSessionIndication, correlation=-1]
+Session[2]
+Session[2]
+CDORemoteSessionManagerImpl@96
+CDORevisionManagerImpl@97
+{}
+Branch[id=0, name=MAIN]
+CDOBranchManagerImpl@98
+CDOCommitInfoManagerImpl@99
+SignalActor.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeRequest, correlation=2]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeIndication, correlation=-2]
+Transaction 1
+SignalActor.execute() - Signal[protocol=cdo, id=3, name=OpenViewRequest, correlation=3]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=3, name=OpenViewIndication, correlation=-3]
+Transaction[2:1]
+SignalActor.execute() - LoadRevisionsRequest(infos=[org.eclipse.emf.cdo.spi.common.revision.RevisionInfo$Missing@dd5681], branchPoint=Transaction 1, referenceChunk=-1, prefetchDepth=0)
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=7, name=LoadRevisionsIndication, correlation=-4]
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$WriteTransition@1609c13
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$PrepareTransition@10613aa
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$AttachTransition@187f9f1
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$WriteNewTransition@6147d9
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$PrepareTransition@10613aa
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$AttachTransition@187f9f1
+SignalActor.execute() - Signal[protocol=cdo, id=11, name=CommitTransactionRequest, correlation=5]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=11, name=CommitTransactionIndication, correlation=-5]
+MEMStoreAccessor@100
+Lifecycle.deactivate() - MEMStoreAccessor@100
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@974600
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@974600
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@c3e967
