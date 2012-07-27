@@ -13,14 +13,6 @@ public class CDOTracingUtils {
 	private CDOTracingUtils(){
 	}
 
-	public static synchronized void append(String string) {
-		try {
-			strBuilder.append(string);
-			strBuilder.append("\n");
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
 
 	public static synchronized void appendHtmlTrace(String string) {
 		try {
@@ -37,11 +29,6 @@ public class CDOTracingUtils {
 		}
 	}
 
-	public static synchronized String dumpTrace() {
-		String dump = strBuilder.toString();
-		strBuilder.setLength(0);
-		return dump;
-	}
 	
 	public static synchronized String dumpHtmlTrace() {
 		String dump = HTML_TOOLTIP_STYLES + "\n\n" + strBuilder.toString();
