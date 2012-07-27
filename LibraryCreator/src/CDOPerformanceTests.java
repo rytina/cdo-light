@@ -72,7 +72,7 @@ public class CDOPerformanceTests {
 //  public static final long MAX_BYTES_IN_SESSION = 5242880;	// 5 MB
 //  public static final long MAX_BYTES_IN_SESSION = 1242880;	// 1 MB
 
-	private static int size   = 400000;
+	private static int size   = 400;
 	private StoreType storeType = StoreType.MEM;
 
 	private IStore store;
