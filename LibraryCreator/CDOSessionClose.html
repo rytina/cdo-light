@@ -1,0 +1,84 @@
+Repository[TESTI]
+MEMStore@119
+SessionManager@120
+CDORevisionManagerImpl@121
+{}
+CDOBranchManagerImpl@122
+QueryManager@123
+CDOCommitInfoManagerImpl@124
+CommitManager@125
+Branch[id=0, name=MAIN]
+MEMStoreAccessor@126
+Lifecycle.deactivate() - MEMStoreAccessor@126
+Session[1]
+Session[1]
+Transaction[1:1]
+MEMStoreAccessor@127
+Lifecycle.deactivate() - MEMStoreAccessor@127
+Lifecycle.deactivate() - Session[1]
+Lifecycle.deactivate() - Transaction[1:1]
+LockManager@128
+MEMStoreAccessor@129
+Lifecycle.deactivate() - MEMStoreAccessor@129
+Session0 [?]
+SignalProtocol[cdo]
+Channel[7, CLIENT, cdo]
+ChannelReceiveSerializer@130
+SignalProtocol[cdo]
+Channel[7, SERVER, cdo]
+ChannelReceiveSerializer@131
+SignalActor.execute() - Signal[protocol=cdo, id=1, name=OpenSessionRequest, correlation=1]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=1, name=OpenSessionIndication, correlation=-1]
+Session[2]
+Session[2]
+CDORemoteSessionManagerImpl@132
+CDORevisionManagerImpl@133
+{}
+Branch[id=0, name=MAIN]
+CDOBranchManagerImpl@134
+CDOCommitInfoManagerImpl@135
+SignalActor.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeRequest, correlation=2]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=23, name=RepositoryTimeIndication, correlation=-2]
+Transaction 1
+SignalActor.execute() - Signal[protocol=cdo, id=3, name=OpenViewRequest, correlation=3]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=3, name=OpenViewIndication, correlation=-3]
+Transaction[2:1]
+SignalActor.execute() - LoadRevisionsRequest(infos=[org.eclipse.emf.cdo.spi.common.revision.RevisionInfo$Missing@81018b], branchPoint=Transaction 1, referenceChunk=-1, prefetchDepth=0)
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=7, name=LoadRevisionsIndication, correlation=-4]
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$WriteTransition@1609c13
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$PrepareTransition@10613aa
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$AttachTransition@187f9f1
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$WriteNewTransition@6147d9
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$PrepareTransition@10613aa
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$AttachTransition@187f9f1
+SignalActor.execute() - Signal[protocol=cdo, id=11, name=CommitTransactionRequest, correlation=5]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=11, name=CommitTransactionIndication, correlation=-5]
+MEMStoreAccessor@136
+Lifecycle.deactivate() - MEMStoreAccessor@136
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@974600
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@974600
+ITransition.execute() - org.eclipse.emf.internal.cdo.view.CDOStateMachine$CommitTransition@c3e967
+Lifecycle.deactivate() - Transaction 1
+SignalActor.execute() - Signal[protocol=cdo, id=5, name=CloseViewRequest, correlation=6]
+IndicationWithResponse.execute() - Signal[protocol=cdo, id=5, name=CloseViewIndication, correlation=-6]
+Lifecycle.deactivate() - Transaction[2:1]
+Lifecycle.deactivate() - Transaction 1
+Lifecycle.deactivate() - Session2 [TESTI]
+Lifecycle.deactivate() - CDORemoteSessionManagerImpl@132
+Lifecycle.deactivate() - SignalProtocol[cdo]
+Lifecycle.deactivate() - Channel[7, CLIENT, cdo]
+Lifecycle.deactivate() - Channel[7, SERVER, cdo]
+Lifecycle.deactivate() - Channel[7, CLIENT, cdo]
+Lifecycle.deactivate() - ChannelReceiveSerializer@131
+Lifecycle.deactivate() - ChannelReceiveSerializer@131
+Lifecycle.deactivate() - SignalProtocol[cdo]
+Lifecycle.deactivate() - Channel[7, SERVER, cdo]
+Lifecycle.deactivate() - Session[2]
+Lifecycle.deactivate() - SignalProtocol[cdo]
+Lifecycle.deactivate() - ChannelReceiveSerializer@130
+Lifecycle.deactivate() - ChannelReceiveSerializer@130
+Lifecycle.deactivate() - SignalProtocol[cdo]
+Lifecycle.deactivate() - CDOCommitInfoManagerImpl@135
+Lifecycle.deactivate() - CDORevisionManagerImpl@133
+Lifecycle.deactivate() - {OID2=OID2:0v1, OID3=OID3:0v1, OID1=OID1:0v2}
+Lifecycle.deactivate() - {OID2=OID2:0v1, OID3=OID3:0v1, OID1=OID1:0v2}
