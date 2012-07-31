@@ -1,4 +1,4 @@
-#summary Roadmap of CDO Light
+#summary Roadmap for CDO Light
 
 = Next releases =
 == Release 0.1, planned for September 2012 ==
