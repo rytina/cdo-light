@@ -98,7 +98,7 @@ public class CDOPerformanceTests {
 		startCDOServer();
 		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("StartCDOServer.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("1_StartCDOServer.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -108,7 +108,7 @@ public class CDOPerformanceTests {
 		IStoreConfig storeConfig = startCDOServer();
 		openCDOSession(storeConfig);
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("StartCDOSession.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("2_StartCDOSession.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -119,7 +119,7 @@ public class CDOPerformanceTests {
 		CDOSession sess = openCDOSession(storeConfig);
 		sess.openTransaction();
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("OpenCDOTransaction.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("3_OpenCDOTransaction.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -131,7 +131,7 @@ public class CDOPerformanceTests {
 		CDOTransaction tx = sess.openTransaction();
 		createCDOResource(tx);
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("CreateCDOResource.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("4_CreateCDOResource.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -144,7 +144,7 @@ public class CDOPerformanceTests {
 		CDOResource res = createCDOResource(tx);
 		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("AddModelToCDOResource.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("5_AddModelToCDOResource.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -158,7 +158,7 @@ public class CDOPerformanceTests {
 		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
 		tx.commit();
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("CDOTransactionCommit.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("6_CDOTransactionCommit.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -173,7 +173,7 @@ public class CDOPerformanceTests {
 		tx.commit();
 		tx.close();
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("CDOTransactionClose.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("7_CDOTransactionClose.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -189,7 +189,7 @@ public class CDOPerformanceTests {
 		tx.close();
 		sess.close();
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("CDOSessionClose.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("8_CDOSessionClose.html"));
 		writer.append(trace);
 		writer.close();
 	}
@@ -200,7 +200,7 @@ public class CDOPerformanceTests {
 		CDOSession sess = openCDOSession(storeConfig);
 		sess.openView();
 		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("OpenCDOView.html"));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("9_OpenCDOView.html"));
 		writer.append(trace);
 		writer.close();
 	}
