@@ -2,7 +2,7 @@
 #P org.eclipse.net4j.util
 Index: META-INF/MANIFEST.MF
 ===================================================================
---- META-INF/MANIFEST.MF	(revision 7)
+--- META-INF/MANIFEST.MF	(revision 50)
 +++ META-INF/MANIFEST.MF	(working copy)
 @@ -3,8 +3,8 @@
  Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -17,7 +17,7 @@ Index: META-INF/MANIFEST.MF
   clipse.net4j.internal.util.container;version="3.1.0";x-friends:="org.
 Index: src/org/eclipse/net4j/util/fsm/ITransition.java
 ===================================================================
---- src/org/eclipse/net4j/util/fsm/ITransition.java	(revision 7)
+--- src/org/eclipse/net4j/util/fsm/ITransition.java	(revision 50)
 +++ src/org/eclipse/net4j/util/fsm/ITransition.java	(working copy)
 @@ -10,10 +10,14 @@
   */
@@ -25,7 +25,7 @@ Index: src/org/eclipse/net4j/util/fsm/ITransition.java
  
 +import org.eclipselabs.cdolight.utils.CDOTracingUtils;
 +
- /** 
+ /**
   * @author Eike Stepper
   */
 -public interface ITransition<STATE extends Enum<?>, EVENT extends Enum<?>, SUBJECT, DATA>
@@ -38,7 +38,7 @@ Index: src/org/eclipse/net4j/util/fsm/ITransition.java
  }
 Index: src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java
 ===================================================================
---- src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(revision 7)
+--- src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(revision 50)
 +++ src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java	(working copy)
 @@ -226,10 +226,11 @@
    /**
@@ -85,7 +85,7 @@ Index: src/org/eclipse/net4j/util/fsm/FiniteStateMachine.java
  
 Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
 ===================================================================
---- src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(revision 7)
+--- src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(revision 50)
 +++ src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java	(working copy)
 @@ -188,10 +188,11 @@
    /**
@@ -102,7 +102,7 @@ Index: src/org/eclipse/net4j/util/security/ChallengeResponseNegotiator.java
  
 Index: src/org/eclipse/net4j/util/lifecycle/Lifecycle.java
 ===================================================================
---- src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(revision 7)
+--- src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(revision 50)
 +++ src/org/eclipse/net4j/util/lifecycle/Lifecycle.java	(working copy)
 @@ -10,6 +10,8 @@
   */
@@ -139,10 +139,61 @@ Index: src/org/eclipse/net4j/util/lifecycle/Lifecycle.java
      try
      {
        if (lifecycleState == LifecycleState.ACTIVE)
+#P org.eclipselabs.cdolight
+Index: src/org/eclipselabs/cdolight/utils/CDOTracingUtils.java
+===================================================================
+--- src/org/eclipselabs/cdolight/utils/CDOTracingUtils.java	(revision 50)
++++ src/org/eclipselabs/cdolight/utils/CDOTracingUtils.java	(working copy)
+@@ -31,7 +31,33 @@
+ 
+ 	
+ 	public static synchronized String dumpHtmlTrace() {
++		
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
++		strBuilder.append("<br/>");
+ 		String dump = HTML_TOOLTIP_STYLES + "\n\n" + strBuilder.toString();
++		
+ 		strBuilder.setLength(0);
+ 		return dump;
+ 	}
 #P org.eclipse.emf.cdo.server
+Index: src/org/eclipse/emf/cdo/internal/server/embedded/EmbeddedClientSessionConfiguration.java
+===================================================================
+--- src/org/eclipse/emf/cdo/internal/server/embedded/EmbeddedClientSessionConfiguration.java	(revision 50)
++++ src/org/eclipse/emf/cdo/internal/server/embedded/EmbeddedClientSessionConfiguration.java	(working copy)
+@@ -33,7 +33,6 @@
+ 
+   public EmbeddedClientSessionConfiguration()
+   {
+-    throw new UnsupportedOperationException("Embedded sessions are not yet supported");
+   }
+ 
+   public InternalRepository getRepository()
 Index: src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java
 ===================================================================
---- src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java	(revision 7)
+--- src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java	(revision 50)
 +++ src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java	(working copy)
 @@ -100,7 +100,17 @@
  
@@ -166,7 +217,7 @@ Index: src/org/eclipse/emf/cdo/internal/server/mem/MEMStore.java
 #P org.eclipse.net4j
 Index: src/org/eclipse/net4j/signal/IndicationWithResponse.java
 ===================================================================
---- src/org/eclipse/net4j/signal/IndicationWithResponse.java	(revision 7)
+--- src/org/eclipse/net4j/signal/IndicationWithResponse.java	(revision 50)
 +++ src/org/eclipse/net4j/signal/IndicationWithResponse.java	(working copy)
 @@ -15,6 +15,7 @@
  import org.eclipse.net4j.util.StringUtil;
@@ -186,7 +237,7 @@ Index: src/org/eclipse/net4j/signal/IndicationWithResponse.java
      try
 Index: src/org/eclipse/net4j/signal/Indication.java
 ===================================================================
---- src/org/eclipse/net4j/signal/Indication.java	(revision 7)
+--- src/org/eclipse/net4j/signal/Indication.java	(revision 50)
 +++ src/org/eclipse/net4j/signal/Indication.java	(working copy)
 @@ -13,6 +13,7 @@
  import org.eclipse.net4j.buffer.BufferInputStream;
@@ -206,7 +257,7 @@ Index: src/org/eclipse/net4j/signal/Indication.java
  
 Index: src/org/eclipse/net4j/signal/SignalActor.java
 ===================================================================
---- src/org/eclipse/net4j/signal/SignalActor.java	(revision 7)
+--- src/org/eclipse/net4j/signal/SignalActor.java	(revision 50)
 +++ src/org/eclipse/net4j/signal/SignalActor.java	(working copy)
 @@ -12,6 +12,7 @@
  
@@ -226,7 +277,7 @@ Index: src/org/eclipse/net4j/signal/SignalActor.java
  
 Index: META-INF/MANIFEST.MF
 ===================================================================
---- META-INF/MANIFEST.MF	(revision 7)
+--- META-INF/MANIFEST.MF	(revision 50)
 +++ META-INF/MANIFEST.MF	(working copy)
 @@ -3,9 +3,9 @@
  Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -244,7 +295,7 @@ Index: META-INF/MANIFEST.MF
 #P org.eclipse.emf.cdo
 Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
 ===================================================================
---- src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(revision 7)
+--- src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(revision 50)
 +++ src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java	(working copy)
 @@ -510,12 +510,13 @@
     * @see AttachTransition
@@ -433,3 +484,79 @@ Index: src/org/eclipse/emf/internal/cdo/view/CDOStateMachine.java
        InternalCDOView view = object.cdoView();
        CDOInvalidationPolicy policy = view.options().getInvalidationPolicy();
        policy.handleInvalidObject(object);
+#P org.eclipse.emf.cdo.common
+Index: META-INF/MANIFEST.MF
+===================================================================
+--- META-INF/MANIFEST.MF	(revision 50)
++++ META-INF/MANIFEST.MF	(working copy)
+@@ -4,12 +4,12 @@
+ Bundle-SymbolicName: org.eclipse.emf.cdo.common
+ Bundle-Activator: org.eclipse.emf.cdo.internal.common.bundle.OM$Activa
+  tor
+-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+- ";resolution:=optional,org.eclipse.emf.ecore;bundle-version="[2.4.0,3
+- .0.0)";visibility:=reexport,org.eclipse.emf.ecore.change;bundle-versi
+- on="[2.4.0,3.0.0)",org.eclipse.emf.ecore.xmi;bundle-version="[2.4.0,3
+- .0.0)",org.eclipse.net4j.util;bundle-version="[3.0.0,4.0.0)";visibili
+- ty:=reexport
++Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)";resolution:=optional,
++ org.eclipse.emf.ecore;bundle-version="[2.4.0,3.0.0)";visibility:=reexport,
++ org.eclipse.emf.ecore.change;bundle-version="[2.4.0,3.0.0)",
++ org.eclipse.emf.ecore.xmi;bundle-version="[2.4.0,3.0.0)",
++ org.eclipse.net4j.util;bundle-version="[3.0.0,4.0.0)";visibility:=reexport,
++ org.eclipselabs.cdolight;bundle-version="0.1.0"
+ Export-Package: org.eclipse.emf.cdo.common;version="4.0.0",org.eclipse
+  .emf.cdo.common.branch;version="4.0.0",org.eclipse.emf.cdo.common.com
+  mit;version="4.0.0",org.eclipse.emf.cdo.common.commit.handler;version
+Index: src/org/eclipse/emf/cdo/internal/common/revision/CDORevisionCacheNonAuditing.java
+===================================================================
+--- src/org/eclipse/emf/cdo/internal/common/revision/CDORevisionCacheNonAuditing.java	(revision 50)
++++ src/org/eclipse/emf/cdo/internal/common/revision/CDORevisionCacheNonAuditing.java	(working copy)
+@@ -12,6 +12,12 @@
+  */
+ package org.eclipse.emf.cdo.internal.common.revision;
+ 
++import java.lang.ref.Reference;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++
+ import org.eclipse.emf.cdo.common.branch.CDOBranch;
+ import org.eclipse.emf.cdo.common.branch.CDOBranchPoint;
+ import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
+@@ -19,16 +25,9 @@
+ import org.eclipse.emf.cdo.common.revision.CDORevision;
+ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
+ import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionCache;
+-
+-import org.eclipse.net4j.util.CheckUtil;
+-
+ import org.eclipse.emf.ecore.EClass;
+-
+-import java.lang.ref.Reference;
+-import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
++import org.eclipse.net4j.util.CheckUtil;
++import org.eclipselabs.cdolight.utils.CDOTracingUtils;
+ 
+ /**
+  * @author Eike Stepper
+@@ -39,6 +38,7 @@
+ 
+   public CDORevisionCacheNonAuditing()
+   {
++	  CDOTracingUtils.appendHtmlTrace("creating cache - "+ hashCode()+ this.toString());
+   }
+ 
+   public InternalCDORevisionCache instantiate(CDORevision revision)
+@@ -162,6 +162,7 @@
+ 
+   public void addRevision(CDORevision revision)
+   {
++	CDOTracingUtils.appendHtmlTrace("adding revision to cache: " + hashCode()+ revision.toString());
+     CheckUtil.checkArg(revision, "revision");
+     if (!revision.isHistorical())
+     {
