@@ -10,6 +10,7 @@
  */
 package org.eclipse.emf.cdo.spi.server;
 
+import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.lock.CDOLockState;
 import org.eclipse.emf.cdo.server.IStoreAccessor;
@@ -93,6 +94,11 @@ public interface InternalCommitContext extends IStoreAccessor.CommitContext
    * @since 4.0
    */
   public void setDetachedObjectTypes(Map<CDOID, EClass> detachedObjectTypes);
+
+  /**
+   * @since 4.2
+   */
+  public void setDetachedObjectVersions(CDOBranchVersion[] detachedObjectVersions);
 
   public void setAutoReleaseLocksEnabled(boolean on);
 

@@ -1,162 +1,17 @@
 Manifest-Version: 1.0
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.net4j.defs;singleton:=true
-Require-Bundle: org.eclipse.net4j.util.defs;bundle-version="[4.0.0,5.0
- .0)";visibility:=reexport,org.eclipse.net4j.tcp;bundle-version="[4.0.
- 0,5.0.0)";visibility:=reexport,org.eclipse.net4j.jvm;bundle-version="
- [4.0.0,5.0.0)";visibility:=reexport,org.eclipse.net4j.http;bundle-ver
- sion="[4.0.0,5.0.0)";visibility:=reexport
-Export-Package: org.eclipse.net4j.defs;version="4.0.100",org.eclipse.n
- et4j.defs.impl;version="4.0.100",org.eclipse.net4j.defs.util;version=
- "4.0.100"
-Bundle-Version: 4.0.100.v20120521-0710
-Ant-Version: Apache Ant 1.8.3
+Bundle-Version: 4.0.100.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Require-Bundle: org.eclipse.net4j.util.defs;bundle-version="[4.0.0,5.0.0)";visibility:=reexport,
+ org.eclipse.net4j.tcp;bundle-version="[4.0.0,5.0.0)";visibility:=reexport,
+ org.eclipse.net4j.jvm;bundle-version="[4.0.0,5.0.0)";visibility:=reexport,
+ org.eclipse.net4j.http;bundle-version="[4.0.0,5.0.0)";visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Bundle-Name: %pluginName
-Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
-Bundle-ManifestVersion: 2
-
-Name: org/eclipse/net4j/defs/impl/TCPAcceptorDefImpl.class
-SHA1-Digest: scHywrenyEasDgJvc1X/GEga9ho=
-
-Name: org/eclipse/net4j/defs/impl/JVMAcceptorDefImpl.class
-SHA1-Digest: /JajkfspHomtabL3d4pnWH6GN5o=
-
-Name: model/org.eclipse.net4j.defs.ecorediag
-SHA1-Digest: 5ege9V7WnLcx/MPHvc/nIRuJpP4=
-
-Name: about.ini
-SHA1-Digest: KQMVTFcyVja5dvVmIh2o+qDsslY=
-
-Name: org/eclipse/net4j/defs/impl/ClientProtocolFactoryDefImpl.class
-SHA1-Digest: 6GMPM6TRlOdHm4s2LLyDGs3Yhzk=
-
-Name: org/eclipse/net4j/defs/impl/HTTPConnectorDefImpl.class
-SHA1-Digest: unJu4r2rx1KBkdJe5/l7KVg10n8=
-
-Name: org/eclipse/net4j/defs/impl/AcceptorDefImpl.class
-SHA1-Digest: Q6zry4riReMTXKGhuGtiOacz/qg=
-
-Name: model/org.eclipse.net4j.defs.genmodel
-SHA1-Digest: K/D4LsV5aX34Qam2lQlgT4ndn/A=
-
-Name: org/eclipse/net4j/defs/impl/ProtocolProviderDefImpl.class
-SHA1-Digest: Zfo+SxCSTfXPLW7xJsRf3XAl4gc=
-
-Name: copyright.txt
-SHA1-Digest: ldD7aZrwbbsMgn1IBJxl3IXKzqI=
-
-Name: org/eclipse/net4j/defs/impl/TCPSelectorDefImpl.class
-SHA1-Digest: 0tyqn9HoJVUm5/fMr0v0YuN2V1k=
-
-Name: org/eclipse/net4j/defs/impl/Net4jDefsPackageImpl.class
-SHA1-Digest: JvwUMVGj1AXVelN9QFJJxeIG/EA=
-
-Name: plugin.properties
-SHA1-Digest: 6DyWG/4jaPqhAFC3hOTi3YmkSPs=
-
-Name: org/eclipse/net4j/defs/impl/Net4jDefsFactoryImpl.class
-SHA1-Digest: VgMNMWn7TpjC/eWAEl1NJey+h0s=
-
-Name: org/eclipse/net4j/defs/ServerProtocolFactoryDef.class
-SHA1-Digest: +Q/ceHi83qn0+l30flBvJ/bFTGI=
-
-Name: org/eclipse/net4j/defs/AcceptorDef.class
-SHA1-Digest: pT1MAIsufKon/oBOgtlXfllOsXM=
-
-Name: org/eclipse/net4j/defs/ConnectorDef.class
-SHA1-Digest: vc88rzVXk23oEZZ/7844zVV5mLI=
-
-Name: org/eclipse/net4j/defs/ProtocolProviderDef.class
-SHA1-Digest: dCwg+EPcBaQcSNLpnb14/ThEpm4=
-
-Name: org/eclipse/net4j/defs/TCPAcceptorDef.class
-SHA1-Digest: TLPtgz1Z+h8UKkRtWctDDvCrFaM=
-
-Name: org/eclipse/net4j/defs/JVMAcceptorDef.class
-SHA1-Digest: /PjltvCvA6jHqWPHGaU1LdWSkgs=
-
-Name: org/eclipse/net4j/defs/impl/BufferPoolDefImpl.class
-SHA1-Digest: AvKgcO8TDeMiwUTAWyvsZr6uwdQ=
-
-Name: model/org.eclipse.net4j.defs.ecore
-SHA1-Digest: zqAvH69MOF/mJOmhs1Mp8HH5ETE=
-
-Name: org/eclipse/net4j/defs/ClientProtocolFactoryDef.class
-SHA1-Digest: BHcpcS8Jx9zyG8jPfl+cVOWcgXM=
-
-Name: plugin.xml
-SHA1-Digest: Zuu27V401xJ5Mw8kG0JuKSct9p0=
-
-Name: org/eclipse/net4j/defs/HTTPConnectorDef.class
-SHA1-Digest: JnrUWXCzBg6mwMyf4WKbbxwdDOc=
-
-Name: org/eclipse/net4j/defs/impl/BufferProviderDefImpl.class
-SHA1-Digest: 3bAQjouq2ASSmXzCUi4EcoB1H/c=
-
-Name: org/eclipse/net4j/defs/TCPSelectorDef.class
-SHA1-Digest: +W4DzQCZTs/9TyiMhavtKktZGfM=
-
-Name: org/eclipse/net4j/defs/BufferPoolDef.class
-SHA1-Digest: wDwJwhwF/U/k0/4B5mC6dPs49kk=
-
-Name: org/eclipse/net4j/defs/Net4jDefsPackage.class
-SHA1-Digest: 6kvOhRW6FeqmRoxKdlK9jkr3m1M=
-
-Name: org/eclipse/net4j/defs/util/Net4jDefsSwitch.class
-SHA1-Digest: AGq/v/E9/DLv0jZa/7WxZ1IITac=
-
-Name: META-INF/eclipse.inf
-SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
-
-Name: org/eclipse/net4j/defs/Net4jDefsFactory.class
-SHA1-Digest: lj8mC+2v4ifDUPYgEC7j4vt5AfA=
-
-Name: org/eclipse/net4j/defs/impl/TCPConnectorDefImpl.class
-SHA1-Digest: XQXoo+Ze5vlD/JMVW9TsAotyQvU=
-
-Name: org/eclipse/net4j/defs/impl/JVMConnectorDefImpl.class
-SHA1-Digest: /GfxKMooovxI46Cz3N5TYn3lnYw=
-
-Name: about.mappings
-SHA1-Digest: UDHVzX1LCfmUjk3o50zFeMraCHE=
-
-Name: org/eclipse/net4j/defs/util/Net4jDefsAdapterFactory.class
-SHA1-Digest: ZH7D8DOayq5PJ/woD3Nq7dqV5fQ=
-
-Name: about.html
-SHA1-Digest: bytt99eO0zZMcEFHRcRURao7/uo=
-
-Name: org/eclipse/net4j/defs/BufferProviderDef.class
-SHA1-Digest: /NeYZaoAFUIX3i5bF1cl0f2uSkc=
-
-Name: org/eclipse/net4j/defs/TCPConnectorDef.class
-SHA1-Digest: B1y6mF5ib9H8bvGL4w3QwxcjnNk=
-
-Name: org/eclipse/net4j/defs/JVMConnectorDef.class
-SHA1-Digest: a50R2wz1zjOtEGQt9ScXwYqSEIk=
-
-Name: org/eclipse/net4j/defs/util/Net4jDefsUtil.class
-SHA1-Digest: ItWgildCik70lAeZxa64GgVR21o=
-
-Name: modeling32.png
-SHA1-Digest: ADlLWFV0eQ74YnLvHnPFkYLeLrs=
-
-Name: about.properties
-SHA1-Digest: GchkKf6bbKZ7eTHNm5oLQapjv0Y=
-
-Name: org/eclipse/net4j/defs/util/Net4jDefsAdapterFactory$1.class
-SHA1-Digest: JNo3OgLW1a7neALArd0EKV0PZok=
-
-Name: org/eclipse/net4j/defs/Net4jDefsPackage$Literals.class
-SHA1-Digest: ImfLz61mMse1YYvV5UV1x1OPywY=
-
-Name: org/eclipse/net4j/defs/impl/ServerProtocolFactoryDefImpl.class
-SHA1-Digest: q9Q5tR5LCEeoqbSo77uMk9MIQws=
-
-Name: org/eclipse/net4j/defs/impl/ConnectorDefImpl.class
-SHA1-Digest: 9N+3J9ZRmvtpwnfoxAZrYeS+ST8=
-
+Export-Package: org.eclipse.net4j.defs;version="4.0.100",
+ org.eclipse.net4j.defs.impl;version="4.0.100",
+ org.eclipse.net4j.defs.util;version="4.0.100"

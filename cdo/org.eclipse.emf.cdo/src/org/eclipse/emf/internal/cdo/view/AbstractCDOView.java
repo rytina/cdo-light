@@ -58,6 +58,7 @@ import org.eclipse.emf.internal.cdo.messages.Messages;
 import org.eclipse.emf.internal.cdo.object.CDOLegacyAdapter;
 import org.eclipse.emf.internal.cdo.query.CDOQueryImpl;
 
+import org.eclipse.net4j.util.CheckUtil;
 import org.eclipse.net4j.util.ImplementationError;
 import org.eclipse.net4j.util.ReflectUtil.ExcludeFromDump;
 import org.eclipse.net4j.util.StringUtil;
@@ -214,8 +215,8 @@ public abstract class AbstractCDOView extends Lifecycle implements InternalCDOVi
         throw new IllegalStateException("RootResourceID is null; is the repository not yet initialized?");
       }
 
-      CDOResourceImpl resource = (CDOResourceImpl)getObject(rootResourceID);
-      setRootResource(resource);
+      getObject(rootResourceID);
+      CheckUtil.checkState(rootResource, "rootResource");
     }
 
     return rootResource;
@@ -883,10 +884,8 @@ public abstract class AbstractCDOView extends Lifecycle implements InternalCDOVi
 
   private String getResourcePath(InternalCDORevision revision)
   {
-    EAttribute nameFeature = EresourcePackage.eINSTANCE.getCDOResourceNode_Name();
-
     CDOID folderID = (CDOID)revision.data().getContainerID();
-    String name = (String)revision.data().get(nameFeature, 0);
+    String name = (String)revision.data().get(EresourcePackage.Literals.CDO_RESOURCE_NODE__NAME, 0);
     if (CDOIDUtil.isNull(folderID))
     {
       if (name == null)
