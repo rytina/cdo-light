@@ -1,0 +1,158 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.util.defs;singleton:=true
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";visibility:=reexport,org.eclipse.emf.ecore;bundle-version="[2.4.0,3
+ .0.0)";visibility:=reexport,org.eclipse.net4j.util;bundle-version="[3
+ .0.0,4.0.0)";visibility:=reexport
+Export-Package: org.eclipse.net4j.util.defs;version="4.0.100",org.ecli
+ pse.net4j.util.defs.impl;version="4.0.100",org.eclipse.net4j.util.def
+ s.util;version="4.0.100"
+Bundle-Version: 4.0.100.v20120521-0710
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-ActivationPolicy: lazy
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/util/defs/PasswordCredentialsProviderDef.class
+SHA1-Digest: SFTs+DSn+rH5/CXDX8MGWjtbM1Q=
+
+Name: org/eclipse/net4j/util/defs/impl/UserImpl.class
+SHA1-Digest: rWpxpWny63PtnD0wlA3fUsZRPGc=
+
+Name: org/eclipse/net4j/util/defs/impl/RandomizerDefImpl.class
+SHA1-Digest: i1HeQ2X9iISR5cfqPW14NewzN4M=
+
+Name: org/eclipse/net4j/util/defs/CredentialsProviderDef.class
+SHA1-Digest: KMR7DZwqVINNlOS3utMv6Umcoqw=
+
+Name: org/eclipse/net4j/util/defs/ThreadPoolDef.class
+SHA1-Digest: xGVFbGSK4SGieyuKFbHnUKxxGh8=
+
+Name: org/eclipse/net4j/util/defs/DefContainer.class
+SHA1-Digest: TYCvnDPx+6u0OnxKNvnrK07/Msg=
+
+Name: model/org.eclipse.net4j.util.defs.ecorediag
+SHA1-Digest: 1s5bdaBihDNN1/KqRD6dKBE6Aho=
+
+Name: copyright.txt
+SHA1-Digest: ldD7aZrwbbsMgn1IBJxl3IXKzqI=
+
+Name: org/eclipse/net4j/util/defs/util/Net4jUtilDefsAdapterFactory$1.c
+ lass
+SHA1-Digest: gq4vQnhq6DlP0nWyVXOhJ9c9gq8=
+
+Name: org/eclipse/net4j/util/defs/RandomizerDef.class
+SHA1-Digest: jjvKq4XyXvr+ngeVBJQ1vA5ILEI=
+
+Name: org/eclipse/net4j/util/defs/Net4jUtilDefsPackage$Literals.class
+SHA1-Digest: hn1qqVuMxxvkDV+cwf7Svz8zZyA=
+
+Name: org/eclipse/net4j/util/defs/impl/ChallengeNegotiatorDefImpl.clas
+ s
+SHA1-Digest: HeQkCXjJMIo59nla4ryOVWXgKbo=
+
+Name: plugin.properties
+SHA1-Digest: k1T4qlKv6Uf/AQNDZLHJ/FCYtls=
+
+Name: org/eclipse/net4j/util/defs/ExecutorServiceDef.class
+SHA1-Digest: N2ENuS9wZ0X47bhDUPR8RWxqqXw=
+
+Name: org/eclipse/net4j/util/defs/UserManagerDef.class
+SHA1-Digest: BboZQp2kSrn9Dg5vleubgIccS7s=
+
+Name: org/eclipse/net4j/util/defs/DefException.class
+SHA1-Digest: JN710plutYoRD/EWp22VMUOruuI=
+
+Name: org/eclipse/net4j/util/defs/impl/ResponseNegotiatorDefImpl.class
+SHA1-Digest: +2muzCHyXJlXLh30VCqyddtsuj8=
+
+Name: org/eclipse/net4j/util/defs/User.class
+SHA1-Digest: 7CmWd3KhTzMFX56G5DjkTpL8JMY=
+
+Name: org/eclipse/net4j/util/defs/impl/Net4jUtilDefsPackageImpl.class
+SHA1-Digest: HP85WWz9wyus8hdPUfCzYq2wnps=
+
+Name: org/eclipse/net4j/util/defs/impl/NegotiatorDefImpl.class
+SHA1-Digest: lAG/oEdReDYjjaZ4OdTOgqjY1Lc=
+
+Name: plugin.xml
+SHA1-Digest: tPgaboKQe2X3W9iY0zLBIrPnIPU=
+
+Name: org/eclipse/net4j/util/defs/impl/Net4jUtilDefsFactoryImpl.class
+SHA1-Digest: D1zwsIfIHiPEdbSkipbESJSv2R4=
+
+Name: model/org.eclipse.net4j.util.defs.ecore
+SHA1-Digest: wIBTFukXFBWfGGif4leBMsiPIOk=
+
+Name: org/eclipse/net4j/util/defs/ResponseNegotiatorDef.class
+SHA1-Digest: 8ij4cdiRL/dPTWw+C9h9E/wefdk=
+
+Name: org/eclipse/net4j/util/defs/NegotiatorDef.class
+SHA1-Digest: fanGjUlZw97kiKxooPLOLy3bNNQ=
+
+Name: org/eclipse/net4j/util/defs/impl/DefImpl.class
+SHA1-Digest: Cgm5zZ64X1Jlo5Eyiagtn59keIM=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/net4j/util/defs/ChallengeNegotiatorDef.class
+SHA1-Digest: TxqTlvfFe6oavk3PLsBPFiz+Ibk=
+
+Name: org/eclipse/net4j/util/defs/impl/PasswordCredentialsProviderDefI
+ mpl.class
+SHA1-Digest: crZaz2Qj5Jf2Qricj+vRtmtNY5Y=
+
+Name: org/eclipse/net4j/util/defs/Def.class
+SHA1-Digest: iV7U+zHRVX+M0XPvc6hSICeCabE=
+
+Name: about.html
+SHA1-Digest: bytt99eO0zZMcEFHRcRURao7/uo=
+
+Name: org/eclipse/net4j/util/defs/impl/CredentialsProviderDefImpl.clas
+ s
+SHA1-Digest: Pl0QAs4rKOSMciaMsDui9qipdf8=
+
+Name: org/eclipse/net4j/util/defs/impl/DefImpl$1.class
+SHA1-Digest: cbRfgPBaYynLZMZg4NiQKrnKGuE=
+
+Name: org/eclipse/net4j/util/defs/Net4jUtilDefsPackage.class
+SHA1-Digest: hgeDuAfVTP+J7FniZspO9TSdZ6w=
+
+Name: org/eclipse/net4j/util/defs/impl/DefImpl$2.class
+SHA1-Digest: LqpqeY6ScBnDVV+//l46lOKv8hk=
+
+Name: org/eclipse/net4j/util/defs/impl/DefContainerImpl.class
+SHA1-Digest: ZCJrldDzIjiwhJJDe9xwgGgjqH8=
+
+Name: org/eclipse/net4j/util/defs/Net4jUtilDefsFactory.class
+SHA1-Digest: 6ljfttBHeAGHffMEIQvrzj8ldlY=
+
+Name: org/eclipse/net4j/util/defs/impl/ThreadPoolDefImpl$DaemonThreadF
+ actory.class
+SHA1-Digest: Gj8peDmxceSYy8WVybSdFLkFyIY=
+
+Name: org/eclipse/net4j/util/defs/util/Net4jUtilDefsSwitch.class
+SHA1-Digest: gjPgAVu2u7fLQz/rOLd0x0pVaos=
+
+Name: org/eclipse/net4j/util/defs/impl/UserManagerDefImpl.class
+SHA1-Digest: qfRvzQlmh1l4ju7dW5CvUjTmPWY=
+
+Name: org/eclipse/net4j/util/defs/impl/ExecutorServiceDefImpl.class
+SHA1-Digest: BZBpqbfn3fMD3PvcBrP/hc37j10=
+
+Name: org/eclipse/net4j/util/defs/impl/ThreadPoolDefImpl.class
+SHA1-Digest: r63T+tJK/hQ1n41afXEk0LZe140=
+
+Name: org/eclipse/net4j/util/defs/util/Net4jUtilDefsAdapterFactory.cla
+ ss
+SHA1-Digest: 5BExfXtGsHxlzx27rqrcWtFPtrc=
+
+Name: model/org.eclipse.net4j.util.defs.genmodel
+SHA1-Digest: TqdTlZ2PJrZLQKmu2C+xzP+X9Dg=
+

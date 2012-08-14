@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model3"
+    nsURI="http://www.eclipse.org/emf/CDO/tests/model3/1.0.0" nsPrefix="model3">
+  <eClassifiers xsi:type="ecore:EClass" name="Class1">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="class2" upperBound="-1"
+        eType="#//subpackage/Class2" unsettable="true" eOpposite="#//subpackage/Class2/class1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetaRef">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ePackageRef" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EPackage"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eClassRef" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eReferenceRef" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EReference"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Point" instanceClassName="org.eclipse.emf.cdo.tests.model3.Point"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Polygon">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="points" lowerBound="1"
+        upperBound="-1" eType="#//Point"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PolygonWithDuplicates">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="points" unique="false"
+        lowerBound="1" upperBound="-1" eType="#//Point"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeA">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//NodeA" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="otherNodes" upperBound="-1"
+        eType="#//NodeA"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeB">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//NodeB" containment="true" eOpposite="#//NodeB/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//NodeB"
+        eOpposite="#//NodeB/children"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeC">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//NodeC" containment="true" eOpposite="#//NodeC/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//NodeC"
+        eOpposite="#//NodeC/children"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="otherNodes" upperBound="-1"
+        eType="#//NodeC" eOpposite="#//NodeC/oppositeNodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="oppositeNodes" upperBound="-1"
+        eType="#//NodeC" eOpposite="#//NodeC/otherNodes"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeD">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//NodeD" containment="true" eOpposite="#//NodeD/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//NodeD"
+        eOpposite="#//NodeD/children"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="otherNodes" upperBound="-1"
+        eType="#//NodeD" eOpposite="#//NodeD/oppositeNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="oppositeNode" eType="#//NodeD"
+        eOpposite="#//NodeD/otherNodes"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Image">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType ../../org.eclipse.emf.cdo/model/etypes.ecore#//Blob"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="File">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType ../../org.eclipse.emf.cdo/model/etypes.ecore#//Clob"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ClassWithIDAttribute">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
+        iD="true"/>
+  </eClassifiers>
+  <eSubpackages name="subpackage" nsURI="http://www.eclipse.org/emf/CDO/tests/subpackage/1.0.0"
+      nsPrefix="subpackage">
+    <eClassifiers xsi:type="ecore:EClass" name="Class2">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="class1" upperBound="-1"
+          eType="#//Class1" eOpposite="#//Class1/class2"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>
