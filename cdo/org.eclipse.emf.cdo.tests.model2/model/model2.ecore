@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model2"
+    nsURI="http://www.eclipse.org/emf/CDO/tests/model2/1.0.0" nsPrefix="model2">
+  <eClassifiers xsi:type="ecore:EClass" name="SpecialPurchaseOrder" eSuperTypes="../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//PurchaseOrder">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="discountCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="shippingAddress" eType="ecore:EClass ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//Address"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TaskContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tasks" upperBound="-1"
+        eType="#//Task" containment="true" eOpposite="#//Task/taskContainer"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Task">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="taskContainer" eType="#//TaskContainer"
+        eOpposite="#//TaskContainer/tasks"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="done" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Unsettable1">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableBoolean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableByte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByte"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableChar" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableDouble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableFloat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableLong" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableShort" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShort"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableVAT" eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"
+        unsettable="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Unsettable2WithDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableBoolean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableByte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByte"
+        defaultValueLiteral="3" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableChar" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"
+        defaultValueLiteral="'x'" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"
+        defaultValueLiteral="2009-12-21T15:12:59" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableDouble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="3.3" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableFloat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
+        defaultValueLiteral="4.4" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="5" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableLong" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"
+        defaultValueLiteral="6" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableShort" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShort"
+        defaultValueLiteral="7" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="&quot;eike&quot;" unsettable="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsettableVAT" eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"
+        defaultValueLiteral="vat15" unsettable="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PersistentContainment">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrBefore" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" ordered="false"
+        upperBound="-1" eType="#//TransientContainer" containment="true" resolveProxies="false"
+        eOpposite="#//TransientContainer/parent"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrAfter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TransientContainer">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrBefore" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//PersistentContainment"
+        transient="true" eOpposite="#//PersistentContainment/children"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="attrAfter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NotUnsettable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableBoolean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableByte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByte"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableChar" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableDouble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableFloat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableLong" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableShort" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShort"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableVAT" eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NotUnsettableWithDefault">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableBoolean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableByte" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByte"
+        defaultValueLiteral="3"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableChar" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EChar"
+        defaultValueLiteral="'x'"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"
+        defaultValueLiteral="1979-03-15T07:12:59"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableDouble" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="3.3"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableFloat" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"
+        defaultValueLiteral="4.4"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableInt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="5"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableLong" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"
+        defaultValueLiteral="6"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableShort" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShort"
+        defaultValueLiteral="7"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableString" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="&quot;eike&quot;"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="notUnsettableVAT" eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"
+        defaultValueLiteral="vat15"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MapHolder">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="integerToStringMap" upperBound="-1"
+        eType="#//IntegerToStringMap" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stringToStringMap" upperBound="-1"
+        eType="#//StringToStringMap" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stringToVATMap" upperBound="-1"
+        eType="#//StringToVATMap" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stringToAddressContainmentMap"
+        upperBound="-1" eType="#//StringToAddressContainmentMap" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stringToAddressReferenceMap"
+        upperBound="-1" eType="#//StringToAddressReferenceMap" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eObjectToEObjectMap" upperBound="-1"
+        eType="#//EObjectToEObjectMap" containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eObjectToEObjectKeyContainedMap"
+        upperBound="-1" eType="#//EObjectToEObjectKeyContainedMap" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eObjectToEObjectBothContainedMap"
+        upperBound="-1" eType="#//EObjectToEObjectBothContainedMap" containment="true"
+        resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eObjectToEObjectValueContainedMap"
+        upperBound="-1" eType="#//EObjectToEObjectValueContainedMap" containment="true"
+        resolveProxies="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToStringMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerToStringMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToVATMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToAddressContainmentMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//Address"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToAddressReferenceMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//Address"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EObjectToEObjectMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="key" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EObjectToEObjectKeyContainedMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="key" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EObjectToEObjectBothContainedMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="key" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EObjectToEObjectValueContainedMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="key" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EnumListHolder">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="enumList" upperBound="-1"
+        eType="ecore:EEnum ../../org.eclipse.emf.cdo.tests.model1/model/model1.ecore#//VAT"/>
+  </eClassifiers>
+</ecore:EPackage>
