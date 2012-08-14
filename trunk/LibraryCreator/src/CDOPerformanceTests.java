@@ -15,6 +15,7 @@ import org.eclipse.emf.cdo.net4j.CDOSessionConfiguration;
 import org.eclipse.emf.cdo.server.CDOServerUtil;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.IStore;
+import org.eclipse.emf.cdo.server.lissome.LissomeStoreUtil;
 import org.eclipse.emf.cdo.server.mem.MEMStoreUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
 import org.eclipse.emf.cdo.session.CDOSession;
@@ -79,7 +80,7 @@ public class CDOPerformanceTests {
 	
 	
 	public enum StoreType{
-		H2,RAF,MEM
+		H2,LISSOME,MEM
 	}
 	
 	private static EObject model;
@@ -268,6 +269,8 @@ public class CDOPerformanceTests {
 		switch(storeType){
 			case MEM: storeConfig = new MemStoreConfig(REPO_NAME);
 				break;
+			case LISSOME: storeConfig = new LissomeStoreConfig(REPO_NAME);
+			break;
 			
 			default: ;
 		}
@@ -347,7 +350,7 @@ public class CDOPerformanceTests {
 		    OMPlatform.INSTANCE.setDebugging(false);
 		    OMPlatform.INSTANCE.addLogHandler(PrintLogHandler.CONSOLE);
 
-		    configureSingleVMContainer(IPluginContainer.INSTANCE);
+		    configureSingleVMContainer(IPluginContainer.INSTANCE, storeConfig);
 
 		    this.store = createStore(storeConfig);
 		    Map<String, String> properties = createProperties(storeConfig.getRepositoryName());
@@ -358,11 +361,14 @@ public class CDOPerformanceTests {
 		    createAcceptor(conType, host,hostPort);
 		  }
 	  
-	  private static void configureSingleVMContainer(final IManagedContainer container) {
+	  private static void configureSingleVMContainer(final IManagedContainer container, IStoreConfig storeConfig) {
 		    // Prepare the TCP support
 
 		    configureClientContainer(container);
 		    configureServerContainer(ConType.JVM, container);
+		    if(storeConfig instanceof LissomeStoreConfig){
+		    	LissomeStoreUtil.prepareContainer(container);
+		    }
 		  }
 	  
 	  private static void configureClientContainer(final IManagedContainer container) {
@@ -385,6 +391,8 @@ public class CDOPerformanceTests {
 		    IStore store = null; 
 		    if(storeConfig instanceof MemStoreConfig){
 		    	store = MEMStoreUtil.createMEMStore();
+		    }else if(storeConfig instanceof LissomeStoreConfig){
+		    	store = LissomeStoreUtil.createStore(new File("lissomestore")); 
 		    }
 		    return store;
 		  }

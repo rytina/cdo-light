@@ -16,4 +16,5 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.net4j.jvm,
  org.eclipse.emf.cdo.server.net4j,
  org.eclipse.net4j.tcp,
- org.eclipselabs.cdolight
+ org.eclipselabs.cdolight,
+ org.eclipse.emf.cdo.server.lissome
