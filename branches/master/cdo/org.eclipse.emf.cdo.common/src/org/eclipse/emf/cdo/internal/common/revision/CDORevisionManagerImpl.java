@@ -197,7 +197,8 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
       InternalCDORevision revision = (InternalCDORevision)cache.getRevision(id, branch.getHead());
       if (revision != null)
       {
-        cache.removeRevision(id, branch.getVersion(revision.getVersion()));
+        CDOBranchVersion version = branch.getVersion(revision.getVersion());
+        cache.removeRevision(id, version);
       }
     }
     finally
@@ -215,14 +216,12 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
       InternalCDORevision revision = getCachedRevisionByVersion(id, branchVersion);
       if (revision != null)
       {
-        if (timeStamp == CDORevision.UNSPECIFIED_DATE)
+        if (timeStamp == CDORevision.UNSPECIFIED_DATE || !supportingAudits)
         {
           cache.removeRevision(id, branchVersion);
         }
-        else
-        {
-          revision.setRevised(timeStamp - 1);
-        }
+
+        revision.setRevised(timeStamp - 1);
       }
     }
     finally

@@ -4,16 +4,18 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *    Caspar De Groot - initial API and implementation
  */
 package org.eclipse.net4j.util.concurrent;
 
+import org.eclipse.net4j.internal.util.bundle.OM;
 import org.eclipse.net4j.util.CheckUtil;
 import org.eclipse.net4j.util.ObjectUtil;
 import org.eclipse.net4j.util.collection.HashBag;
 import org.eclipse.net4j.util.lifecycle.Lifecycle;
+import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,12 +32,14 @@ import java.util.Set;
  * Keeps track of locks on objects. Locks are owned by contexts. A particular combination of locks and their owners, for
  * a given object, is represented by instances of the {@link LockState} class. This class is also repsonsible for
  * deciding whether or not a new lock can be granted, based on the locks already present.
- * 
+ *
  * @author Caspar De Groot
  * @since 3.2
  */
 public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLockManager<OBJECT, CONTEXT>
 {
+  private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_CONCURRENCY, RWOLockManager.class);
+
   private final List<LockState<OBJECT, CONTEXT>> EMPTY_RESULT = Collections.emptyList();
 
   private final Map<OBJECT, LockState<OBJECT, CONTEXT>> objectToLockStateMap = createObjectToLocksMap();
@@ -63,6 +67,11 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
       return EMPTY_RESULT;
     }
 
+    if (TRACER.isEnabled())
+    {
+      TRACER.format("Lock: {0} --> {1}", objectsToLock, context); //$NON-NLS-1$
+    }
+
     // Must come before the synchronized block!
     long startTime = timeout == WAIT ? 0L : currentTimeMillis();
 
@@ -70,11 +79,11 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
     synchronized (this)
     {
       int count = objectsToLock.size();
-      List<LockState<OBJECT, CONTEXT>> lockStates = new ArrayList<LockState<OBJECT, CONTEXT>>(count);
 
       for (;;)
       {
-        if (canLockInContext(type, context, objectsToLock, lockStates))
+        ArrayList<LockState<OBJECT, CONTEXT>> lockStates = getLockStatesForContext(type, context, objectsToLock);
+        if (lockStates != null)
         {
           for (int i = 0; i < count; i++)
           {
@@ -108,6 +117,11 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
     if (objectsToUnlock.isEmpty())
     {
       return EMPTY_RESULT;
+    }
+
+    if (TRACER.isEnabled())
+    {
+      TRACER.format("Unlock", objectsToUnlock, context); //$NON-NLS-1$
     }
 
     Set<LockState<OBJECT, CONTEXT>> lockStates = new HashSet<LockState<OBJECT, CONTEXT>>();
@@ -156,6 +170,11 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
       return EMPTY_RESULT;
     }
 
+    if (TRACER.isEnabled())
+    {
+      TRACER.format("Unlock", objectsToUnlock, context); //$NON-NLS-1$
+    }
+
     List<LockState<OBJECT, CONTEXT>> lockStates = new LinkedList<LockState<OBJECT, CONTEXT>>();
 
     Iterator<? extends OBJECT> it = objectsToUnlock.iterator();
@@ -201,6 +220,11 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
     if (lockStates == null)
     {
       return EMPTY_RESULT;
+    }
+
+    if (TRACER.isEnabled())
+    {
+      TRACER.format("Unlock", lockStates, context); //$NON-NLS-1$
     }
 
     List<OBJECT> objectsWithoutLocks = new LinkedList<OBJECT>();
@@ -322,11 +346,13 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
     {
       addContextToLockStateMapping(readLockOwner, lockState);
     }
+
     CONTEXT writeLockOwner = lockState.getWriteLockOwner();
     if (writeLockOwner != null)
     {
       addContextToLockStateMapping(writeLockOwner, lockState);
     }
+
     CONTEXT writeOptionOwner = lockState.getWriteOptionOwner();
     if (writeOptionOwner != null)
     {
@@ -346,9 +372,10 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
     return lockState;
   }
 
-  private boolean canLockInContext(LockType type, CONTEXT context, Collection<? extends OBJECT> objectsToLock,
-      List<LockState<OBJECT, CONTEXT>> lockStatesToFill)
+  private ArrayList<LockState<OBJECT, CONTEXT>> getLockStatesForContext(LockType type, CONTEXT context,
+      Collection<? extends OBJECT> objectsToLock)
   {
+    ArrayList<LockState<OBJECT, CONTEXT>> lockStates = new ArrayList<LockState<OBJECT, CONTEXT>>(objectsToLock.size());
     Iterator<? extends OBJECT> it = objectsToLock.iterator();
     for (int i = 0; i < objectsToLock.size(); i++)
     {
@@ -356,13 +383,13 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
       LockState<OBJECT, CONTEXT> lockState = getOrCreateLockState(o);
       if (!lockState.canLock(type, context))
       {
-        return false;
+        return null;
       }
 
-      lockStatesToFill.add(lockState);
+      lockStates.add(lockState);
     }
 
-    return true;
+    return lockStates;
   }
 
   private void addContextToLockStateMapping(CONTEXT context, LockState<OBJECT, CONTEXT> lockState)
@@ -421,9 +448,8 @@ public class RWOLockManager<OBJECT, CONTEXT> extends Lifecycle implements IRWOLo
    * <li>a write lock prevents read locks by others, a write lock by another, and a write option by another, and is
    * therefore <b>exclusive</b></li>
    * <li>a write option prevents write locks by others and a write option by another, but allows read locks by others,
-   * and is therefore <b>exclusive</b></li>
-   * <p>
-   * 
+   * and is therefore <b>exclusive</b></li>.
+   *
    * @author Caspar De Groot
    * @since 3.2
    */

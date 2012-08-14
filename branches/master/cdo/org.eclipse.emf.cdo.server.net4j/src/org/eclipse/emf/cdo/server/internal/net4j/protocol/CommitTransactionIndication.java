@@ -13,6 +13,8 @@
  */
 package org.eclipse.emf.cdo.server.internal.net4j.protocol;
 
+import org.eclipse.emf.cdo.common.branch.CDOBranch;
+import org.eclipse.emf.cdo.common.branch.CDOBranchVersion;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDReference;
 import org.eclipse.emf.cdo.common.lock.CDOLockState;
@@ -34,7 +36,6 @@ import org.eclipse.emf.cdo.spi.server.InternalView;
 import org.eclipse.net4j.util.WrappedException;
 import org.eclipse.net4j.util.concurrent.RWOLockManager.LockState;
 import org.eclipse.net4j.util.om.monitor.OMMonitor;
-import org.eclipse.net4j.util.om.monitor.ProgressDistributor;
 import org.eclipse.net4j.util.om.trace.ContextTracer;
 
 import org.eclipse.emf.ecore.EClass;
@@ -193,12 +194,22 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
         monitor.worked();
       }
 
+      boolean auditing = getRepository().isSupportingAudits();
+      boolean ensuringReferentialIntegrity = getRepository().isEnsuringReferentialIntegrity();
+
       Map<CDOID, EClass> detachedObjectTypes = null;
-      if (getRepository().isEnsuringReferentialIntegrity())
+      if (auditing || ensuringReferentialIntegrity)
       {
         detachedObjectTypes = new HashMap<CDOID, EClass>();
       }
 
+      CDOBranchVersion[] detachedObjectVersions = null;
+      if (auditing && detachedObjects.length != 0)
+      {
+        detachedObjectVersions = new CDOBranchVersion[detachedObjects.length];
+      }
+
+      CDOBranch transactionBranch = commitContext.getBranchPoint().getBranch();
       for (int i = 0; i < detachedObjects.length; i++)
       {
         CDOID id = in.readCDOID();
@@ -208,6 +219,23 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
         {
           EClass eClass = (EClass)in.readCDOClassifierRefAndResolve();
           detachedObjectTypes.put(id, eClass);
+        }
+
+        if (detachedObjectVersions != null)
+        {
+          CDOBranch branch;
+          int version = in.readInt();
+          if (version < 0)
+          {
+            version = -version;
+            branch = in.readCDOBranch();
+          }
+          else
+          {
+            branch = transactionBranch;
+          }
+
+          detachedObjectVersions[i] = branch.getVersion(version);
         }
 
         monitor.worked();
@@ -224,6 +252,7 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
       commitContext.setDirtyObjectDeltas(dirtyObjectDeltas);
       commitContext.setDetachedObjects(detachedObjects);
       commitContext.setDetachedObjectTypes(detachedObjectTypes);
+      commitContext.setDetachedObjectVersions(detachedObjectVersions);
       commitContext.setCommitComment(commitComment);
       commitContext.setLobs(getIndicationStream());
     }
@@ -240,7 +269,7 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
       @Override
       protected void demandLoad(Resource resource) throws IOException
       {
-        // Do nothing: we don't want this ResourceSet to attempt demandloads.
+        // Do nothing: we don't want this ResourceSet to attempt demand-loads.
       }
     };
 
@@ -258,8 +287,7 @@ public class CommitTransactionIndication extends CDOServerIndicationWithMonitori
 
   protected void indicatingCommit(OMMonitor monitor)
   {
-    ProgressDistributor distributor = getStore().getIndicatingCommitDistributor();
-    distributor.run(InternalCommitContext.OPS, commitContext, monitor);
+    getRepository().commit(commitContext, monitor);
   }
 
   @Override

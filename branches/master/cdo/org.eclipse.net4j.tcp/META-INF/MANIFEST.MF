@@ -1,194 +1,24 @@
 Manifest-Version: 1.0
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-SymbolicName: org.eclipse.net4j.tcp;singleton:=true
-Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/cdo/cd
- o.git
-Bundle-Activator: org.eclipse.net4j.internal.tcp.bundle.OM$Activator
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
- ";resolution:=optional,org.eclipse.net4j;bundle-version="[4.0.0,5.0.0
- )";visibility:=reexport
-Bundle-Version: 4.1.0.v20120609-0625
-Export-Package: org.eclipse.net4j.internal.tcp;version="4.1.0"; x-frie
- nds:="org.eclipse.net4j.tests,  org.eclipse.net4j.defs,  org.eclipse.
- emf.cdo.examples,  org.eclipse.net4j.ui",org.eclipse.net4j.internal.t
- cp.bundle;version="4.1.0";x-internal:=true,org.eclipse.net4j.internal
- .tcp.messages;version="4.1.0";x-internal:=true,org.eclipse.net4j.inte
- rnal.tcp.ssl;version="4.1.0";x-friends:="org.eclipse.net4j.tests,org.
- eclipse.net4j.defs,org.eclipse.emf.cdo.examples",org.eclipse.net4j.tc
- p;version="4.1.0",org.eclipse.net4j.tcp.ssl;version="4.1.0"
-Ant-Version: Apache Ant 1.8.3
-Bundle-ClassPath: .
-Bundle-ActivationPolicy: lazy
-Bundle-Vendor: %providerName
-Bundle-Name: %pluginName
-Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
-Import-Package: org.osgi.framework;version="[1.3.0,2.0.0)";resolution:
- =optional
 Bundle-ManifestVersion: 2
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLAcceptor.class
-SHA1-Digest: LvngsjrN+gE3uXlhdrPTYZtVRZc=
-
-Name: org/eclipse/net4j/tcp/TCPUtil.class
-SHA1-Digest: wI5WG+GrcOoYRXwf8REPa9WGA/Q=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLAcceptorFactory.class
-SHA1-Digest: 34TXtgkdClt+nWPFGC2CO1iMObU=
-
-Name: org/eclipse/net4j/tcp/package-info.class
-SHA1-Digest: +kmWamP5OmL6cTlYYsvL8z1T57A=
-
-Name: org/eclipse/net4j/internal/tcp/TCPClientConnector.class
-SHA1-Digest: +6oo0NvUrUE40dnCjyq+rNSRaqU=
-
-Name: org/eclipse/net4j/tcp/ITCPSelector.class
-SHA1-Digest: /wO38cWlsfdhl2l3k4Y4PIYpCa8=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLConnectorFactory.class
-SHA1-Digest: MV8FBOCDQw8jT0RcpXJNDkX6ZXU=
-
-Name: org/eclipse/net4j/internal/tcp/ControlChannel.class
-SHA1-Digest: MsW81FtOqYx7ExUaObtiq2XhC0E=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLBuffer.class
-SHA1-Digest: BlMp75Ipl+Knw54qdyamGJzT0rc=
-
-Name: org/eclipse/net4j/tcp/TCPUtil$ConnectorData.class
-SHA1-Digest: IR+y3zipFNop1M8uQkZgkKX5PWg=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLEngineManager$WriteLock.cl
- ass
-SHA1-Digest: tcILZAwyQRsw98UD8DWppadvQwk=
-
-Name: META-INF/eclipse.inf
-SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
-
-Name: org/eclipse/net4j/internal/tcp/TCPServerConnector.class
-SHA1-Digest: qzO/bcj54azjdcA96tXPWaHpHgM=
-
-Name: org/eclipse/net4j/internal/tcp/bundle/OM.class
-SHA1-Digest: 0pzYqRFpf438EnuSE5uYpWTjcqA=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector$2.class
-SHA1-Digest: 4RC0mtqmlz14bDSKcEt746YBlN8=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector$4.class
-SHA1-Digest: 4yeuPIICyoi4HM3j1Zkgqs+fuuA=
-
-Name: org/eclipse/net4j/tcp/ITCPAcceptor.class
-SHA1-Digest: Ir0/KAiTMBcwhmyH870xoO/FNkw=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelectorInjector.class
-SHA1-Digest: +vJAS+FS5gWxTfEE9TuywioFbR8=
-
-Name: .options
-SHA1-Digest: oxeDbTqZnj2g5d0a9IGbMKxfqzQ=
-
-Name: org/eclipse/net4j/internal/tcp/bundle/OM$Activator.class
-SHA1-Digest: B1gCJXS09qeCROZUnR/tqyzeea8=
-
-Name: org/eclipse/net4j/tcp/ssl/SSLUtil.class
-SHA1-Digest: 6rTwGPqI+Vfpiku5m4Pf7yCgDFY=
-
-Name: org/eclipse/net4j/internal/tcp/TCPAcceptorFactory.class
-SHA1-Digest: PhS7qAt4f16VoI51cf19ef2Cg7w=
-
-Name: org/eclipse/net4j/internal/tcp/SelectorUtil.class
-SHA1-Digest: jMCTahxp3f02196ckyEVlPJUO5Y=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLConnector.class
-SHA1-Digest: iAwEnIVL8jLgV10Bj+7F3iCmCgo=
-
-Name: org/eclipse/net4j/tcp/ITCPConnector.class
-SHA1-Digest: FpY3a2IpobWQ7BzxkR7Md5uqGBM=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelectorFactory.class
-SHA1-Digest: 1kNHPQULGyZ0AzSi+ch4Pr0HkKc=
-
-Name: copyright.txt
-SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLConnector$1.class
-SHA1-Digest: CTs8vsqJhAfvaeJtqzLNmEUemIc=
-
-Name: org/eclipse/net4j/tcp/ITCPNegotiationContext.class
-SHA1-Digest: amQF3CxQgKhsnr/toSTezLAnREI=
-
-Name: plugin.properties
-SHA1-Digest: WwbsydjZpNqkYJKk+h11E2a02FI=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLProperties.class
-SHA1-Digest: 7soJJ21gsE5TNZEzawRm/MJXdsc=
-
-Name: org/eclipse/net4j/tcp/ITCPActiveSelectorListener.class
-SHA1-Digest: WOXKzez0qUIanoQf0423Xbdri08=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector.class
-SHA1-Digest: NQLqrMJ5H7wFCdfsa0TfnACLPu8=
-
-Name: plugin.xml
-SHA1-Digest: wdskuPpyjVNYGMRRmVaMEl0MhyE=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLBufferFactory.class
-SHA1-Digest: kXIrL2r5vOoyJc9sO8JweMxoZ6s=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLEngineManager$ReadLock.cla
- ss
-SHA1-Digest: zLD9NPsFlvBskWSbakoz0W6T55E=
-
-Name: org/eclipse/net4j/internal/tcp/messages/messages.properties
-SHA1-Digest: Haz/U0P871OJIqOTYVf9soDqbG4=
-
-Name: org/eclipse/net4j/internal/tcp/TCPAcceptor.class
-SHA1-Digest: MLE41KR8JtkYTT18kEVEny10R3w=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector$1.class
-SHA1-Digest: gtgZukDeGCIoi3tjlMF0ZE7mNbI=
-
-Name: org/eclipse/net4j/internal/tcp/TCPConnector.class
-SHA1-Digest: 7mOfjIPco/UHUcY0vpvtMoOhJY8=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector$3.class
-SHA1-Digest: gtb0jtWqsFgelak+l+Zs7OwjhCw=
-
-Name: org/eclipse/net4j/internal/tcp/messages/Messages.class
-SHA1-Digest: HH/vR8lqf8Ue75+aGoCr2MqJokQ=
-
-Name: org/eclipse/net4j/internal/tcp/TCPSelector$5.class
-SHA1-Digest: IIYHmoQL+oS0YSVgMYq2SlLA0dc=
-
-Name: about.html
-SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
-
-Name: org/eclipse/net4j/tcp/ITCPPassiveSelectorListener.class
-SHA1-Digest: al1KNn8jJvtL/PzvR2ijUC7TZxs=
-
-Name: org/eclipse/net4j/internal/tcp/TCPConnector$TCPNegotiationContex
- t.class
-SHA1-Digest: mdzj4wjzCTBUWjmSSmLDerJy9PM=
-
-Name: org/eclipse/net4j/internal/tcp/TCPAcceptor$1.class
-SHA1-Digest: R8eChd5c1dk/7nJOeZdfe/outfo=
-
-Name: org/eclipse/net4j/internal/tcp/TCPConnector$1.class
-SHA1-Digest: nRpvk0EpQI7318QvA34Lvd+94L4=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLClientConnector.class
-SHA1-Digest: ODxPw6KTXVa/vyIJuk2Yf3mtjrI=
-
-Name: org/eclipse/net4j/internal/tcp/TCPConnectorFactory.class
-SHA1-Digest: cko1Sb4oL11+3ZE2c7ds2eopTtE=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLServerConnector.class
-SHA1-Digest: lorLdaP8jQ7IQh5Nh7fYwnwJpjs=
-
-Name: org/eclipse/net4j/tcp/TCPUtil$AcceptorData.class
-SHA1-Digest: G+4FMDxm77GLBQf9MnwMIvqvvLs=
-
-Name: org/eclipse/net4j/internal/tcp/ssl/SSLEngineManager.class
-SHA1-Digest: iHScmjqrGpifzrNMPfe5DjcGX90=
-
-Name: org/eclipse/net4j/tcp/ssl/package-info.class
-SHA1-Digest: 9OugYPaPhxuPFUfia+6av3RIQ9U=
-
+Bundle-SymbolicName: org.eclipse.net4j.tcp;singleton:=true
+Bundle-Version: 4.1.0.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.eclipse.net4j.internal.tcp.bundle.OM$Activator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ClassPath: .
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)";resolution:=optional,
+ org.eclipse.net4j;bundle-version="[4.0.0,5.0.0)";visibility:=reexport
+Import-Package: org.osgi.framework;version="[1.3.0,2.0.0)";resolution:=optional
+Export-Package: org.eclipse.net4j.internal.tcp;version="4.1.0";
+  x-friends:="org.eclipse.net4j.tests,
+   org.eclipse.net4j.defs,
+   org.eclipse.emf.cdo.examples,
+   org.eclipse.net4j.ui",
+ org.eclipse.net4j.internal.tcp.bundle;version="4.1.0";x-internal:=true,
+ org.eclipse.net4j.internal.tcp.messages;version="4.1.0";x-internal:=true,
+ org.eclipse.net4j.internal.tcp.ssl;version="4.1.0";x-friends:="org.eclipse.net4j.tests,org.eclipse.net4j.defs,org.eclipse.emf.cdo.examples",
+ org.eclipse.net4j.tcp;version="4.1.0",
+ org.eclipse.net4j.tcp.ssl;version="4.1.0"
