@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
@@ -15,6 +18,8 @@ import org.eclipse.emf.cdo.net4j.CDOSessionConfiguration;
 import org.eclipse.emf.cdo.server.CDOServerUtil;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.IStore;
+import org.eclipse.emf.cdo.server.db.CDODBUtil;
+import org.eclipse.emf.cdo.server.internal.db.mapping.horizontal.HorizontalNonAuditMappingStrategy;
 import org.eclipse.emf.cdo.server.lissome.LissomeStoreUtil;
 import org.eclipse.emf.cdo.server.mem.MEMStoreUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
@@ -40,13 +45,20 @@ import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.net4j.Net4jUtil;
 import org.eclipse.net4j.acceptor.IAcceptor;
 import org.eclipse.net4j.connector.IConnector;
+import org.eclipse.net4j.db.DBUtil;
+import org.eclipse.net4j.db.IDBConnectionProvider;
+import org.eclipse.net4j.db.h2.H2Adapter;
+import org.eclipse.net4j.internal.util.container.PluginContainer;
 import org.eclipse.net4j.jvm.JVMUtil;
 import org.eclipse.net4j.tcp.TCPUtil;
 import org.eclipse.net4j.util.container.IManagedContainer;
 import org.eclipse.net4j.util.container.IPluginContainer;
+import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.eclipse.net4j.util.om.OMPlatform;
 import org.eclipse.net4j.util.om.log.PrintLogHandler;
 import org.eclipselabs.cdolight.utils.CDOTracingUtils;
+import org.h2.jdbcx.JdbcConnectionPool;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -74,9 +86,15 @@ public class CDOPerformanceTests {
 //  public static final long MAX_BYTES_IN_SESSION = 1242880;	// 1 MB
 
 	private static int size   = 400000;
-	private StoreType storeType = StoreType.MEM;
+	private StoreType storeType = StoreType.H2;
 
 	private IStore store;
+
+	private IRepository repository;
+
+	private String DBDIR;
+
+	private static IPluginContainer container;
 	
 	
 	public enum StoreType{
@@ -88,176 +106,238 @@ public class CDOPerformanceTests {
 	  private static final int COMMIT_TIMEOUT = (int) (SESSION_TIMEOUT / 1000L);
 	private static CDOSession session;
 
+	private static JdbcConnectionPool datasource;
+
 	@Before
 	public void setUp() throws Exception {
-		EPackage.Registry.INSTANCE.put(EXTLibraryPackage.eNS_URI, EXTLibraryPackage.eINSTANCE);
-		System.out.println("CDOPerformanceTests.setUp()");
+		try{
+			System.out.println("CDOPerformanceTests.setUp()");
+			 container = IPluginContainer.INSTANCE;
+			EPackage.Registry.INSTANCE.put(EXTLibraryPackage.eNS_URI, EXTLibraryPackage.eINSTANCE);
+			DBDIR = "database"+System.currentTimeMillis();
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	private void removeContent(File dir) {
+		for (File file : dir.listFiles()) {
+			if(file.isDirectory()){
+				removeContent(file);
+			}
+			file.deleteOnExit();
+		}
 	}
 
 	@Test
 	public void testStartCDOServer() throws IOException {
+		long begin = System.currentTimeMillis();
 		startCDOServer();
+		System.out.println("CDOPerformanceTests.testStartCDOServer() - took: " + (System.currentTimeMillis() -begin));
 		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("1_StartCDOServer.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
 	public void testStartCDOSession() throws IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		openCDOSession(storeConfig);
+		System.out.println("CDOPerformanceTests.testStartCDOSession() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("2_StartCDOSession.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
 	public void testOpenCDOTransaction() throws IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		sess.openTransaction();
+		System.out.println("CDOPerformanceTests.testOpenCDOTransaction() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("3_OpenCDOTransaction.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
-	public void testCreateCDOResource() throws IOException {	
+	public void testCreateCDOResource() throws IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
 		createCDOResource(tx);
+		System.out.println("CDOPerformanceTests.testCreateCDOResource() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("4_CreateCDOResource.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
-	public void testAddModelToCDOResource() throws IOException {	
+	public void testAddModelToCDOResource() throws IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
 		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
+		addModelToCDOResource(res);
+		System.out.println("CDOPerformanceTests.testAddModelToCDOResource() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("5_AddModelToCDOResource.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
-	public void testCDOTransactionCommit() throws CommitException, IOException {	
+	public void testCDOTransactionCommit() throws CommitException, IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
 		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
+		addModelToCDOResource(res);
 		tx.commit();
+		System.out.println("CDOPerformanceTests.testCDOTransactionCommit() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("6_CDOTransactionCommit.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
-	public void testCDOTransactionClose() throws CommitException, IOException {	
+	public void testCDOTransactionClose() throws CommitException, IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
 		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
+		addModelToCDOResource(res);
 		tx.commit();
 		tx.close();
+		System.out.println("CDOPerformanceTests.testCDOTransactionClose() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("7_CDOTransactionClose.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
-	public void testCDOSessionClose() throws CommitException, IOException {	
+	public void testCDOSessionClose() throws CommitException, IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
 		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(EXTLibraryFactory.eINSTANCE.createLibrary(), res);
+		addModelToCDOResource(res);
 		tx.commit();
 		tx.close();
 		sess.close();
+		System.out.println("CDOPerformanceTests.testCDOSessionClose() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("8_CDOSessionClose.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 	
 	@Test
 	public void testOpenCDOView() throws IOException {
+		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		sess.openView();
+		System.out.println("CDOPerformanceTests.testOpenCDOView() - took: " + (System.currentTimeMillis() -begin));
+		
 		String trace = CDOTracingUtils.dumpHtmlTrace();
 		BufferedWriter writer = new BufferedWriter(new FileWriter("9_OpenCDOView.html"));
 		writer.append(trace);
 		writer.close();
+		stopCDOServer();
 	}
 
 
-	@Test @Ignore
-	public void testCreateModel() {
+//	@Test @Ignore
+//	public void testCreateModel() {
+//		ResourceSet rSet = new ResourceSetImpl();
+//		rSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
+//		Resource resource = rSet.createResource(URI.createURI("testdump.xmi"));
+//		System.out.println("CDOPerformanceTests.testCreateModel()");
+//		long begin = System.currentTimeMillis();
+//		Library lib = EXTLibraryFactory.eINSTANCE.createLibrary();
+//		resource.getContents().add(lib);
+//		lib.setName("TestLib");
+//		int lastPerc = 0;
+//		for(int i=0;i<=size    ;i++){
+//			int perc = (int) ((i/(double)size)*100);
+//			if(perc>lastPerc){
+//				lastPerc= perc;
+//				System.out.println(perc +"%");
+//			}
+//			Library l  = EXTLibraryFactory.eINSTANCE.createLibrary();
+//			lib.getBranches().add(l);
+//		}
+//		System.out.println("CDOPerformanceTests.testCreateModel() - took: " + (System.currentTimeMillis()-begin));
+//		try {
+//			System.out.println("CDOPerformanceTests.testCreateModel() - dump");
+//			resource.save(null);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		model = lib;
+//		if(model instanceof CDOObject){
+//			commit(model);
+//		}
+//	}
+	
+	private Library  loadTestModel(){
 		ResourceSet rSet = new ResourceSetImpl();
 		rSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
-		Resource resource = rSet.createResource(URI.createURI("testdump.xmi"));
-		System.out.println("CDOPerformanceTests.testCreateModel()");
-		long begin = System.currentTimeMillis();
-		Library lib = EXTLibraryFactory.eINSTANCE.createLibrary();
-		resource.getContents().add(lib);
-		lib.setName("TestLib");
-		int lastPerc = 0;
-		for(int i=0;i<=size    ;i++){
-			int perc = (int) ((i/(double)size)*100);
-			if(perc>lastPerc){
-				lastPerc= perc;
-				System.out.println(perc +"%");
-			}
-			Library l  = EXTLibraryFactory.eINSTANCE.createLibrary();
-			lib.getBranches().add(l);
-		}
-		System.out.println("CDOPerformanceTests.testCreateModel() - took: " + (System.currentTimeMillis()-begin));
-		try {
-			System.out.println("CDOPerformanceTests.testCreateModel() - dump");
-			resource.save(null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		model = lib;
-		if(model instanceof CDOObject){
-			commit(model);
-		}
+		Resource resource = rSet.getResource(URI.createURI("testdump.xmi"), true);
+		return (Library)resource.getContents().get(0);
 	}
 
-	private void commit(EObject model2) {
-		try{
-			IStoreConfig storeConfig = startCDOServer();		    
-		    session = openCDOSession(storeConfig);
-		    CDOTransaction tx = session.openTransaction();
-		    CDOResource res = createCDOResource(tx);
-		    System.out.println("CDOPerformanceTests.commit() - add contents to CDOResource");
-		    addModelToCDOResource(model2, res);
-		    tx.commit();
-		    tx.close();
-		    System.out.println("CDOPerformanceTests.commit() - finished");
-		}catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
+//	private void commit(EObject model2) {
+//		try{
+//			IStoreConfig storeConfig = startCDOServer();		    
+//		    session = openCDOSession(storeConfig);
+//		    CDOTransaction tx = session.openTransaction();
+//		    CDOResource res = createCDOResource(tx);
+//		    System.out.println("CDOPerformanceTests.commit() - add contents to CDOResource");
+//		    addModelToCDOResource(model2, res);
+//		    tx.commit();
+//		    tx.close();
+//		    System.out.println("CDOPerformanceTests.commit() - finished");
+//		}catch (Throwable e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	private void addModelToCDOResource(EObject model2, CDOResource res) {
-		res.getContents().add(model2);
+	private void addModelToCDOResource(CDOResource res) {
+		Library testmodel = loadTestModel();
+		res.getContents().add(testmodel);
 	}
 
 	private CDOResource createCDOResource(CDOTransaction tx) {
@@ -270,12 +350,31 @@ public class CDOPerformanceTests {
 			case MEM: storeConfig = new MemStoreConfig(REPO_NAME);
 				break;
 			case LISSOME: storeConfig = new LissomeStoreConfig(REPO_NAME);
-			break;
-			
+				break;
+			case H2: storeConfig = new H2StoreConfig(REPO_NAME);
+				break;
 			default: ;
 		}
 		startCDOServer(storeConfig, ConType.JVM, "127.0.0.1","2036");
 		return storeConfig;
+	}
+	
+	
+	private void stopCDOServer() {
+		try{
+		if(datasource!=null){
+			if(datasource.getActiveConnections()>0){
+				datasource.getConnection().close();
+				datasource.dispose();
+			}
+		}
+		}catch(Throwable e){
+			e.printStackTrace();
+		}
+		LifecycleUtil.deactivate(this.store);
+		LifecycleUtil.deactivate(this.repository);
+		container.deactivate();
+		removeContent(new File(DBDIR));
 	}
 	
 	
@@ -336,10 +435,10 @@ public class CDOPerformanceTests {
 
 	  private static IConnector createConnector(ConType conType, String host) {
 	    if (conType == ConType.TCP) {
-	      return Net4jUtil.getConnector(IPluginContainer.INSTANCE, conType.toString(), host);
+	      return Net4jUtil.getConnector(container, conType.toString(), host);
 	    }
 	    else if (conType == ConType.JVM) {
-	      return JVMUtil.getConnector(IPluginContainer.INSTANCE, "default");
+	      return JVMUtil.getConnector(container, "default");
 	    }
 	    return null;
 	  }
@@ -350,13 +449,13 @@ public class CDOPerformanceTests {
 		    OMPlatform.INSTANCE.setDebugging(false);
 		    OMPlatform.INSTANCE.addLogHandler(PrintLogHandler.CONSOLE);
 
-		    configureSingleVMContainer(IPluginContainer.INSTANCE, storeConfig);
+		    configureSingleVMContainer(container, storeConfig);
 
 		    this.store = createStore(storeConfig);
 		    Map<String, String> properties = createProperties(storeConfig.getRepositoryName());
 
-		    IRepository repository = CDOServerUtil.createRepository(storeConfig.getRepositoryName(), this.store, properties);
-		    CDOServerUtil.addRepository(IPluginContainer.INSTANCE, repository);
+		    repository = CDOServerUtil.createRepository(storeConfig.getRepositoryName(), this.store, properties);
+		    CDOServerUtil.addRepository(container, repository);
 
 		    createAcceptor(conType, host,hostPort);
 		  }
@@ -387,22 +486,27 @@ public class CDOPerformanceTests {
 		    
 	 }
 	  
-	  private static IStore createStore(IStoreConfig storeConfig) {
+	  private IStore createStore(IStoreConfig storeConfig) {
 		    IStore store = null; 
 		    if(storeConfig instanceof MemStoreConfig){
 		    	store = MEMStoreUtil.createMEMStore();
 		    }else if(storeConfig instanceof LissomeStoreConfig){
 		    	store = LissomeStoreUtil.createStore(new File("lissomestore")); 
-		    }
+	  		}else if(storeConfig instanceof H2StoreConfig){
+	  			H2Adapter adapter = new H2Adapter();
+	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
+	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
+	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
+	  		}
 		    return store;
 		  }
 	  
 	  private static IAcceptor createAcceptor(ConType conType, String host, String hostPort) {
 		    if (conType == ConType.TCP) {
-		      return Net4jUtil.getAcceptor(IPluginContainer.INSTANCE, conType.toString(), host + ":" + hostPort);
+		      return Net4jUtil.getAcceptor(container, conType.toString(), host + ":" + hostPort);
 		    }
 		    else if (conType == ConType.JVM) {
-		      return JVMUtil.getAcceptor(IPluginContainer.INSTANCE, "default");
+		      return JVMUtil.getAcceptor(container, "default");
 		    }
 		    return null;
 
