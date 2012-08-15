@@ -86,7 +86,7 @@ public class CDOPerformanceTests {
 //  public static final long MAX_BYTES_IN_SESSION = 1242880;	// 1 MB
 
 	private static int size   = 400000;
-	private StoreType storeType = StoreType.H2;
+	private static final StoreType storeType = StoreType.LISSOME;
 
 	private IStore store;
 
@@ -373,8 +373,9 @@ public class CDOPerformanceTests {
 		}
 		LifecycleUtil.deactivate(this.store);
 		LifecycleUtil.deactivate(this.repository);
-		container.deactivate();
-		removeContent(new File(DBDIR));
+		if(storeType == StoreType.H2){
+			removeContent(new File(DBDIR));
+		}
 	}
 	
 	
@@ -491,7 +492,7 @@ public class CDOPerformanceTests {
 		    if(storeConfig instanceof MemStoreConfig){
 		    	store = MEMStoreUtil.createMEMStore();
 		    }else if(storeConfig instanceof LissomeStoreConfig){
-		    	store = LissomeStoreUtil.createStore(new File("lissomestore")); 
+		    	store = LissomeStoreUtil.createStore(new File(DBDIR)); 
 	  		}else if(storeConfig instanceof H2StoreConfig){
 	  			H2Adapter adapter = new H2Adapter();
 	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
@@ -515,8 +516,8 @@ public class CDOPerformanceTests {
 	  private static Map<String, String> createProperties(final String REPO) {
 		    Map<String, String> props = new HashMap<String, String>();
 		    props.put(IRepository.Props.OVERRIDE_UUID, REPO);
-		    props.put(IRepository.Props.SUPPORTING_AUDITS, Boolean.toString(false));
-		    props.put(IRepository.Props.SUPPORTING_BRANCHES, Boolean.toString(false));
+		    props.put(IRepository.Props.SUPPORTING_AUDITS, storeType == StoreType.LISSOME ?Boolean.toString(true) :Boolean.toString(false));
+		    props.put(IRepository.Props.SUPPORTING_BRANCHES, storeType == StoreType.LISSOME ?Boolean.toString(true) :Boolean.toString(false));
 		    return props;
 		  }
 	  
