@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResource;
@@ -20,11 +21,13 @@ import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.IStore;
 import org.eclipse.emf.cdo.server.db.CDODBUtil;
 import org.eclipse.emf.cdo.server.internal.db.mapping.horizontal.HorizontalNonAuditMappingStrategy;
-import org.eclipse.emf.cdo.server.internal.lissome.LissomeStore;
-import org.eclipse.emf.cdo.server.internal.lissome.db.Index;
-import org.eclipse.emf.cdo.server.internal.lissome.file.Journal;
-import org.eclipse.emf.cdo.server.internal.lissome.file.Vob;
-import org.eclipse.emf.cdo.server.lissome.LissomeStoreUtil;
+
+//import org.eclipse.emf.cdo.server.internal.lissome.LissomeStore;
+//import org.eclipse.emf.cdo.server.internal.lissome.db.Index;
+//import org.eclipse.emf.cdo.server.internal.lissome.file.Journal;
+//import org.eclipse.emf.cdo.server.internal.lissome.file.Vob;
+//import org.eclipse.emf.cdo.server.lissome.LissomeStoreUtil;
+
 import org.eclipse.emf.cdo.server.mem.MEMStoreUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
 import org.eclipse.emf.cdo.session.CDOSession;
@@ -471,7 +474,7 @@ public class CDOPerformanceTests {
 		    configureClientContainer(container);
 		    configureServerContainer(ConType.JVM, container);
 		    if(storeConfig instanceof LissomeStoreConfig){
-		    	LissomeStoreUtil.prepareContainer(container);
+//		    	LissomeStoreUtil.prepareContainer(container);
 		    }
 		  }
 	  
@@ -496,11 +499,17 @@ public class CDOPerformanceTests {
 		    if(storeConfig instanceof MemStoreConfig){
 		    	store = MEMStoreUtil.createMEMStore();
 		    }else if(storeConfig instanceof LissomeStoreConfig){
-		    	File reusableFolder = new File(DBDIR);
-		    	DataSource dataSource = Index.createDataSource(reusableFolder, storeConfig.getRepositoryName(), null);
-		        DBUtil.createSchema(dataSource, storeConfig.getRepositoryName(), false);
-		        store = new LissomeStore();
-		        ((LissomeStore)store).setFolder(reusableFolder);
+		    	try{
+			    	File reusableFolder = new File(DBDIR);
+			    	Class<?> indexClass = getClass().getClassLoader().loadClass("org.eclipse.emf.cdo.server.internal.lissome.db.Index");
+			    	System.out.println("CDOPerformanceTests.createStore()");
+	//		    	DataSource dataSource = Index.createDataSource(reusableFolder, storeConfig.getRepositoryName(), null);
+	//		        DBUtil.createSchema(dataSource, storeConfig.getRepositoryName(), false);
+	//		        store = new LissomeStore();
+	//		        ((LissomeStore)store).setFolder(reusableFolder);
+		    	}catch (Exception e) {
+					e.printStackTrace();
+				}
 	  		}else if(storeConfig instanceof H2StoreConfig){
 	  			H2Adapter adapter = new H2Adapter();
 	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
