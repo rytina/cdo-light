@@ -19,8 +19,8 @@ import org.eclipse.emf.cdo.net4j.CDOSessionConfiguration;
 import org.eclipse.emf.cdo.server.CDOServerUtil;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.IStore;
-import org.eclipse.emf.cdo.server.db.CDODBUtil;
-import org.eclipse.emf.cdo.server.internal.db.mapping.horizontal.HorizontalNonAuditMappingStrategy;
+//import org.eclipse.emf.cdo.server.db.CDODBUtil;
+//import org.eclipse.emf.cdo.server.internal.db.mapping.horizontal.HorizontalNonAuditMappingStrategy;
 
 //import org.eclipse.emf.cdo.server.internal.lissome.LissomeStore;
 //import org.eclipse.emf.cdo.server.internal.lissome.db.Index;
@@ -52,9 +52,7 @@ import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.net4j.Net4jUtil;
 import org.eclipse.net4j.acceptor.IAcceptor;
 import org.eclipse.net4j.connector.IConnector;
-import org.eclipse.net4j.db.DBUtil;
-import org.eclipse.net4j.db.IDBConnectionProvider;
-import org.eclipse.net4j.db.h2.H2Adapter;
+
 import org.eclipse.net4j.internal.util.container.PluginContainer;
 import org.eclipse.net4j.jvm.JVMUtil;
 import org.eclipse.net4j.tcp.TCPUtil;
@@ -64,7 +62,7 @@ import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.eclipse.net4j.util.om.OMPlatform;
 import org.eclipse.net4j.util.om.log.PrintLogHandler;
 import org.eclipselabs.cdolight.utils.CDOTracingUtils;
-import org.h2.jdbcx.JdbcConnectionPool;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -93,7 +91,7 @@ public class CDOPerformanceTests {
 //  public static final long MAX_BYTES_IN_SESSION = 1242880;	// 1 MB
 
 	private static int size   = 400000;
-	private static final StoreType storeType = StoreType.LISSOME;
+	private static final StoreType storeType = StoreType.MEM;
 
 	private IStore store;
 
@@ -113,7 +111,7 @@ public class CDOPerformanceTests {
 	  private static final int COMMIT_TIMEOUT = (int) (SESSION_TIMEOUT / 1000L);
 	private static CDOSession session;
 
-	private static JdbcConnectionPool datasource;
+	private static DataSource datasource;
 
 	@Before
 	public void setUp() throws Exception {
@@ -369,12 +367,12 @@ public class CDOPerformanceTests {
 	
 	private void stopCDOServer() {
 		try{
-		if(datasource!=null){
-			if(datasource.getActiveConnections()>0){
-				datasource.getConnection().close();
-				datasource.dispose();
-			}
-		}
+//		if(datasource!=null){
+//			if(datasource.getActiveConnections()>0){
+//				datasource.getConnection().close();
+//				datasource.dispose();
+//			}
+//		}
 		}catch(Throwable e){
 			e.printStackTrace();
 		}
@@ -511,10 +509,10 @@ public class CDOPerformanceTests {
 					e.printStackTrace();
 				}
 	  		}else if(storeConfig instanceof H2StoreConfig){
-	  			H2Adapter adapter = new H2Adapter();
-	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
-	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
-	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
+//	  			H2Adapter adapter = new H2Adapter();
+//	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
+//	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
+//	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
 	  		}
 		    return store;
 		  }
