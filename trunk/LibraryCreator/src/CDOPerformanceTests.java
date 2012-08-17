@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResource;
+import org.eclipse.emf.cdo.internal.net4j.Net4jSessionFactory;
+import org.eclipse.emf.cdo.internal.net4j.protocol.CDOClientProtocolFactory;
+import org.eclipse.emf.cdo.internal.server.embedded.EmbeddedClientSessionConfiguration;
 import org.eclipse.emf.cdo.net4j.CDONet4jUtil;
 import org.eclipse.emf.cdo.net4j.CDOSessionConfiguration;
 import org.eclipse.emf.cdo.server.CDOServerUtil;
@@ -93,9 +96,9 @@ public class CDOPerformanceTests {
 	private static int size   = 400000;
 	private static final StoreType storeType = StoreType.MEM;
 
-	private IStore store;
+	private static IStore store;
 
-	private IRepository repository;
+	private static IRepository repository;
 
 	private String DBDIR;
 
@@ -394,10 +397,14 @@ public class CDOPerformanceTests {
 
 		    IConnector connector = createConnector(ConType.JVM, hostPort);
 
-		    CDOSessionConfiguration config = CDONet4jUtil.createSessionConfiguration();
-		    config.setConnector(connector);
-		    config.setRepositoryName(storeConfig.getRepositoryName());
-		    org.eclipse.emf.cdo.net4j.CDOSession cdoSession = config.openSession();
+//		    CDOSessionConfiguration config = CDONet4jUtil.createSessionConfiguration();
+//		    config.setConnector(connector);
+//		    config.setRepositoryName(storeConfig.getRepositoryName());
+		    EmbeddedClientSessionConfiguration sessConfig = new EmbeddedClientSessionConfiguration();
+		    sessConfig.setRepository(repository);
+		    org.eclipse.emf.cdo.server.embedded.CDOSession cdoSession = sessConfig.openSession();
+		    
+		    cdoSession = sessConfig.openSession();
 		    cdoSession.getPackageRegistry().putEPackage(EPackage.Registry.INSTANCE.getEPackage(EXTLibraryPackage.eNS_URI));
 		    ((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().getProtocol().setTimeout(SESSION_TIMEOUT);
 		    ((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().setCommitTimeout(COMMIT_TIMEOUT);
@@ -460,8 +467,9 @@ public class CDOPerformanceTests {
 		    this.store = createStore(storeConfig);
 		    Map<String, String> properties = createProperties(storeConfig.getRepositoryName());
 
-		    repository = CDOServerUtil.createRepository(storeConfig.getRepositoryName(), this.store, properties);
-		    CDOServerUtil.addRepository(container, repository);
+		    this.repository = CDOServerUtil.createRepository(storeConfig.getRepositoryName(), this.store, properties);
+ 		    CDOServerUtil.addRepository(IPluginContainer.INSTANCE, repository);
+ 
 
 		    createAcceptor(conType, host,hostPort);
 		  }
@@ -477,7 +485,8 @@ public class CDOPerformanceTests {
 		  }
 	  
 	  private static void configureClientContainer(final IManagedContainer container) {
-		    CDONet4jUtil.prepareContainer(container);
+		  container.registerFactory(new CDOClientProtocolFactory());
+		  container.registerFactory(new Net4jSessionFactory());
 	  }
 	  
 	  private static void configureServerContainer(ConType conType,IManagedContainer container) {
