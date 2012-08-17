@@ -94,7 +94,9 @@ public class CDOPerformanceTests {
 //  public static final long MAX_BYTES_IN_SESSION = 1242880;	// 1 MB
 
 	private static int size   = 400000;
+	
 	private static final StoreType storeType = StoreType.MEM;
+	private static final ConType conType = ConType.JVM;
 
 	private static IStore store;
 
@@ -363,7 +365,7 @@ public class CDOPerformanceTests {
 				break;
 			default: ;
 		}
-		startCDOServer(storeConfig, ConType.JVM, "127.0.0.1","2036");
+		startCDOServer(storeConfig, conType, "127.0.0.1","2036");
 		return storeConfig;
 	}
 	
@@ -395,7 +397,7 @@ public class CDOPerformanceTests {
 	  private static synchronized CDOSession openCDOSession(IStoreConfig storeConfig, String hostPort) {
 		    System.out.println("PLBlueArXProjectSession.openSession()");
 
-		    IConnector connector = createConnector(ConType.JVM, hostPort);
+		    IConnector connector = createConnector(conType, hostPort);
 
 //		    CDOSessionConfiguration config = CDONet4jUtil.createSessionConfiguration();
 //		    config.setConnector(connector);
@@ -406,8 +408,10 @@ public class CDOPerformanceTests {
 		    
 		    cdoSession = sessConfig.openSession();
 		    cdoSession.getPackageRegistry().putEPackage(EPackage.Registry.INSTANCE.getEPackage(EXTLibraryPackage.eNS_URI));
-		    ((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().getProtocol().setTimeout(SESSION_TIMEOUT);
-		    ((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().setCommitTimeout(COMMIT_TIMEOUT);
+		    if(conType == ConType.TCP){
+		    	((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().getProtocol().setTimeout(SESSION_TIMEOUT);
+		    	((org.eclipse.emf.cdo.net4j.CDOSession) cdoSession).options().setCommitTimeout(COMMIT_TIMEOUT);
+	  		}
 		    return cdoSession;
 		  }
 	
@@ -478,7 +482,7 @@ public class CDOPerformanceTests {
 		    // Prepare the TCP support
 
 		    configureClientContainer(container);
-		    configureServerContainer(ConType.JVM, container);
+		    configureServerContainer(conType, container);
 		    if(storeConfig instanceof LissomeStoreConfig){
 //		    	LissomeStoreUtil.prepareContainer(container);
 		    }
