@@ -140,7 +140,7 @@ public class CDOPerformanceTests {
 	}
 
 	@Test
-	public void testStartCDOServer() throws IOException {
+	public void test1StartCDOServer() throws IOException {
 		long begin = System.currentTimeMillis();
 		startCDOServer();
 		System.out.println("CDOPerformanceTests.testStartCDOServer() - took: " + (System.currentTimeMillis() -begin));
@@ -153,7 +153,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testStartCDOSession() throws IOException {
+	public void test2StartCDOSession() throws IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		openCDOSession(storeConfig);
@@ -167,7 +167,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testOpenCDOTransaction() throws IOException {
+	public void test3OpenCDOTransaction() throws IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -182,7 +182,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testCreateCDOResource() throws IOException {
+	public void test4CreateCDOResource() throws IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -198,7 +198,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testAddModelToCDOResource() throws IOException {
+	public void test5AddModelToCDOResource() throws IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -215,7 +215,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testCDOTransactionCommit() throws CommitException, IOException {
+	public void test6CDOTransactionCommit() throws CommitException, IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -233,7 +233,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testCDOTransactionClose() throws CommitException, IOException {
+	public void test7CDOTransactionClose() throws CommitException, IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -252,7 +252,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testCDOSessionClose() throws CommitException, IOException {
+	public void test8CDOSessionClose() throws CommitException, IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
@@ -272,7 +272,7 @@ public class CDOPerformanceTests {
 	}
 	
 	@Test
-	public void testOpenCDOView() throws IOException {
+	public void test9OpenCDOView() throws IOException {
 		long begin = System.currentTimeMillis();
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
