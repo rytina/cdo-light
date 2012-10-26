@@ -237,16 +237,16 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       // .getRevisions(ids, branchPoint, referenceChunk, prefetchDepth, true);
 
       // TODO: implement EmbeddedClientSessionProtocol.loadRevisions(infos, branchPoint, referenceChunk, prefetchDepth)
-//      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException();
       
    
    
       
 //      CDOFetchRuleManager ruleManager = getSession().getFetchRuleManager();
-      
-      List<CDORevision> additionalRevisions = new ArrayList<CDORevision>();
-      InternalCDORevisionManager revisionManager = getSession().getRepository().getRevisionManager();
-      List<CDORevision> result = new ArrayList<CDORevision>();
+//      
+//      List<CDORevision> additionalRevisions = new ArrayList<CDORevision>();
+//      InternalCDORevisionManager revisionManager = getSession().getRepository().getRevisionManager();
+//      List<CDORevision> result = new ArrayList<CDORevision>();
 //      for (CDOID id : idset) {
 //    	  SyntheticCDORevision[] synthetics = new SyntheticCDORevision[1];
 //    	  result = revisionManager.getRevision(id, branchPoint, referenceChunk, CDORevision.DEPTH_NONE, true,
@@ -261,7 +261,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       
       
       
-      return null;
+//      return null;
     }
     finally
     {
