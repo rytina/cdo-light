@@ -29,10 +29,13 @@ import org.eclipse.emf.cdo.common.lock.CDOLockState;
 import org.eclipse.emf.cdo.common.model.CDOPackageUnit;
 import org.eclipse.emf.cdo.common.protocol.CDOAuthenticator;
 import org.eclipse.emf.cdo.common.revision.CDOIDAndVersion;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.CDORevisionHandler;
 import org.eclipse.emf.cdo.common.revision.CDORevisionKey;
+import org.eclipse.emf.cdo.common.util.CDOFetchRule;
 import org.eclipse.emf.cdo.common.util.CDOQueryQueue;
 import org.eclipse.emf.cdo.server.StoreThreadLocal;
+import org.eclipse.emf.cdo.session.CDOCollectionLoadingPolicy;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSession;
 import org.eclipse.emf.cdo.session.remote.CDORemoteSessionMessage;
 import org.eclipse.emf.cdo.spi.common.CDOAuthenticationResult;
@@ -42,7 +45,9 @@ import org.eclipse.emf.cdo.spi.common.commit.CDORevisionAvailabilityInfo;
 import org.eclipse.emf.cdo.spi.common.model.InternalCDOPackageUnit;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionDelta;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager;
 import org.eclipse.emf.cdo.spi.common.revision.RevisionInfo;
+import org.eclipse.emf.cdo.spi.common.revision.SyntheticCDORevision;
 import org.eclipse.emf.cdo.spi.server.InternalCommitContext;
 import org.eclipse.emf.cdo.spi.server.InternalQueryManager;
 import org.eclipse.emf.cdo.spi.server.InternalQueryResult;
@@ -50,6 +55,7 @@ import org.eclipse.emf.cdo.spi.server.InternalRepository;
 import org.eclipse.emf.cdo.spi.server.InternalSession;
 import org.eclipse.emf.cdo.spi.server.InternalTransaction;
 import org.eclipse.emf.cdo.spi.server.InternalView;
+import org.eclipse.emf.cdo.view.CDOFetchRuleManager;
 import org.eclipse.emf.cdo.view.CDOView;
 
 import org.eclipse.net4j.util.collection.Pair;
@@ -70,6 +76,7 @@ import org.eclipse.emf.spi.cdo.InternalCDOXATransaction.InternalCDOXACommitConte
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -218,19 +225,51 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       {
         ids.add(info.getID());
       }
+      
+      Set<CDOID> idset = new HashSet<CDOID>();
+      for (RevisionInfo info : infos)
+      {
+        idset.add(info.getID());
+      }
 
       // @SuppressWarnings("unchecked")
       // List<InternalCDORevision> revisions = (List<InternalCDORevision>)(List<?>)repository.getRevisionManager()
       // .getRevisions(ids, branchPoint, referenceChunk, prefetchDepth, true);
 
       // TODO: implement EmbeddedClientSessionProtocol.loadRevisions(infos, branchPoint, referenceChunk, prefetchDepth)
-      throw new UnsupportedOperationException();
+//      throw new UnsupportedOperationException();
+      
+   
+   
+      
+//      CDOFetchRuleManager ruleManager = getSession().getFetchRuleManager();
+      
+      List<CDORevision> additionalRevisions = new ArrayList<CDORevision>();
+      InternalCDORevisionManager revisionManager = getSession().getRepository().getRevisionManager();
+      List<CDORevision> result = new ArrayList<CDORevision>();
+//      for (CDOID id : idset) {
+//    	  SyntheticCDORevision[] synthetics = new SyntheticCDORevision[1];
+//    	  result = revisionManager.getRevision(id, branchPoint, referenceChunk, CDORevision.DEPTH_NONE, true,
+//    	          synthetics);
+//    	      synthetic = synthetics[0];
+//    	   
+//    	  
+//    	  .getRevision(id, branchPoint, referenceChunk, CDORevision.DEPTH_NONE,
+//      	        true);		
+//      }
+      
+      
+      
+      
+      return null;
     }
     finally
     {
       StoreThreadLocal.release();
     }
   }
+  
+
 
   public RefreshSessionResult refresh(long lastUpdateTime,
       Map<CDOBranch, Map<CDOID, InternalCDORevision>> viewedRevisions, int initialChunkSize,

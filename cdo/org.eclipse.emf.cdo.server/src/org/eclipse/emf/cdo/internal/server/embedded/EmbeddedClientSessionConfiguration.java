@@ -35,7 +35,7 @@ public class EmbeddedClientSessionConfiguration extends CDOSessionConfigurationI
 
   public EmbeddedClientSessionConfiguration()
   {
-    throw new UnsupportedOperationException("Embedded sessions are not yet supported");
+//    throw new UnsupportedOperationException("Embedded sessions are not yet supported");
   }
 
   public InternalRepository getRepository()
@@ -61,8 +61,9 @@ public class EmbeddedClientSessionConfiguration extends CDOSessionConfigurationI
     {
       CheckUtil.checkState(repository, "Specify a repository"); //$NON-NLS-1$
     }
-
-    return new EmbeddedClientSession();
+    EmbeddedClientSession clientSession = new EmbeddedClientSession();
+    clientSession.setRepository(repository);
+    return clientSession;
   }
 
   /**
