@@ -15,6 +15,7 @@ import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
 import org.eclipse.emf.cdo.internal.server.embedded.EmbeddedClientSessionConfiguration.RepositoryInfo;
+import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.embedded.CDOSession;
 import org.eclipse.emf.cdo.spi.common.branch.InternalCDOBranchManager;
 import org.eclipse.emf.cdo.spi.common.commit.InternalCDOCommitInfoManager;
@@ -35,6 +36,9 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
 
   public EmbeddedClientSession()
   {
+	  	EmbeddedClientSessionProtocol protocol = new EmbeddedClientSessionProtocol(this);
+	    setSessionProtocol(protocol);
+	  
   }
 
   public InternalRepository getRepository()
@@ -70,11 +74,9 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
   protected void doActivate() throws Exception
   {
     super.doActivate();
-
-    EmbeddedClientSessionProtocol protocol = new EmbeddedClientSessionProtocol(this);
-    setSessionProtocol(protocol);
-    protocol.activate();
-    protocol.openSession(options().isPassiveUpdateEnabled());
+    
+    ((EmbeddedClientSessionProtocol)getSessionProtocol()).activate();
+    ((EmbeddedClientSessionProtocol)getSessionProtocol()).openSession(options().isPassiveUpdateEnabled());
 
     setLastUpdateTime(repository.getLastCommitTimeStamp());
     setRepositoryInfo(new RepositoryInfo(this));
@@ -97,4 +99,9 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
     getRevisionManager().deactivate();
     setRevisionManager(null);
   }
+
+	public void setRepository(InternalRepository rep) {
+		this.repository = rep;
+	}
+
 }
