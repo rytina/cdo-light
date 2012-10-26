@@ -237,31 +237,28 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       // .getRevisions(ids, branchPoint, referenceChunk, prefetchDepth, true);
 
       // TODO: implement EmbeddedClientSessionProtocol.loadRevisions(infos, branchPoint, referenceChunk, prefetchDepth)
-      throw new UnsupportedOperationException();
+//      throw new UnsupportedOperationException();
       
    
    
       
 //      CDOFetchRuleManager ruleManager = getSession().getFetchRuleManager();
-//      
-//      List<CDORevision> additionalRevisions = new ArrayList<CDORevision>();
-//      InternalCDORevisionManager revisionManager = getSession().getRepository().getRevisionManager();
-//      List<CDORevision> result = new ArrayList<CDORevision>();
-//      for (CDOID id : idset) {
-//    	  SyntheticCDORevision[] synthetics = new SyntheticCDORevision[1];
-//    	  result = revisionManager.getRevision(id, branchPoint, referenceChunk, CDORevision.DEPTH_NONE, true,
-//    	          synthetics);
-//    	      synthetic = synthetics[0];
-//    	   
-//    	  
-//    	  .getRevision(id, branchPoint, referenceChunk, CDORevision.DEPTH_NONE,
-//      	        true);		
-//      }
       
-      
-      
-      
-//      return null;
+      List<CDORevision> additionalRevisions = new ArrayList<CDORevision>();
+      InternalCDORevisionManager revisionManager = getSession().getRepository().getRevisionManager();
+      List<CDORevision> result = new ArrayList<CDORevision>();
+      List<InternalCDORevision> revisions = new ArrayList<InternalCDORevision>();
+      for (int i = 0; i < infos.size(); i++)
+      {
+        RevisionInfo info = infos.get(i);
+        info.execute(revisionManager, referenceChunk);
+        revisions.add(info.getResult());
+//        if (loadRevisionCollectionChunkSize > 0)
+//        {
+//          collectRevisions(revisions[i], revisionIDs, additionalRevisions, visitedFetchRules);
+//        }
+      }
+      return revisions;
     }
     finally
     {
