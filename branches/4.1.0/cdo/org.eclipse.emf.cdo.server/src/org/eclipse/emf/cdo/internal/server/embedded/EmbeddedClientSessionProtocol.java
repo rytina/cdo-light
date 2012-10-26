@@ -462,7 +462,6 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     monitor.begin(2);
     boolean success = false;
     InternalCommitContext serverCommitContext = null;
-    CommitTransactionResult result = null;
 
     try
     {
@@ -524,7 +523,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
       monitor.done();
     }
 
-    return result;
+    return new CommitTransactionResult(context.getTransaction(), serverCommitContext.getBranchPoint(), serverCommitContext.getPreviousTimeStamp());
   }
 
   @Deprecated
