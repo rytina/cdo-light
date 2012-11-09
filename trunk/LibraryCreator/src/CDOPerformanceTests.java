@@ -1,3 +1,5 @@
+import static org.junit.Assert.*;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -34,9 +36,11 @@ import org.eclipse.emf.cdo.server.IStore;
 import org.eclipse.emf.cdo.server.mem.MEMStoreUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
 import org.eclipse.emf.cdo.session.CDOSession;
+import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionCache;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.util.CommitException;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -46,6 +50,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.examples.extlibrary.EXTLibraryFactory;
 import org.eclipse.emf.examples.extlibrary.EXTLibraryPackage;
+import org.eclipse.emf.examples.extlibrary.Employee;
 import org.eclipse.emf.examples.extlibrary.Library;
 import org.eclipse.emf.examples.extlibrary.Writer;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
@@ -74,6 +79,9 @@ import org.junit.Test;
 
 
 public class CDOPerformanceTests {
+
+
+	  private static final String CDO_RESOURCE_NAME = "libraryRes";
 	
 	  public enum ConType {
 		    TCP,
@@ -141,121 +149,102 @@ public class CDOPerformanceTests {
 		}
 	}
 
-	@Test
-	public void test1StartCDOServer() throws IOException {
-		long begin = System.currentTimeMillis();
-		startCDOServer();
-		System.out.println("CDOPerformanceTests.testStartCDOServer() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("1_StartCDOServer.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
+//	@Test
+//	public void test1StartCDOServer() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		startCDOServer();
+//		System.out.println("CDOPerformanceTests.testStartCDOServer() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("1_StartCDOServer.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test2StartCDOSession() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		openCDOSession(storeConfig);
+//		System.out.println("CDOPerformanceTests.testStartCDOSession() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("2_StartCDOSession.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test3OpenCDOTransaction() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		sess.openTransaction();
+//		System.out.println("CDOPerformanceTests.testOpenCDOTransaction() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("3_OpenCDOTransaction.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test4CreateCDOResource() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		CDOTransaction tx = sess.openTransaction();
+//		createCDOResource(tx);
+//		System.out.println("CDOPerformanceTests.testCreateCDOResource() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("4_CreateCDOResource.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test5AddModelToCDOResource() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		CDOTransaction tx = sess.openTransaction();
+//		CDOResource res = createCDOResource(tx);
+//		addModelToCDOResource(res);
+//		System.out.println("CDOPerformanceTests.testAddModelToCDOResource() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("5_AddModelToCDOResource.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test6CDOTransactionCommit() throws CommitException, IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		CDOTransaction tx = sess.openTransaction();
+//		CDOResource res = createCDOResource(tx);
+//		addModelToCDOResource(res);
+//		tx.commit();
+//		System.out.println("CDOPerformanceTests.testCDOTransactionCommit() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("6_CDOTransactionCommit.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+	
 	
 	@Test
-	public void test2StartCDOSession() throws IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		openCDOSession(storeConfig);
-		System.out.println("CDOPerformanceTests.testStartCDOSession() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("2_StartCDOSession.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test3OpenCDOTransaction() throws IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		sess.openTransaction();
-		System.out.println("CDOPerformanceTests.testOpenCDOTransaction() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("3_OpenCDOTransaction.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test4CreateCDOResource() throws IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		CDOTransaction tx = sess.openTransaction();
-		createCDOResource(tx);
-		System.out.println("CDOPerformanceTests.testCreateCDOResource() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("4_CreateCDOResource.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test5AddModelToCDOResource() throws IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		CDOTransaction tx = sess.openTransaction();
-		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(res);
-		System.out.println("CDOPerformanceTests.testAddModelToCDOResource() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("5_AddModelToCDOResource.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test6CDOTransactionCommit() throws CommitException, IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		CDOTransaction tx = sess.openTransaction();
-		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(res);
-		tx.commit();
-		System.out.println("CDOPerformanceTests.testCDOTransactionCommit() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("6_CDOTransactionCommit.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test7CDOTransactionClose() throws CommitException, IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		CDOTransaction tx = sess.openTransaction();
-		CDOResource res = createCDOResource(tx);
-		addModelToCDOResource(res);
-		tx.commit();
-		tx.close();
-		System.out.println("CDOPerformanceTests.testCDOTransactionClose() - took: " + (System.currentTimeMillis() -begin));
-		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("7_CDOTransactionClose.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test8CDOSessionClose() throws CommitException, IOException {
-		long begin = System.currentTimeMillis();
+	public void test6_1CDOTransactionCommitAndRead() throws CommitException, IOException {
 		IStoreConfig storeConfig = startCDOServer();
 		CDOSession sess = openCDOSession(storeConfig);
 		CDOTransaction tx = sess.openTransaction();
@@ -263,31 +252,84 @@ public class CDOPerformanceTests {
 		addModelToCDOResource(res);
 		tx.commit();
 		tx.close();
-		sess.close();
-		System.out.println("CDOPerformanceTests.testCDOSessionClose() - took: " + (System.currentTimeMillis() -begin));
+		InternalCDORevisionCache clientCache = ((org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager)tx.getSession().getRevisionManager()).getCache();
+		InternalCDORevisionCache serverCache = ((org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager)repository.getRevisionManager()).getCache();
 		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("8_CDOSessionClose.html"));
-		writer.append(trace);
-		writer.close();
-		stopCDOServer();
-	}
-	
-	@Test
-	public void test9OpenCDOView() throws IOException {
-		long begin = System.currentTimeMillis();
-		IStoreConfig storeConfig = startCDOServer();
-		CDOSession sess = openCDOSession(storeConfig);
-		sess.openView();
-		System.out.println("CDOPerformanceTests.testOpenCDOView() - took: " + (System.currentTimeMillis() -begin));
+		clientCache.clear();
+		serverCache.clear();
 		
-		String trace = CDOTracingUtils.dumpHtmlTrace();
-		BufferedWriter writer = new BufferedWriter(new FileWriter("9_OpenCDOView.html"));
-		writer.append(trace);
-		writer.close();
+		tx = sess.openTransaction();
+		CDOResource cdoResource = tx.getResource(CDO_RESOURCE_NAME);
+		Library lib = (Library) cdoResource.getContents().get(0);
+		assertEquals("CoolMedia Inc", lib.getName());
+		Library coolBooks = lib.getBranches().get(0);
+		Library coolAudioBooks = lib.getBranches().get(1);
+		Library coolVideos = lib.getBranches().get(2);
+		EList<Writer> writers = lib.getWriters();
+		EList<Employee> emploees = lib.getEmployees();
+		
+		assertEquals("CoolBooks",coolBooks.getName());
+		assertEquals("CoolAudioBooks", coolAudioBooks.getName());
+		assertEquals("CoolVideos", coolVideos.getName());
+		
 		stopCDOServer();
 	}
 
+	
+//	@Test
+//	public void test7CDOTransactionClose() throws CommitException, IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		CDOTransaction tx = sess.openTransaction();
+//		CDOResource res = createCDOResource(tx);
+//		addModelToCDOResource(res);
+//		tx.commit();
+//		tx.close();
+//		System.out.println("CDOPerformanceTests.testCDOTransactionClose() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("7_CDOTransactionClose.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test8CDOSessionClose() throws CommitException, IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		CDOTransaction tx = sess.openTransaction();
+//		CDOResource res = createCDOResource(tx);
+//		addModelToCDOResource(res);
+//		tx.commit();
+//		tx.close();
+//		sess.close();
+//		System.out.println("CDOPerformanceTests.testCDOSessionClose() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("8_CDOSessionClose.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//	
+//	@Test
+//	public void test9OpenCDOView() throws IOException {
+//		long begin = System.currentTimeMillis();
+//		IStoreConfig storeConfig = startCDOServer();
+//		CDOSession sess = openCDOSession(storeConfig);
+//		sess.openView();
+//		System.out.println("CDOPerformanceTests.testOpenCDOView() - took: " + (System.currentTimeMillis() -begin));
+//		
+//		String trace = CDOTracingUtils.dumpHtmlTrace();
+//		BufferedWriter writer = new BufferedWriter(new FileWriter("9_OpenCDOView.html"));
+//		writer.append(trace);
+//		writer.close();
+//		stopCDOServer();
+//	}
+//
 
 //	@Test @Ignore
 //	public void testCreateModel() {
@@ -351,7 +393,7 @@ public class CDOPerformanceTests {
 	}
 
 	private CDOResource createCDOResource(CDOTransaction tx) {
-		return tx.createResource("libraryRes");
+		return tx.createResource(CDO_RESOURCE_NAME);
 	}
 
 	private IStoreConfig startCDOServer() {
