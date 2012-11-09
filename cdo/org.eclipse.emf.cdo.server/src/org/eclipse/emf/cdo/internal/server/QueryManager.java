@@ -120,8 +120,8 @@ public class QueryManager extends Lifecycle implements InternalQueryManager
   {
     QueryContext queryContext = queryContexts.get(queryID);
     if (queryContext == null || queryContext.getFuture().isDone())
-    {
-      throw new RuntimeException("Query " + queryID + " is not running anymore"); //$NON-NLS-1$ //$NON-NLS-2$
+    { 
+    	return;
     }
 
     if (TRACER.isEnabled())
