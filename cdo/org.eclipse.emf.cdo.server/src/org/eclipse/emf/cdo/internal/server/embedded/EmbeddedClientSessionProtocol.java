@@ -23,6 +23,8 @@ import org.eclipse.emf.cdo.common.commit.CDOCommitData;
 import org.eclipse.emf.cdo.common.commit.CDOCommitInfoHandler;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDProvider;
+import org.eclipse.emf.cdo.common.id.CDOIDTemp;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.lob.CDOLob;
 import org.eclipse.emf.cdo.common.lob.CDOLobInfo;
 import org.eclipse.emf.cdo.common.lock.CDOLockState;
@@ -79,6 +81,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -462,6 +465,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     monitor.begin(2);
     boolean success = false;
     InternalCommitContext serverCommitContext = null;
+    CommitTransactionResult result = null;
 
     try
     {
@@ -522,8 +526,33 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
 
       monitor.done();
     }
+    result = new CommitTransactionResult(context.getTransaction(), serverCommitContext.getBranchPoint(), serverCommitContext.getPreviousTimeStamp());
+    confirmingMappingNewObjects(result, serverCommitContext);
+    return result;
+  }
+  
+  protected void confirmingMappingNewObjects(CommitTransactionResult result, InternalCommitContext commitContext)
+  {
+	  Map<CDOID, CDOID> idMappings = commitContext.getIDMappings();
+    for (Entry<CDOID, CDOID> entry : idMappings.entrySet())
+    {
+      CDOID id = entry.getKey();
+      if (CDOIDUtil.isNull(id))
+      {
+        break;
+      }
 
-    return new CommitTransactionResult(context.getTransaction(), serverCommitContext.getBranchPoint(), serverCommitContext.getPreviousTimeStamp());
+      if (id instanceof CDOIDTemp)
+      {
+        CDOIDTemp oldID = (CDOIDTemp)id;
+        CDOID newID = entry.getValue();
+        result.addIDMapping(oldID, newID);
+      }
+      else
+      {
+        throw new ClassCastException("Not a temporary ID: " + id);
+      }
+    }
   }
 
   @Deprecated
