@@ -2,7 +2,7 @@
 #labels Featured
 
 = Next releases =
-== Release 0.1, planned for 9th November 2012 ==
+== Release 0.1, planned for 30th November 2012 ==
  * [http://code.google.com/a/eclipselabs.org/p/cdo-light/issues/list?q=label:Milestone-Release0.1 Issues for Release 0.1]
 == Release 0.2 ==
  * [http://code.google.com/a/eclipselabs.org/p/cdo-light/issues/list?q=label:Milestone-Release0.2 Issues for Release 0.2]
