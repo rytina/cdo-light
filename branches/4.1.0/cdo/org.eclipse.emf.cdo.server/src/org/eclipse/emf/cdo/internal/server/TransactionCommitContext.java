@@ -1108,8 +1108,9 @@ public class TransactionCommitContext implements InternalCommitContext
     {
       monitor.begin(8);
       addNewPackageUnits(monitor.fork());
-      addRevisions(newObjects, monitor.fork());
-      addRevisions(dirtyObjects, monitor.fork());
+// rytina see org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.CACHE_ERROR_MSG
+//      addRevisions(newObjects, monitor.fork());
+//      addRevisions(dirtyObjects, monitor.fork());
       reviseDetachedObjects(monitor.fork());
 
       unlockObjects();

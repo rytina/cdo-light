@@ -48,8 +48,16 @@ import java.util.List;
  */
 public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevisionManager
 {
-  private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION, CDORevisionManagerImpl.class);
+  private static final String CACHE_ERROR_MSG = "cdo-light is not intended to use a revision cache on server side.";
 
+private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION, CDORevisionManagerImpl.class);
+
+  private final Node node;
+  
+  public enum Node{
+	  CLIENT,SERVER
+  }
+  
   private boolean supportingAudits;
 
   private boolean supportingBranches;
@@ -60,7 +68,7 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
 
   private CDORevisionFactory factory;
 
-  private InternalCDORevisionCache cache;
+  private InternalCDORevisionCache revCache;
 
   @ExcludeFromDump
   private transient Object loadAndAddLock = new Object()
@@ -82,8 +90,9 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
     }
   };
 
-  public CDORevisionManagerImpl()
+  public CDORevisionManagerImpl(Node side)
   {
+	  this.node = side;
   }
 
   public boolean isSupportingAudits()
@@ -143,18 +152,24 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
 
   public InternalCDORevisionCache getCache()
   {
-    return cache;
+	  if(node == Node.SERVER){
+		  throw new RuntimeException(CACHE_ERROR_MSG);
+	  }
+    return revCache;
   }
 
   public void setCache(CDORevisionCache cache)
   {
+	  if(node == Node.SERVER){
+		  throw new RuntimeException(CACHE_ERROR_MSG);
+	  }
     checkInactive();
-    this.cache = (InternalCDORevisionCache)cache;
+    this.revCache = (InternalCDORevisionCache)cache;
   }
 
   public EClass getObjectType(CDOID id, CDOBranchManager branchManagerForLoadOnDemand)
   {
-    EClass type = cache.getObjectType(id);
+    EClass type = getCache().getObjectType(id);
     if (type == null && branchManagerForLoadOnDemand != null)
     {
       CDOBranch mainBranch = branchManagerForLoadOnDemand.getMainBranch();
@@ -185,7 +200,7 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
 
   public boolean containsRevisionByVersion(CDOID id, CDOBranchVersion branchVersion)
   {
-    return cache.getRevisionByVersion(id, branchVersion) != null;
+    return getCache().getRevisionByVersion(id, branchVersion) != null;
   }
 
   public void reviseLatest(CDOID id, CDOBranch branch)
@@ -194,10 +209,10 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
 
     try
     {
-      InternalCDORevision revision = (InternalCDORevision)cache.getRevision(id, branch.getHead());
+      InternalCDORevision revision = (InternalCDORevision)getCache().getRevision(id, branch.getHead());
       if (revision != null)
       {
-        cache.removeRevision(id, branch.getVersion(revision.getVersion()));
+        getCache().removeRevision(id, branch.getVersion(revision.getVersion()));
       }
     }
     finally
@@ -217,7 +232,7 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
       {
         if (timeStamp == CDORevision.UNSPECIFIED_DATE)
         {
-          cache.removeRevision(id, branchVersion);
+          getCache().removeRevision(id, branchVersion);
         }
         else
         {
@@ -447,13 +462,13 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
               {
                 // Found revision is stale.
                 // We cannot revise it now because of lack information, thus remove it from the cache
-                cache.removeRevision(cachedLatestRevision.getID(), cachedLatestRevision);
+                getCache().removeRevision(cachedLatestRevision.getID(), cachedLatestRevision);
               }
             }
           }
         }
 
-        cache.addRevision(revision);
+        getCache().addRevision(revision);
       }
       finally
       {
@@ -471,9 +486,9 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
       factory = CDORevisionFactory.DEFAULT;
     }
 
-    if (cache == null)
+    if (node == Node.CLIENT && getCache() == null)
     {
-      cache = (InternalCDORevisionCache)CDORevisionUtil.createRevisionCache(supportingAudits, supportingBranches);
+      setCache( (InternalCDORevisionCache)CDORevisionUtil.createRevisionCache(supportingAudits, supportingBranches));
     }
   }
 
@@ -481,13 +496,15 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
   protected void doActivate() throws Exception
   {
     super.doActivate();
-    LifecycleUtil.activate(cache);
+    if(node == Node.CLIENT){
+    	LifecycleUtil.activate(getCache());
+    }
   }
 
   @Override
   protected void doDeactivate() throws Exception
   {
-    LifecycleUtil.deactivate(cache);
+    LifecycleUtil.deactivate(getCache());
     super.doDeactivate();
   }
 
@@ -509,12 +526,12 @@ public class CDORevisionManagerImpl extends Lifecycle implements InternalCDORevi
 
   private InternalCDORevision getCachedRevisionByVersion(CDOID id, CDOBranchVersion branchVersion)
   {
-    return (InternalCDORevision)cache.getRevisionByVersion(id, branchVersion);
+    return (InternalCDORevision)getCache().getRevisionByVersion(id, branchVersion);
   }
 
   private InternalCDORevision getCachedRevision(CDOID id, CDOBranchPoint branchPoint)
   {
-    return (InternalCDORevision)cache.getRevision(id, branchPoint);
+    return (InternalCDORevision)getCache().getRevision(id, branchPoint);
   }
 
   private InternalCDORevision getCachedRevisionRecursively(CDOID id, CDOBranchPoint branchPoint)

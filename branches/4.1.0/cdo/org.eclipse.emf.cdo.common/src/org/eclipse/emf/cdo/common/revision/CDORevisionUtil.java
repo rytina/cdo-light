@@ -31,6 +31,7 @@ import org.eclipse.emf.cdo.internal.common.revision.CDORevisionCacheNonAuditing;
 import org.eclipse.emf.cdo.internal.common.revision.CDORevisionImpl;
 import org.eclipse.emf.cdo.internal.common.revision.CDORevisionKeyImpl;
 import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.Node;
 import org.eclipse.emf.cdo.internal.common.revision.delta.CDORevisionDeltaImpl;
 import org.eclipse.emf.cdo.spi.common.revision.CDOFeatureMapEntry;
 import org.eclipse.emf.cdo.spi.common.revision.InternalCDORevision;
@@ -88,17 +89,17 @@ public final class CDORevisionUtil
   /**
    * @since 4.0
    */
-  public static CDORevisionManager createRevisionManager()
+  public static CDORevisionManager createRevisionManager(Node side)
   {
-    return new CDORevisionManagerImpl();
+    return new CDORevisionManagerImpl(side);
   }
 
   /**
    * @since 4.0
    */
-  public static CDORevisionManager createRevisionManager(CDORevisionCache cache)
+  public static CDORevisionManager createRevisionManager(CDORevisionCache cache, Node side)
   {
-    InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)createRevisionManager();
+    InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)createRevisionManager(side);
     revisionManager.setCache(cache);
     return revisionManager;
   }

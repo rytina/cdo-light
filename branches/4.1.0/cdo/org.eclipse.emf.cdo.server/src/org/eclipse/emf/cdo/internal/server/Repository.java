@@ -50,6 +50,7 @@ import org.eclipse.emf.cdo.common.util.RepositoryTypeChangedEvent;
 import org.eclipse.emf.cdo.eresource.EresourcePackage;
 import org.eclipse.emf.cdo.etypes.EtypesPackage;
 import org.eclipse.emf.cdo.internal.common.model.CDOPackageRegistryImpl;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.Node;
 import org.eclipse.emf.cdo.internal.server.bundle.OM;
 import org.eclipse.emf.cdo.server.IQueryHandler;
 import org.eclipse.emf.cdo.server.IQueryHandlerProvider;
@@ -1968,7 +1969,7 @@ public class Repository extends Container<Object> implements InternalRepository
 
     protected InternalCDORevisionManager createRevisionManager()
     {
-      return (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager();
+      return (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager(Node.SERVER);
     }
 
     protected InternalQueryManager createQueryManager()
