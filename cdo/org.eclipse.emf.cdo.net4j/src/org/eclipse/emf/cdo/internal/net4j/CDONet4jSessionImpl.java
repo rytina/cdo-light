@@ -19,6 +19,7 @@ package org.eclipse.emf.cdo.internal.net4j;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
 import org.eclipse.emf.cdo.common.util.NotAuthenticatedException;
 import org.eclipse.emf.cdo.internal.common.model.CDOPackageRegistryImpl;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.Node;
 import org.eclipse.emf.cdo.internal.net4j.CDONet4jSessionConfigurationImpl.RepositoryInfo;
 import org.eclipse.emf.cdo.internal.net4j.protocol.CDOClientProtocol;
 import org.eclipse.emf.cdo.internal.net4j.protocol.CommitTransactionRequest;
@@ -145,7 +146,7 @@ public class CDONet4jSessionImpl extends CDOSessionImpl implements org.eclipse.e
     InternalCDORevisionManager revisionManager = getRevisionManager();
     if (revisionManager == null)
     {
-      revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager();
+      revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager(Node.CLIENT);
       setRevisionManager(revisionManager);
     }
 

@@ -14,6 +14,7 @@ package org.eclipse.emf.cdo.internal.server.embedded;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
+import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.Node;
 import org.eclipse.emf.cdo.internal.server.embedded.EmbeddedClientSessionConfiguration.RepositoryInfo;
 import org.eclipse.emf.cdo.server.IRepository;
 import org.eclipse.emf.cdo.server.embedded.CDOSession;
@@ -81,7 +82,7 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
     setLastUpdateTime(repository.getLastCommitTimeStamp());
     setRepositoryInfo(new RepositoryInfo(this));
 
-    InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager();
+    InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager(Node.CLIENT);
     setRevisionManager(revisionManager);
     revisionManager.setSupportingAudits(getRepositoryInfo().isSupportingAudits());
     revisionManager.setSupportingBranches(getRepositoryInfo().isSupportingBranches());
