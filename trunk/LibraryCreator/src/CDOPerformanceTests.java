@@ -253,10 +253,10 @@ public class CDOPerformanceTests {
 		tx.commit();
 		tx.close();
 		InternalCDORevisionCache clientCache = ((org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager)tx.getSession().getRevisionManager()).getCache();
-		InternalCDORevisionCache serverCache = ((org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager)repository.getRevisionManager()).getCache();
+//		InternalCDORevisionCache serverCache = ((org.eclipse.emf.cdo.spi.common.revision.InternalCDORevisionManager)repository.getRevisionManager()).getCache();
 		
 		clientCache.clear();
-		serverCache.clear();
+//		serverCache.clear();
 		
 		tx = sess.openTransaction();
 		CDOResource cdoResource = tx.getResource(CDO_RESOURCE_NAME);
