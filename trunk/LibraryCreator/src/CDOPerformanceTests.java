@@ -33,6 +33,8 @@ import org.eclipse.emf.cdo.server.IStore;
 //import org.eclipse.emf.cdo.server.internal.lissome.file.Vob;
 //import org.eclipse.emf.cdo.server.lissome.LissomeStoreUtil;
 
+import org.eclipse.emf.cdo.server.db.CDODBUtil;
+import org.eclipse.emf.cdo.server.internal.db.mapping.horizontal.HorizontalNonAuditMappingStrategy;
 import org.eclipse.emf.cdo.server.mem.MEMStoreUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
 import org.eclipse.emf.cdo.session.CDOSession;
@@ -60,6 +62,9 @@ import org.eclipse.emf.validation.service.ModelValidationService;
 import org.eclipse.net4j.Net4jUtil;
 import org.eclipse.net4j.acceptor.IAcceptor;
 import org.eclipse.net4j.connector.IConnector;
+import org.eclipse.net4j.db.DBUtil;
+import org.eclipse.net4j.db.IDBConnectionProvider;
+import org.eclipse.net4j.db.h2.H2Adapter;
 
 import org.eclipse.net4j.internal.util.container.PluginContainer;
 import org.eclipse.net4j.jvm.JVMUtil;
@@ -71,6 +76,7 @@ import org.eclipse.net4j.util.om.OMPlatform;
 import org.eclipse.net4j.util.om.log.PrintLogHandler;
 import org.eclipselabs.cdolight.utils.CDOTracingUtils;
 
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -103,7 +109,7 @@ public class CDOPerformanceTests {
 
 	private static int size   = 400000;
 	
-	private static final StoreType storeType = StoreType.MEM;
+	private static final StoreType storeType = StoreType.H2;
 	private static final ConType conType = ConType.JVM;
 
 	private static IStore store;
@@ -564,10 +570,10 @@ public class CDOPerformanceTests {
 					e.printStackTrace();
 				}
 	  		}else if(storeConfig instanceof H2StoreConfig){
-//	  			H2Adapter adapter = new H2Adapter();
-//	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
-//	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
-//	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
+	  			H2Adapter adapter = new H2Adapter();
+	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
+	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
+	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
 	  		}
 		    return store;
 		  }

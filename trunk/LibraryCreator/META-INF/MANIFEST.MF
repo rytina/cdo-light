@@ -18,6 +18,6 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.net4j.tcp,
  org.eclipselabs.cdolight,
  org.eclipse.emf.cdo.server.lissome;resolution:=optional,
- org.h2;resolution:=optional,
- org.eclipse.emf.cdo.server.db;resolution:=optional,
- org.eclipse.net4j.db.h2;resolution:=optional
+ org.h2,
+ org.eclipse.emf.cdo.server.db,
+ org.eclipse.net4j.db.h2
