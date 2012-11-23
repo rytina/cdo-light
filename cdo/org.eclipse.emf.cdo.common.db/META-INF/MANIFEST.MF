@@ -1,0 +1,112 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.emf.cdo.common.db;singleton:=true
+Bundle-Activator: org.eclipse.emf.cdo.common.internal.db.bundle.OM$Act
+ ivator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ";resolution:=optional,org.eclipse.emf.cdo.common;bundle-version="[4.
+ 0.0,5.0.0)";visibility:=reexport,org.eclipse.net4j.db;bundle-version=
+ "[4.0.0,5.0.0)"
+Export-Package: org.eclipse.emf.cdo.common.db;version="3.0.200",org.ec
+ lipse.emf.cdo.common.internal.db;version="3.0.200";x-friends:="org.ec
+ lipse.emf.cdo.tests",org.eclipse.emf.cdo.common.internal.db.bundle;ve
+ rsion="3.0.200";x-internal:=true,org.eclipse.emf.cdo.common.internal.
+ db.cache;version="3.0.200";x-friends:="org.eclipse.emf.cdo.tests"
+Bundle-Version: 3.0.200.v20120521-0710
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Import-Package: org.osgi.framework;version="[1.3.0,2.0.0)";resolution:
+ =optional
+Bundle-ManifestVersion: 2
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache.cla
+ ss
+SHA1-Digest: Mic6VRr87p4zs3rUKpFbUVsyO4I=
+
+Name: org/eclipse/emf/cdo/common/internal/db/bundle/OM$Activator.class
+SHA1-Digest: QJ+RnhA0XmJdeBTKRmppM5Su4qY=
+
+Name: copyright.txt
+SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCacheSche
+ ma.class
+SHA1-Digest: 0dnwprzX7LmXIx2Fsq9s1ChNhwg=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: plugin.properties
+SHA1-Digest: t4ZV8eLPNDcdPPbULIqOLXOKbhM=
+
+Name: org/eclipse/emf/cdo/common/internal/db/AbstractDBAccessor.class
+SHA1-Digest: FAO7kVnSRG/kVam30lCKvh7Ok0g=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$10.
+ class
+SHA1-Digest: 322IcgnuNyfkcAPvKMbTpn5S1ao=
+
+Name: .options
+SHA1-Digest: D5NIROWvvkb8iwQGX1I8f9fCD8o=
+
+Name: org/eclipse/emf/cdo/common/internal/db/AbstractUpdateStatement.c
+ lass
+SHA1-Digest: pb5kmubkoMlxcsiGzbklUkAt+04=
+
+Name: org/eclipse/emf/cdo/common/db/CDOCommonDBUtil.class
+SHA1-Digest: nY/mDn1zPsoT+lalaphI0gmcnVc=
+
+Name: org/eclipse/emf/cdo/common/internal/db/AbstractQueryStatement.cl
+ ass
+SHA1-Digest: /3W32KMkgpWo/p4JP7sf5xqgRcM=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$1.c
+ lass
+SHA1-Digest: Lm0H6WXedcRD+64KsekdC8Ltyv8=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$2.c
+ lass
+SHA1-Digest: T2yb7m6xtNPWBCIVEAvZk5tSq4Y=
+
+Name: org/eclipse/emf/cdo/common/internal/db/DBRevisionCacheUtil.class
+SHA1-Digest: hL3M3Bhz5YHD/rLPLeG0Zc2F1z4=
+
+Name: org/eclipse/emf/cdo/common/internal/db/bundle/OM.class
+SHA1-Digest: aRISnJDxSvDPnTf3C9+Ke1cO6O8=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$3.c
+ lass
+SHA1-Digest: 0hBAKzLiXpFwcLZ0VkBjiM137uA=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$4.c
+ lass
+SHA1-Digest: midzwJItDnKgW8TLZjpY3n0j7YI=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$5.c
+ lass
+SHA1-Digest: ImYGm7k05V+t6iOj/462zQSZlrQ=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$6.c
+ lass
+SHA1-Digest: VLNHD1XQMnr+15KXTUABvWAeY80=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$7.c
+ lass
+SHA1-Digest: Bcqbb5/gqBHa0Er0yShV0JdYyRM=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$8.c
+ lass
+SHA1-Digest: hjBgCBTo0aju9Lc/iaVkDbhjwm4=
+
+Name: org/eclipse/emf/cdo/common/internal/db/cache/DBRevisionCache$9.c
+ lass
+SHA1-Digest: TGNIC5sh37wDH/vnrrteBcam8vg=
+

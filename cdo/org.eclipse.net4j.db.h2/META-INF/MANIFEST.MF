@@ -1,0 +1,66 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.db.h2;singleton:=true
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/cdo/cd
+ o.git
+Bundle-Activator: org.eclipse.net4j.db.internal.h2.bundle.OM$Activator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ",org.eclipse.net4j.db;bundle-version="[4.0.0,5.0.0)";visibility:=ree
+ xport
+Bundle-Version: 4.0.100.v20120607-1600
+Export-Package: org.eclipse.net4j.db.h2;version="4.0.100",org.eclipse.
+ net4j.db.internal.h2.bundle;version="4.0.100";x-internal:=true
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Eclipse-RegisterBuddy: org.eclipse.net4j.db
+Import-Package: org.h2;version="[1.0.0,2.0.0)",org.h2.jdbcx;version="[
+ 1.0.0,2.0.0)"
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/db/internal/h2/bundle/OM.class
+SHA1-Digest: OHRMBUi04JvcxVGNQEN9iXKOFZg=
+
+Name: org/eclipse/net4j/db/h2/package-info.class
+SHA1-Digest: vGSNR4U0FxhD9XmjuZMmycm1Cuk=
+
+Name: about.ini
+SHA1-Digest: KQMVTFcyVja5dvVmIh2o+qDsslY=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: about.mappings
+SHA1-Digest: UDHVzX1LCfmUjk3o50zFeMraCHE=
+
+Name: copyright.txt
+SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
+
+Name: org/eclipse/net4j/db/h2/H2Adapter.class
+SHA1-Digest: DMc/+xQjbRPtw2vAgm0CS93bnRg=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: plugin.properties
+SHA1-Digest: 7rm8ukaWomRpbd8U2Kz8tXgn11Y=
+
+Name: .options
+SHA1-Digest: iCNuE6PRZaA14gVZ7Abt5PKXxbE=
+
+Name: org/eclipse/net4j/db/internal/h2/bundle/OM$Activator.class
+SHA1-Digest: Xn6WrChj+qoK64FGdcsWAhIhlO8=
+
+Name: modeling32.png
+SHA1-Digest: ADlLWFV0eQ74YnLvHnPFkYLeLrs=
+
+Name: about.properties
+SHA1-Digest: 2dIYw9acoZD7laPmeYahBQCH79w=
+
+Name: plugin.xml
+SHA1-Digest: DMVUlOpSfN9H6SW4ZcUgnqaqssA=
+

@@ -1,0 +1,249 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.net4j.db;singleton:=true
+Eclipse-SourceReferences: scm:git:git://git.eclipse.org/gitroot/cdo/cd
+ o.git
+Bundle-Activator: org.eclipse.net4j.internal.db.bundle.OM$Activator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ",org.eclipse.net4j.util;bundle-version="[3.0.0,4.0.0)";visibility:=r
+ eexport
+Bundle-Version: 4.1.0.v20120607-1600
+Export-Package: org.eclipse.net4j.db;version="4.1.0",org.eclipse.net4j
+ .db.ddl;version="4.1.0",org.eclipse.net4j.db.dml;version="4.1.0",org.
+ eclipse.net4j.internal.db;version="4.1.0";x-internal:=true,org.eclips
+ e.net4j.internal.db.bundle;version="4.1.0";x-internal:=true,org.eclip
+ se.net4j.internal.db.ddl;version="4.1.0";x-internal:=true,org.eclipse
+ .net4j.internal.db.dml;version="4.1.0";x-internal:=true,org.eclipse.n
+ et4j.spi.db;version="4.1.0"
+Eclipse-BuddyPolicy: registered
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/net4j/db/dml/IDBStatement.class
+SHA1-Digest: AZXmAZO9wbXNUvzq7O+4B4SlbhM=
+
+Name: about.ini
+SHA1-Digest: KQMVTFcyVja5dvVmIh2o+qDsslY=
+
+Name: org/eclipse/net4j/db/DBType$15$2.class
+SHA1-Digest: RNXSE/7Tp/eUjBAMOyh1M/MMtoY=
+
+Name: org/eclipse/net4j/db/DBType$20.class
+SHA1-Digest: 6OFZ+/BOhaXFG1rgpL/95iJjH2E=
+
+Name: org/eclipse/net4j/db/DBType$22.class
+SHA1-Digest: xIbMHkLvRdJ/aknauBi6+tRJoEg=
+
+Name: org/eclipse/net4j/db/IDBAdapter.class
+SHA1-Digest: 7VG9xlagscLiT8uTCfYv08DlHhQ=
+
+Name: org/eclipse/net4j/internal/db/ddl/DBField.class
+SHA1-Digest: L6zDZ309v/w9bj5T80KPJOUgk50=
+
+Name: org/eclipse/net4j/db/ddl/IDBTable.class
+SHA1-Digest: cyA8S3nJZIvib6UJL9T+sh24CH8=
+
+Name: org/eclipse/net4j/db/ddl/IDBIndex.class
+SHA1-Digest: q9xEhsHVrTjUSO82l9ZQ8Qb+CvI=
+
+Name: org/eclipse/net4j/internal/db/DBAdapterDescriptor.class
+SHA1-Digest: 2LhNT3yXfzudDJX7gMF5qzCis3g=
+
+Name: org/eclipse/net4j/internal/db/dml/DBStatement.class
+SHA1-Digest: mb/VJUlxhRpZRm41PLzH4AJveYM=
+
+Name: schema/dbAdapters.exsd
+SHA1-Digest: 0m3rlV3+Z9UWGo3uwpNCVLOGO5c=
+
+Name: org/eclipse/net4j/db/ddl/IDBSchemaElement.class
+SHA1-Digest: P7heFFNV2olkhP/OryMjl2AIqfw=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/net4j/db/DBType.class
+SHA1-Digest: /TpbV4Rd/YKDTcUNClNy4BtROq8=
+
+Name: about.mappings
+SHA1-Digest: UDHVzX1LCfmUjk3o50zFeMraCHE=
+
+Name: org/eclipse/net4j/internal/db/bundle/OM.class
+SHA1-Digest: F2vu0ljxZhriREhL3oU8Jc/8Yos=
+
+Name: org/eclipse/net4j/spi/db/DBSchema.class
+SHA1-Digest: Eez8+cqLi71wLAqi2FupQ8L4Y3E=
+
+Name: org/eclipse/net4j/internal/db/DBAdapterRegistry.class
+SHA1-Digest: 1fxp2+N3nvD/fhIoRNACoE+an80=
+
+Name: .options
+SHA1-Digest: q8dPcX4n6FKznxHVN0wbHJo9CkE=
+
+Name: org/eclipse/net4j/db/DBType$2.class
+SHA1-Digest: wFfEAddbZPbTCFrhAEdzEWIHFtI=
+
+Name: org/eclipse/net4j/db/DBType$10.class
+SHA1-Digest: WEkvc9jXjSdQQCVvEFM0EsRV0zs=
+
+Name: about.properties
+SHA1-Digest: FZaOpY+HQwyGG0AsAkbKuJRUvYo=
+
+Name: org/eclipse/net4j/db/DBType$4.class
+SHA1-Digest: 07gNkKVb+NlAmcWjbmkKlJhSOYs=
+
+Name: org/eclipse/net4j/db/DBType$12.class
+SHA1-Digest: yUrqlvEk4zp36RFSuSGTSwPPNbA=
+
+Name: org/eclipse/net4j/db/DBType$6.class
+SHA1-Digest: hIiFn+QdenblPgzbns7xF7ifd7A=
+
+Name: org/eclipse/net4j/db/DBType$14.class
+SHA1-Digest: HP6UxBUpJuESjetcrpwsKJlw1A0=
+
+Name: org/eclipse/net4j/db/DBType$8.class
+SHA1-Digest: X2fsedKdNP9YvC6qR8MvG5vflpI=
+
+Name: org/eclipse/net4j/db/DBUtil$SerializeRowHandler.class
+SHA1-Digest: A+cVT1qGrE34MySduEl3T1y0mPU=
+
+Name: org/eclipse/net4j/db/DBType$16.class
+SHA1-Digest: gEeCFTI/CDdPl//JZ5nCHOC+QtQ=
+
+Name: org/eclipse/net4j/db/DBException.class
+SHA1-Digest: J9QnurY4VsXRaZQUsjxSsdbxQlw=
+
+Name: org/eclipse/net4j/db/DBUtil$1.class
+SHA1-Digest: 59G69yGLvqRNlZOZF3q++WhtCF8=
+
+Name: org/eclipse/net4j/db/dml/IDBParameter.class
+SHA1-Digest: sawksDPRYM1CxZR2rxirKZBw0yQ=
+
+Name: org/eclipse/net4j/db/DBType$18.class
+SHA1-Digest: WxAtcXXY8qDYi/UoHAo+XQx4X5c=
+
+Name: org/eclipse/net4j/db/DBUtil$RowHandler.class
+SHA1-Digest: 1gGnv4BGzPQvzo42ww3sLnrruaw=
+
+Name: org/eclipse/net4j/spi/db/package-info.class
+SHA1-Digest: 8PFx6ZaMdqZD5euoJDHVBa67jLs=
+
+Name: org/eclipse/net4j/db/IDBRowHandler.class
+SHA1-Digest: Z/7WIOe+KWAgc8ajVJ+io6cv1uQ=
+
+Name: org/eclipse/net4j/db/ddl/IDBField.class
+SHA1-Digest: V6H1QdBvYJQzohEd/BKMscMETBM=
+
+Name: org/eclipse/net4j/internal/db/bundle/OM$Activator$1.class
+SHA1-Digest: p3EwjPURpG4NPBUAuZW3n+gujI0=
+
+Name: org/eclipse/net4j/db/DBType$15$1.class
+SHA1-Digest: 1WguO4nuaHjds/YjsxZshZNXRn0=
+
+Name: org/eclipse/net4j/db/DBType$15$3.class
+SHA1-Digest: 8C31WKkiUMKFZBUG8+5vstnzoTU=
+
+Name: copyright.txt
+SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
+
+Name: org/eclipse/net4j/internal/db/DataSourceConnectionProvider.class
+SHA1-Digest: 8EUN0gsbrfD4LnLHmMcxbU3jexo=
+
+Name: plugin.properties
+SHA1-Digest: Sx0rdwTO4EPuGGy42ajJuG4AqNQ=
+
+Name: org/eclipse/net4j/db/DBType$21.class
+SHA1-Digest: /IKJj0Ys00WOxTlMnheY6bqor2M=
+
+Name: org/eclipse/net4j/db/DBUtil$DeserializeRowHandler.class
+SHA1-Digest: 3yQh93C8qxvaddeUfnZmRagoMGA=
+
+Name: org/eclipse/net4j/internal/db/dml/DBParameter.class
+SHA1-Digest: xxsCRdkA8Ez0xOKS3yeCqY8bC5c=
+
+Name: plugin.xml
+SHA1-Digest: W80vraXVPT/pr4lPY00xtiIuZ9k=
+
+Name: org/eclipse/net4j/db/IDBConnectionProvider.class
+SHA1-Digest: D/ZcJfckX84RjKcsdqMPv453lP4=
+
+Name: org/eclipse/net4j/db/package-info.class
+SHA1-Digest: Zf+Rhs/PW6+HdceFWeJTw9711mA=
+
+Name: org/eclipse/net4j/db/DBType$22$1.class
+SHA1-Digest: KGmrzJif3CV7V7toBgVXKvFDk5k=
+
+Name: org/eclipse/net4j/db/ddl/package-info.class
+SHA1-Digest: 2Go8slmNgy6++GCVYhj/sqyTsEs=
+
+Name: org/eclipse/net4j/internal/db/ddl/DBTable.class
+SHA1-Digest: soiq8ZUs94UlIxoot/Yyxe4SfJA=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: org/eclipse/net4j/db/DBUtil.class
+SHA1-Digest: VSVVEyFz+rLy9PmkILpeC3sl1is=
+
+Name: org/eclipse/net4j/internal/db/ddl/DBIndex.class
+SHA1-Digest: TG+Vvw1oCZwS2gACVshZCSYnRDo=
+
+Name: org/eclipse/net4j/db/dml/package-info.class
+SHA1-Digest: zUA72lyc7p5L3OGyutfcRxjhMVw=
+
+Name: org/eclipse/net4j/db/ddl/IDBSchema.class
+SHA1-Digest: JPMMsZfw6Gi4uWglHAley5EjOKE=
+
+Name: org/eclipse/net4j/db/DBType$1.class
+SHA1-Digest: Q8V+iFQzbNKtYlInldcnLXtq8I8=
+
+Name: modeling32.png
+SHA1-Digest: ADlLWFV0eQ74YnLvHnPFkYLeLrs=
+
+Name: org/eclipse/net4j/db/DBType$3.class
+SHA1-Digest: Yi9QeRdnJWLyHuhM/f7887wuFZg=
+
+Name: org/eclipse/net4j/db/DBType$11.class
+SHA1-Digest: EPasZU93QOODLNGsC8WBLZtGWwg=
+
+Name: org/eclipse/net4j/spi/db/DBSchema$1.class
+SHA1-Digest: uFkSszhV0ttrCLEimYk/Wh0bfxU=
+
+Name: org/eclipse/net4j/db/DBType$5.class
+SHA1-Digest: qR40O77exwyccedUct9vI+LiYqE=
+
+Name: org/eclipse/net4j/internal/db/ddl/DBSchemaElement.class
+SHA1-Digest: EaKLLDYoX1oQsB81UDcp5nx3eTU=
+
+Name: org/eclipse/net4j/db/DBType$13.class
+SHA1-Digest: YjWyjBkCvKAOFTdMSQe0DzcRiJs=
+
+Name: org/eclipse/net4j/db/DBType$7.class
+SHA1-Digest: 8CIyD6lbPR/a59WiuJUJYBRQsIk=
+
+Name: org/eclipse/net4j/internal/db/bundle/OM$Activator.class
+SHA1-Digest: NQ5KqD1EECbLC2SxS++5wTmtkIA=
+
+Name: org/eclipse/net4j/db/DBType$15.class
+SHA1-Digest: 327MmYG5ZXNqU94ZczvNG/arFwI=
+
+Name: org/eclipse/net4j/db/ddl/IDBIndex$Type.class
+SHA1-Digest: SAsa3/turjAwbLu1RlRACYmu+5c=
+
+Name: org/eclipse/net4j/db/DBType$9.class
+SHA1-Digest: viDOg24oUXFq6ym8L7IacFj8ci0=
+
+Name: org/eclipse/net4j/db/DBType$17.class
+SHA1-Digest: +Fv9pEW67lb75r9ycJqsqE0/64M=
+
+Name: org/eclipse/net4j/spi/db/DBAdapter.class
+SHA1-Digest: v4LnczxOl6yI6TqMXqoo0WOS1CU=
+
+Name: org/eclipse/net4j/db/DBType$19.class
+SHA1-Digest: K7TtIuYIhAnZqkPSbqKr+LFV29Y=
+

@@ -1,0 +1,649 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-SymbolicName: org.eclipse.emf.cdo.server.db;singleton:=true
+Bundle-Activator: org.eclipse.emf.cdo.server.internal.db.bundle.OM$Act
+ ivator
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)
+ ",org.eclipse.net4j.db;bundle-version="[4.0.0,5.0.0)";visibility:=ree
+ xport,org.eclipse.emf.cdo.server;bundle-version="[4.0.0,5.0.0)";visib
+ ility:=reexport
+Export-Package: org.eclipse.emf.cdo.server.db;version="4.1.0",org.ecli
+ pse.emf.cdo.server.db.mapping;version="4.1.0",org.eclipse.emf.cdo.ser
+ ver.internal.db;version="4.1.0";x-friends:="org.eclipse.emf.cdo.tests
+ ,org.eclipse.emf.cdo.tests.db",org.eclipse.emf.cdo.server.internal.db
+ .bundle;version="4.1.0";x-internal:=true,org.eclipse.emf.cdo.server.i
+ nternal.db.jdbc;version="4.1.0";x-friends:="org.eclipse.emf.cdo.tests
+ ,org.eclipse.emf.cdo.tests.db",org.eclipse.emf.cdo.server.internal.db
+ .mapping;version="4.1.0";x-friends:="org.eclipse.emf.cdo.tests,org.ec
+ lipse.emf.cdo.tests.db",org.eclipse.emf.cdo.server.internal.db.mappin
+ g.horizontal;version="4.1.0";x-friends:="org.eclipse.emf.cdo.tests,or
+ g.eclipse.emf.cdo.tests.db",org.eclipse.emf.cdo.server.internal.db.me
+ ssages;version="4.1.0";x-internal:=true
+Bundle-Version: 4.1.0.v20120610-1749
+Ant-Version: Apache Ant 1.8.3
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+Created-By: 1.6.0_21-b06 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingListTableMappingWithRanges.class
+SHA1-Digest: IDGj7vrKsjojspLyv/Ly7LgQREo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctHorizontalMappingStrategy.class
+SHA1-Digest: fMFoF6H9TIoVenKZ2Q0hqbsZzfs=
+
+Name: about.ini
+SHA1-Digest: OQioBcmL2lkUXHKFToH3/6ARgiA=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingClassMapping$1.class
+SHA1-Digest: 5D4csENpdbd/KCzvBEmeFmBcuMo=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/ITypeMapping$Descriptor.cl
+ ass
+SHA1-Digest: TPv99itFNv7rWxODN2Oarw0ulzw=
+
+Name: org/eclipse/emf/cdo/server/db/package-info.class
+SHA1-Digest: TWvnIXZCB49G1ALizwKUJ/Nhn3M=
+
+Name: org/eclipse/emf/cdo/server/db/IMetaDataManager.class
+SHA1-Digest: FJBEAFILiXayPOH9DHu4gMrnfqY=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingFeatureMapTableMapping.class
+SHA1-Digest: Vb631C+hCCR2J4y1qAuG7tJcSyQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctListTableMapping.class
+SHA1-Digest: 3NULyOztkX4IhBXVeRfwl2Q/qg8=
+
+Name: org/eclipse/emf/cdo/server/db/CDODBUtil.class
+SHA1-Digest: jAJx7aiG3pfNRvlSakvylk0DcFk=
+
+Name: org/eclipse/emf/cdo/server/db/IDBStore.class
+SHA1-Digest: iFvNEAKM66LpBmkOoPAKIT/2gao=
+
+Name: org/eclipse/emf/cdo/server/internal/db/MetaDataManager$1.class
+SHA1-Digest: 7mQtMgAwedNHz5nqvLiFpjO7Mxw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctListTableMapping$FieldInfo.class
+SHA1-Digest: /2ARDcMh/NjU00WQARTs361TEQQ=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IClassMappingAuditSupport.
+ class
+SHA1-Digest: UCpMkg6B70zGNIaav2wk5WTPrD8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMFloat$Factory.class
+SHA1-Digest: 3d3pTeHJ8GXoArJzvzdMOokyCwg=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalNonAuditMappingStrategy.class
+SHA1-Digest: fZgqI13AS+i9tm06311gBmxvN6M=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStore$2.class
+SHA1-Digest: L5EGYxFidifKuUjv128UuMHIuHc=
+
+Name: org/eclipse/emf/cdo/server/internal/db/messages/messages.propert
+ ies
+SHA1-Digest: ZYFjNh2ldKh9LhS6JyE7kjzjl0M=
+
+Name: org/eclipse/emf/cdo/server/internal/db/ObjectIDIterator.class
+SHA1-Digest: V5shrPj764isjEFxmqL9l5JcXEE=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStoreAccessor$Connectio
+ nKeepAliveTask.class
+SHA1-Digest: CGfcFLhAsosIth6LNnw7bsUJgfY=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBoolean.class
+SHA1-Digest: opi7xCTGRbN8p/ZO53wPmGKtxN8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Object
+ TypeTable.class
+SHA1-Digest: io3luAWuuElMRvHKOtAZuaoKE9E=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStoreChunkReader.class
+SHA1-Digest: ozCTaYk91rcRbPAlswg2y6Zc0PE=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBytes.class
+SHA1-Digest: v9z4DGS4Gue9HUNkycjwxyKvJ7s=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMClob.class
+SHA1-Digest: vTN4WtYGxCYh3JV+mOQ6Cr+/8bk=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBytesVarbinary.class
+SHA1-Digest: mh9VDOwVOBywNE5mb0ejyEMCCZk=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMObject.class
+SHA1-Digest: D5lFVDr5FHKrK6KCHWwZk+tQrVw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMCharacter$Factory.class
+SHA1-Digest: akwW/T/RKZDAY9DY5/CrvU/+6I8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingListTableMapping.class
+SHA1-Digest: JHJuU2ZX0NEgbbGGAWmizol/HJI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMEnum$Factory.class
+SHA1-Digest: ds1fOHfInUbEdSV+1t1c92SiRuk=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Time$Factory.class
+SHA1-Digest: kDyU/RErbhw2tvaKe60LWNcWn0o=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctHorizontalClassMapping.class
+SHA1-Digest: onzY3pEn1UxJhU24V2i5uTu/2cc=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IListMapping2.class
+SHA1-Digest: BH/jRo3VFkdvyAHtZDYR1M87Jlo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMByte.class
+SHA1-Digest: SCaYsioifFgKliDyhvg88CCPAwo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/TypeMappingUtil$F
+ actoryTypeParserException.class
+SHA1-Digest: 8ajmDfGfu05FE0W6HV9MsKjIzZg=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IMappingStrategy.class
+SHA1-Digest: z6V2+J+Lpo1H+9m3uRIa9pnv8qQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itFeatureMapTableMapping$1.class
+SHA1-Digest: r3ba4S5vizRY5IIpw6rdo+lezEU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDouble.class
+SHA1-Digest: Q0j4p2gq1hBldjdf/OrOnOCbT78=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/TypeMappingRegist
+ ry.class
+SHA1-Digest: p0dP050av/tOMF+M7E8bdTrxtlQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMShort$Factory.class
+SHA1-Digest: uckgaeGbL/JPv+eUHgTYJ4XGKhc=
+
+Name: about.properties
+SHA1-Digest: chBChlkbTbZ/mv9WI+GJa3hx7zg=
+
+Name: org/eclipse/emf/cdo/server/db/IDBStoreAccessor.class
+SHA1-Digest: LVIEoZ6rYyqK3HXWhv+AX+XkqaU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMString$Factory.class
+SHA1-Digest: v04+80FeQWJLAaecUspcvnpKWOc=
+
+Name: schema/mappingStrategies.exsd
+SHA1-Digest: WicUXKjGkFVTXeDd7aksGEIaEu8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/MetaDataManager.class
+SHA1-Digest: t58pKcxtOT/UnKEMwPF3kkly65s=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStore.class
+SHA1-Digest: dxu50hHG8GhpAbA3Px5DAi7PMDk=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditF
+ eatureMapTableMappingWithRanges$ListDeltaVisitor.class
+SHA1-Digest: eTbcDN3p7uXY8/DPK6w+nNTGHr0=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Date$Factory.class
+SHA1-Digest: tf7KU7951Bq3i8qPongtRT2VvY4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMFloat.class
+SHA1-Digest: F8j/4PvSAW3XSEgQaEtICwjhpcY=
+
+Name: org/eclipse/emf/cdo/server/internal/db/bundle/OM.class
+SHA1-Digest: Et/xSAYIJNKBQqNfnLUksiuzhV0=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/AbstractMappingSt
+ rategy$1.class
+SHA1-Digest: ZwtymKqy6V0GOP0qSoFfABQYVF8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/MetaDataManager$2.class
+SHA1-Digest: Hae6+60pGk1NA5vLZclvShk+PWQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/UUIDHandler.class
+SHA1-Digest: 9rYO56YtLBTlPXgIoGeN3xriVig=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IClassMappingDeltaSupport.
+ class
+SHA1-Digest: A+6ZN9Lmgq/dJID/h2tibMy0QcA=
+
+Name: org/eclipse/emf/cdo/server/internal/db/LongIDHandler.class
+SHA1-Digest: K8BwfgGT6uEeFoY9XSWAahgyp8g=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBigDecimal$Factory.class
+SHA1-Digest: y6yAeyE8J1emSfJZOSbn06n/sLQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMCharacter.class
+SHA1-Digest: EEd1d6vVbUOAjCVy5Z1OA231N0A=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBAnnotation.class
+SHA1-Digest: S15aMjeR+MORqep5+XRdwTu36RQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalAuditClassMapping$1.class
+SHA1-Digest: XhrlswJcNi/1mmQAsBIvYwzSwhY=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itFeatureMapTableMapping.class
+SHA1-Digest: UJ1a9OPoIsIxM3ggYNtlkCYztFQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalNonAuditClassMapping$1.class
+SHA1-Digest: Q2xd2QaPF3vZK9CSIaHOrMe5NVs=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMEnum.class
+SHA1-Digest: NpQiwglYuiwFnkJRDTteGyLLanQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Time.class
+SHA1-Digest: RovrEvkjfFMC+XQmbkMG6cuNHW8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMLong$Factory.class
+SHA1-Digest: L7VVXJlCQeSVrmmiCwuKxtGybWQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditF
+ eatureMapTableMapping.class
+SHA1-Digest: 09nX9UtbObkChtIdnLpZEE9qqpc=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingListTableMappingWithRanges$ListDeltaVisitor.class
+SHA1-Digest: /cWwpRJo7GDlpsqg903yihtMW3w=
+
+Name: about.html
+SHA1-Digest: mLkmRLtG3amkcY0I7KSYZX6qKhs=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMShort.class
+SHA1-Digest: oAjiu/5Pcka4u7Q1S/bpqDlv32c=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStoreAccessor.class
+SHA1-Digest: B/oJLZaSovVLyO/sVKSYcL3ZtU8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/TypeMappingRegist
+ ry$RegistryPopulator.class
+SHA1-Digest: iNRehfQmPftCnSl985u7Yofh8MM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingMappingStrategyWithRanges$ImportListHandler.class
+SHA1-Digest: +OG2fEZev+Q+35MRp0SplmbUriw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMString.class
+SHA1-Digest: xDz872E7XbNWJt8J9sp00HPjBsE=
+
+Name: modeling32.png
+SHA1-Digest: ADlLWFV0eQ74YnLvHnPFkYLeLrs=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctFeatureMapTableMapping.class
+SHA1-Digest: JAoFhAi4nPyimqq9Sr5biV7ox9I=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMInteger$Factory.class
+SHA1-Digest: Oy7XtGQq3AgO5WSBA+0ryqU4YrI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctFeatureMapTableMapping$FieldInfo.class
+SHA1-Digest: zk/004fZWBAkbJu3lclF1UDsp+4=
+
+Name: org/eclipse/emf/cdo/server/db/IIDHandler.class
+SHA1-Digest: lf41twK6//jMNoyhKmz1VSV53hY=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IClassMapping.class
+SHA1-Digest: aJ6zPlAWM4EDhvLhcL2+Am8NyFI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/AbstractMappingSt
+ rategy.class
+SHA1-Digest: rfPM6RFvOMHlMCF9/rXNjYM1arU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalMappingStrategy.class
+SHA1-Digest: n/Y7jzGmqLH1puS5voLXiKX3++w=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditF
+ eatureMapTableMappingWithRanges.class
+SHA1-Digest: vJqVAnvM43gXp4AXbFuTz2Gq9eU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBBrowserPage$Factory.cla
+ ss
+SHA1-Digest: Cn8R5+rhQVs1bDeuMFcCzA7D8IE=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingFeatureMapTableMappingWithRanges$ListDeltaVisitor.class
+SHA1-Digest: k//SHH7aObCMoqVewx8Eq4b9Pgs=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Date.class
+SHA1-Digest: mSIS+7gOsfjfe70gaQxb9T4QJ54=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/ITypeMapping$Factory.class
+SHA1-Digest: GVl/SY+FOun4EW0XqIbWO/DGHic=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBigInteger$Factory.class
+SHA1-Digest: qEczucfeM/n2BI1qPMbVJRdfnYw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/NullPreparedStatementCach
+ e.class
+SHA1-Digest: kLoBhtoD4mYJysDxVYB7ZGuFxJo=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/ITypeMapping$Provider.clas
+ s
+SHA1-Digest: 3Cf+VKaxthxjabCC0OZXrbmPZJ0=
+
+Name: org/eclipse/emf/cdo/server/internal/db/CDODBSchema.class
+SHA1-Digest: m/PKwNH2x84+yp0Ps077QSMKerM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/messages/Messages.class
+SHA1-Digest: aE0eOgBXfMtnlyKFCsz/rrvjwbo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBigDecimal.class
+SHA1-Digest: AvBEErNHEQamm2ciqEDUM+vIOdQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalAuditMappingStrategyWithRanges.class
+SHA1-Digest: lJHndnpmkGXIMfWM9SSwnqBMdFU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/BasicA
+ bstractListTableMapping.class
+SHA1-Digest: fQgqPB0kGz66RnZUUQAxpEvR958=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itListTableMapping$ManipulationElement.class
+SHA1-Digest: esDynN+o8+v97ptbUrNvJnowejU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingClassMapping$FeatureDeltaWriter.class
+SHA1-Digest: h+ERAvRuAoYI0yhA7/bPsZJZe8Y=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalNonAuditClassMapping.class
+SHA1-Digest: eLpHRIEydDNLC9sFiscmq2KCXfw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStoreFactory.class
+SHA1-Digest: JpRw5VnicybGUEF1zW1QL06D5Zo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMCustom$Factory.class
+SHA1-Digest: GOoQPiKsiVarorhu0Bc2VxSIOJU=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalAuditClassMapping$FeatureDeltaWriter.class
+SHA1-Digest: R+VTm0XVfvZeR7KcB+KsL1pHc/4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Timestamp$Factory.class
+SHA1-Digest: mYLjn4zVCZiAWlNCS9abfkyj7sA=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMLong.class
+SHA1-Digest: FSikHXMznBw5UlmLYgei0eIknXI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/bundle/OM$Activator.class
+SHA1-Digest: sy4rXE6qaY3LuwogbE3i/ALfK5E=
+
+Name: org/eclipse/emf/cdo/server/internal/db/AbstractPreparedStatement
+ Cache.class
+SHA1-Digest: dRe2pHIRAb/AnII6UaRdUKGAFU8=
+
+Name: org/eclipse/emf/cdo/server/internal/db/StringIDHandler.class
+SHA1-Digest: fQNvzxAZcz47xSml7X3WmMVsGwM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itListTableMapping$ShiftOperation.class
+SHA1-Digest: AzP9EAe3TEFNPA9eMJBcAuH5KB0=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/jdbc/WrappedPreparedState
+ ment.class
+SHA1-Digest: 3wQg+iPuy825rUa91/htUvHdK8o=
+
+Name: about.mappings
+SHA1-Digest: UDHVzX1LCfmUjk3o50zFeMraCHE=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/TypeMappingDescri
+ ptor.class
+SHA1-Digest: tO1TBk+YfD/aIRBA+EoiWRpAYns=
+
+Name: org/eclipse/emf/cdo/server/internal/db/SmartPreparedStatementCac
+ he$CachedPreparedStatement.class
+SHA1-Digest: pCsERAe8yLcK4LfL11y2tnp8JE0=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/AbstractTypeMappingFactory
+ .class
+SHA1-Digest: zQRLlqx9o093AUp/ayw4T56/N0Y=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMInteger.class
+SHA1-Digest: Kc8msOjaJaa7jBVkglaZkPKWqGQ=
+
+Name: .options
+SHA1-Digest: VYRohFJVPItt8PvO3G7A1kXyxi0=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itListTableMapping$ListDeltaVisitor.class
+SHA1-Digest: C6DyZBizT2DdCmtZCXoXfan7SpQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingMappingStrategy.class
+SHA1-Digest: RP8JkNkxgopvg/aXtmSMJLk+PvU=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IListMappingDeltaSupport.c
+ lass
+SHA1-Digest: ME6xMr44AWtW7+F920BDD0XhnSw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/SQLQueryHandler.class
+SHA1-Digest: jdtm/uU0lPAl7NxTbZsqd8ZgE7E=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DurableLockingManager.cla
+ ss
+SHA1-Digest: 9Z/nMrd4vc9z/iE+0iH8ZWF0z1E=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingClassMapping.class
+SHA1-Digest: Puezhtw9xnDA4trn7Iali1aLs44=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalAuditMappingStrategy.class
+SHA1-Digest: dZLyeti53M/WB8zr7zEmLectnCo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/TypeMappingUtil.c
+ lass
+SHA1-Digest: b5vSaV/J49hvGv2h3pfI/8RFOis=
+
+Name: org/eclipse/emf/cdo/server/db/IPreparedStatementCache.class
+SHA1-Digest: W9DWbd+n3WxjIGUp5T3KFfF7uYo=
+
+Name: org/eclipse/emf/cdo/server/db/IDBStore$Props.class
+SHA1-Digest: 6fGxpLR0C47CHBx/aJ41uHfiGng=
+
+Name: org/eclipse/emf/cdo/server/internal/db/SmartPreparedStatementCac
+ he$Cache.class
+SHA1-Digest: xBDR4IKNFxlGMhDG9nZCY2lFzMM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBBrowserPage.class
+SHA1-Digest: mUMjb76fnZQktwPblHc/gA8ND3I=
+
+Name: org/eclipse/emf/cdo/server/internal/db/SmartPreparedStatementCac
+ he.class
+SHA1-Digest: mJdXYeCHi5GeAvhtWEp7PzBE9xI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditL
+ istTableMapping.class
+SHA1-Digest: YdzJpqq+02FDJbg5bA0Hjela9jE=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/ITypeMapping.class
+SHA1-Digest: NjAzlN1Gg4EqE7pqNZBxq7uN0CI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBigInteger.class
+SHA1-Digest: vVvvf5htWmKyVI3Pp2EgYVVYlCo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBlob$Factory.class
+SHA1-Digest: D+9QcJm8UX8vB4fRwUxVablq4z0=
+
+Name: copyright.txt
+SHA1-Digest: iRYyz3zPy1L6akoLx4WPbHktlJo=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Delega
+ tingObjectTypeMapper.class
+SHA1-Digest: hqLWgXMCykrm02KmTWTVAi73Qp0=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Object
+ TypeCache$MemoryCache.class
+SHA1-Digest: AFuNW8noIXLufbFwwR0P4CPNwCU=
+
+Name: plugin.properties
+SHA1-Digest: mybeJsIyUCHBOL4IghZI9k/jbDw=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Object
+ TypeCache.class
+SHA1-Digest: jcRpxIpvm5ASEamfCKinNeCPd/g=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalBranchingMappingStrategyWithRanges.class
+SHA1-Digest: GqdAtMcqt33eDLOoSGTZGK/hKyQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings.
+ class
+SHA1-Digest: f3FJRSNgsqT1pVo3Z6lwBFe+AxA=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalAuditClassMapping.class
+SHA1-Digest: A11M4c0VR953sWEhMpd7zfqj2As=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMCustom.class
+SHA1-Digest: 8HPIka3xRsVIpdAEGoUey6NahhY=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBStore$1.class
+SHA1-Digest: 0lL3knHC7bFCf+9Snid0bKib6ac=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDate2Timestamp.class
+SHA1-Digest: nPSTGPXcTRSb9HGGEihjVuBw6/c=
+
+Name: org/eclipse/emf/cdo/server/internal/db/DBRevisionHandler.class
+SHA1-Digest: vyWQYXAXsNrkbiP4r24M/yuf0F4=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/ITypeMapping$Registry.clas
+ s
+SHA1-Digest: 5KN7z9EGViSuzx6ve45t+TF7iB4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditL
+ istTableMappingWithRanges.class
+SHA1-Digest: PKWMH+m9zAquCUKrO6RO8K2MsmE=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/IListMapping.class
+SHA1-Digest: w7AkusSigVnrWGr4PaPbG5V4898=
+
+Name: plugin.xml
+SHA1-Digest: sJh/sCKt4h9mQOQUYgs6Av7sb3E=
+
+Name: org/eclipse/emf/cdo/server/db/IPreparedStatementCache$ReuseProba
+ bility.class
+SHA1-Digest: HiQ/2ijDTM4SxyyFEWf+B0jIkPs=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBoolean$Factory.class
+SHA1-Digest: gvDFGrE/+qlIXzIYTR0HqgVJUaE=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBytes$Factory.class
+SHA1-Digest: 85M51wdron+CawrEs8wagVeupq4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMClob$Factory.class
+SHA1-Digest: wbi4pprrTptGiXGENXx9pHi/0OI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBytesVarbinary$Factory.class
+SHA1-Digest: DM7WA1VQdDFOxX3+tu9roB/29vA=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMObject$Factory.class
+SHA1-Digest: k3vnQHrwE06/L3C2990pVnzj2qQ=
+
+Name: org/eclipse/emf/cdo/server/internal/db/IObjectTypeMapper.class
+SHA1-Digest: 2ZV5x9XCqGX4bv6sBNqJogWo7VM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itListTableMapping$ManipulationConstants.class
+SHA1-Digest: 5V7DfJ3YC3965slLu9BMgMHf4cI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Branch
+ ingFeatureMapTableMappingWithRanges.class
+SHA1-Digest: W8GakkLXYkSqb57Y0zEK9yvkSJ4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Abstra
+ ctObjectTypeMapper.class
+SHA1-Digest: tJgBcRp5yoioPiY8OvBt3abFuoQ=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/package-info.class
+SHA1-Digest: 4At/EBqwKJmOP9oe6VxQkMOEgl4=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMByte$Factory.class
+SHA1-Digest: MLlr2CEmWTlcorsNkc7xKge6cLI=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/AuditL
+ istTableMappingWithRanges$ListDeltaVisitor.class
+SHA1-Digest: 8SRM1mmTZhdmz91ZVxpGU2iZRZw=
+
+Name: org/eclipse/emf/cdo/server/db/mapping/AbstractTypeMapping.class
+SHA1-Digest: Wvuur1deqsrFNc93MTfA2tYBBhU=
+
+Name: org/eclipse/emf/cdo/server/db/IDBStoreChunkReader.class
+SHA1-Digest: MomlsEPb84P6wuXQZZBkmnFOlUM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/Horizo
+ ntalNonAuditClassMapping$FeatureDeltaWriter.class
+SHA1-Digest: mlYMNdMEco/OW1j4rXnhDWYlo4o=
+
+Name: org/eclipse/emf/cdo/server/internal/db/SmartPreparedStatementCac
+ he$Cache$CacheList.class
+SHA1-Digest: vwErDuSU/rqRib9lQ3VG8tG6whg=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMDouble$Factory.class
+SHA1-Digest: dLwqda6fhujd/lYHpqO2qJuwZ+Q=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/horizontal/NonAud
+ itListTableMapping.class
+SHA1-Digest: TS/TmOjqElaG5r+qY9Ah7ePRQFM=
+
+Name: org/eclipse/emf/cdo/server/internal/db/ExternalReferenceManager.
+ class
+SHA1-Digest: f9ECEZ1c3gU4EIZnJpvoPL8S84k=
+
+Name: org/eclipse/emf/cdo/server/internal/db/mapping/CoreTypeMappings$
+ TMBlob.class
+SHA1-Digest: zpKgOLbXM7n4wnvKgMZ2Y8THr/8=
+
