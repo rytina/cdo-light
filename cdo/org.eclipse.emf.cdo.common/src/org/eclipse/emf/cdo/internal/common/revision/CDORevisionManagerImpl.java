@@ -255,7 +255,11 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
 
     try
     {
-      InternalCDORevision revision = getCachedRevisionByVersion(id, branchVersion);
+    	
+      InternalCDORevision revision = null; 
+      if(node == Node.CLIENT){
+    	  revision = getCachedRevisionByVersion(id, branchVersion);
+      }
       if (revision == null)
       {
         if (loadOnDemand)
@@ -447,7 +451,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
         if (oldVersion >= CDORevision.UNSPECIFIED_VERSION)
         {
           CDOBranchVersion old = revision.getBranch().getVersion(oldVersion);
-          InternalCDORevision oldRevision = getCachedRevisionByVersion(revision.getID(), old);
+          InternalCDORevision oldRevision = null;
+          if(node == Node.CLIENT){
+        	  oldRevision = getCachedRevisionByVersion(revision.getID(), old);
+          }
           if (!revision.isHistorical())
           {
             if (oldRevision != null)
@@ -457,7 +464,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
             else
             {
               // Remove last revision from cache, which is not revised
-              InternalCDORevision cachedLatestRevision = getCachedRevision(revision.getID(), revision);
+              InternalCDORevision cachedLatestRevision = null;
+              if(node == Node.CLIENT){
+            	  cachedLatestRevision = getCachedRevision(revision.getID(), revision);
+              }
               if (cachedLatestRevision != null && !cachedLatestRevision.isHistorical())
               {
                 // Found revision is stale.
@@ -467,8 +477,9 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
             }
           }
         }
-
-        getCache().addRevision(revision);
+        if(node == Node.CLIENT){
+        	getCache().addRevision(revision);
+        }
       }
       finally
       {
