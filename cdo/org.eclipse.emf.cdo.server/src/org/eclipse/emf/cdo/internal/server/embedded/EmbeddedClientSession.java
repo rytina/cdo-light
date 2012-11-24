@@ -14,6 +14,7 @@ package org.eclipse.emf.cdo.internal.server.embedded;
 import org.eclipse.emf.cdo.common.lob.CDOLobStore;
 import org.eclipse.emf.cdo.common.revision.CDORevisionCache;
 import org.eclipse.emf.cdo.common.revision.CDORevisionUtil;
+import org.eclipse.emf.cdo.internal.common.model.CDOPackageRegistryImpl;
 import org.eclipse.emf.cdo.internal.common.revision.CDORevisionManagerImpl.Node;
 import org.eclipse.emf.cdo.internal.server.embedded.EmbeddedClientSessionConfiguration.RepositoryInfo;
 import org.eclipse.emf.cdo.server.IRepository;
@@ -34,6 +35,7 @@ import org.eclipse.emf.internal.cdo.session.CDOSessionImpl;
 public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
 {
   private InternalRepository repository;
+  private InternalCDOPackageRegistry packageReg;
 
   public EmbeddedClientSession()
   {
@@ -47,11 +49,7 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
     return repository;
   }
 
-  @Override
-  public InternalCDOPackageRegistry getPackageRegistry()
-  {
-    return getRepository().getPackageRegistry();
-  }
+
 
   @Override
   public InternalCDOBranchManager getBranchManager()
@@ -81,6 +79,17 @@ public class EmbeddedClientSession extends CDOSessionImpl implements CDOSession
 
     setLastUpdateTime(repository.getLastCommitTimeStamp());
     setRepositoryInfo(new RepositoryInfo(this));
+    
+    InternalCDOPackageRegistry packageRegistry = getPackageRegistry();
+    if (packageRegistry == null)
+    {
+      packageRegistry = new CDOPackageRegistryImpl();
+      setPackageRegistry(packageRegistry);
+    }
+
+    packageRegistry.setPackageProcessor(this);
+    packageRegistry.setPackageLoader(this);
+    packageRegistry.activate();
 
     InternalCDORevisionManager revisionManager = (InternalCDORevisionManager)CDORevisionUtil.createRevisionManager(Node.CLIENT);
     setRevisionManager(revisionManager);
