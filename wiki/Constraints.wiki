@@ -1,0 +1,7 @@
+#summary lists all constraints for cdo-light.
+#labels Phase-Design
+
+Constraint: [A short title for the constraint, i.e. "Caching is only allowed on client side"] 
+Definition: [What does it exactly mean?]
+Rationale: [What is the reason for this constraint?] 
+Implications: [What does it mean for the architecture? What are the limitations it places?] 
