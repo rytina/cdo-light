@@ -567,7 +567,7 @@ public class CDOPerformanceTests {
 				}
 	  		}else if(storeConfig instanceof H2StoreConfig){
 	  			H2Adapter adapter = new H2Adapter();
-	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test", "sa", "sa");
+	  			datasource = JdbcConnectionPool.create("jdbc:h2:"+DBDIR+"/test;TRACE_LEVEL_FILE=2", "sa", "sa");
 	  			IDBConnectionProvider connProvider = DBUtil.createConnectionProvider(datasource);
 	  			store = CDODBUtil.createStore(new HorizontalNonAuditMappingStrategy(), adapter, connProvider);
 	  		}
