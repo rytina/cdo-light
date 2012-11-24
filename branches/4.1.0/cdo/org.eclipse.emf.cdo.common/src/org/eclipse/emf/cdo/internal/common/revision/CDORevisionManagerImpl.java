@@ -169,7 +169,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
 
   public EClass getObjectType(CDOID id, CDOBranchManager branchManagerForLoadOnDemand)
   {
-    EClass type = getCache().getObjectType(id);
+	EClass type = null;
+	if(node == Node.CLIENT){
+		type = getCache().getObjectType(id);
+	}
     if (type == null && branchManagerForLoadOnDemand != null)
     {
       CDOBranch mainBranch = branchManagerForLoadOnDemand.getMainBranch();
@@ -194,13 +197,20 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
     {
       return getRevision(id, branchPoint, CDORevision.UNCHUNKED, CDORevision.DEPTH_NONE, false, null) != null;
     }
-
-    return getCachedRevision(id, branchPoint) != null;
+    if(node == Node.CLIENT){
+    	return getCachedRevision(id, branchPoint) != null;
+    }else{
+		return false;
+	}
   }
 
   public boolean containsRevisionByVersion(CDOID id, CDOBranchVersion branchVersion)
   {
-    return getCache().getRevisionByVersion(id, branchVersion) != null;
+	  if(node == Node.CLIENT){
+		  return getCache().getRevisionByVersion(id, branchVersion) != null;
+	  }else{
+		  return false;
+	  }
   }
 
   public void reviseLatest(CDOID id, CDOBranch branch)
@@ -209,7 +219,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
 
     try
     {
-      InternalCDORevision revision = (InternalCDORevision)getCache().getRevision(id, branch.getHead());
+    	InternalCDORevision revision = null;
+    	if(node == Node.CLIENT){
+    		revision = (InternalCDORevision)getCache().getRevision(id, branch.getHead());
+    	}
       if (revision != null)
       {
         getCache().removeRevision(id, branch.getVersion(revision.getVersion()));
@@ -227,7 +240,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
 
     try
     {
-      InternalCDORevision revision = getCachedRevisionByVersion(id, branchVersion);
+    	InternalCDORevision revision = null;
+    	if(node == Node.CLIENT){
+    		revision = getCachedRevisionByVersion(id, branchVersion);
+    	}
       if (revision != null)
       {
         if (timeStamp == CDORevision.UNSPECIFIED_DATE)
@@ -342,7 +358,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
 
   private RevisionInfo createRevisionInfo(CDOID id, CDOBranchPoint branchPoint)
   {
-    InternalCDORevision revision = getCachedRevision(id, branchPoint);
+	  InternalCDORevision revision = null;
+	  if(node == Node.CLIENT){
+	    revision = getCachedRevision(id, branchPoint);
+	  }
     if (revision != null)
     {
       return createRevisionInfoAvailable(revision, branchPoint);
@@ -367,7 +386,10 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
     {
       PointerCDORevision pointer = (PointerCDORevision)revision;
       CDOBranchVersion target = pointer.getTarget();
-      InternalCDORevision targetRevision = target == null ? null : getCachedRevisionByVersion(pointer.getID(), target);
+      InternalCDORevision targetRevision = null;
+      if(node == Node.CLIENT){
+        targetRevision = target == null ? null : getCachedRevisionByVersion(pointer.getID(), target);
+      }
       if (targetRevision != null)
       {
         target = targetRevision;
@@ -515,7 +537,9 @@ private static final ContextTracer TRACER = new ContextTracer(OM.DEBUG_REVISION,
   @Override
   protected void doDeactivate() throws Exception
   {
-    LifecycleUtil.deactivate(getCache());
+	if(node == Node.CLIENT){
+	  LifecycleUtil.deactivate(getCache());
+	}
     super.doDeactivate();
   }
 
