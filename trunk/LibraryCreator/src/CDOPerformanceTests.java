@@ -122,7 +122,7 @@ public class CDOPerformanceTests {
 	
 	
 	public enum StoreType{
-		H2,LISSOME,MEM
+		H2,LISSOME
 	}
 	
 	private static EObject model;
@@ -405,8 +405,6 @@ public class CDOPerformanceTests {
 	private IStoreConfig startCDOServer() {
 		IStoreConfig storeConfig = null ;
 		switch(storeType){
-			case MEM: storeConfig = new MemStoreConfig(REPO_NAME);
-				break;
 			case LISSOME: storeConfig = new LissomeStoreConfig(REPO_NAME);
 				break;
 			case H2: storeConfig = new H2StoreConfig(REPO_NAME);
@@ -555,9 +553,7 @@ public class CDOPerformanceTests {
 	  
 	  private IStore createStore(IStoreConfig storeConfig) {
 		    IStore store = null; 
-		    if(storeConfig instanceof MemStoreConfig){
-		    	store = MEMStoreUtil.createMEMStore();
-		    }else if(storeConfig instanceof LissomeStoreConfig){
+		    if(storeConfig instanceof LissomeStoreConfig){
 		    	try{
 			    	File reusableFolder = new File(DBDIR);
 			    	Class<?> indexClass = getClass().getClassLoader().loadClass("org.eclipse.emf.cdo.server.internal.lissome.db.Index");
