@@ -9,7 +9,7 @@ _*Implications:* What does it mean for the architecture? What are the limitation
 
 ==and now the actual constraints for cdo-light:== 
 _*Constraint:* Caching is only allowed on client side. <br>
-_*Definition:* When a CDORevision is queried on the server side, there is no lookup for this revision in the revision cache. Instead of searching in the cache, the query id directly forwarded to the store. <br>
+_*Definition:* When a CDORevision is queried on the server side, there is no lookup for this revision in the revision cache. Instead of searching in the cache, the query is directly forwarded to the store. <br>
 _*Rationale:* The reason for this is to have a lower heap consumption. <br> 
 _*Implications:* This has an effect to the revision manager which uses the cache. This means also, that the MemStore cannot be use, because it caches the revisions.<br>
 ----
