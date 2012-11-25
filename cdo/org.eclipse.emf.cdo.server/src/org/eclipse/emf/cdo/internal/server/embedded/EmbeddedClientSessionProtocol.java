@@ -497,7 +497,7 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
         // revision.convertEObjects(clientTransaction);
         array[index++] = revision;
       }
-
+      adjustContainerIDs(array);
       serverCommitContext.setNewObjects(array);
 
       List<CDORevisionKey> rd = commitData.getChangedObjects();
@@ -537,7 +537,15 @@ public class EmbeddedClientSessionProtocol extends Lifecycle implements CDOSessi
     return result;
   }
   
-  protected void confirmingMappingNewObjects(CommitTransactionResult result, InternalCommitContext commitContext)
+  private void adjustContainerIDs(InternalCDORevision[] array) {
+	  for (InternalCDORevision rev : array) {
+		if(rev.getContainerID() instanceof CDOObject){
+			rev.setContainerID(((CDOObject)rev.getContainerID()).cdoID());
+		}
+	  }
+  }
+
+protected void confirmingMappingNewObjects(CommitTransactionResult result, InternalCommitContext commitContext)
   {
 	  Map<CDOID, CDOID> idMappings = commitContext.getIDMappings();
     for (Entry<CDOID, CDOID> entry : idMappings.entrySet())
