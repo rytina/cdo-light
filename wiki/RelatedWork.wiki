@@ -1,4 +1,4 @@
 #summary collection of links which are about similar projects.
 
-* http://http://modeling-languages.com/neo4emf-big-models-made-possible-emf-neo4j/
+* http://modeling-languages.com/neo4emf-big-models-made-possible-emf-neo4j/
  
